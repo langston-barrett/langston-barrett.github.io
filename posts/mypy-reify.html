@@ -1,0 +1,764 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2021-10-27 Wed 19:51 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Fun with Mypy: Reifying Runtime Relations on Types</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Langston" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="static/mine.css" />
+<link rel="stylesheet" type="text/css" href="../static/mine.css" />
+<script type="text/javascript">
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+<!--/*--><![CDATA[/*><!--*/
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+    /*]]>*///-->
+// @license-end
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/index.html"> UP </a>
+ |
+ <a accesskey="H" href="/index.html"> HOME </a>
+</div><div id="content">
+<h1 class="title">Fun with Mypy: Reifying Runtime Relations on Types</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org63f59ff">Fun with Mypy: Reifying Runtime Relations on Types</a>
+<ul>
+<li><a href="#org310c023"><code>Subclass</code></a></li>
+<li><a href="#org4e09a98"><code>SameType</code></a></li>
+<li><a href="#org447504a"><code>InTuple</code></a></li>
+<li><a href="#org9d0b0f1"><code>IsGenericArgument</code></a></li>
+<li><a href="#orgb6a5b37"><code>NewtypeOf</code></a></li>
+<li><a href="#org446b46e"><code>Newtype</code></a></li>
+<li><a href="#orgcb090f4">More Ideas</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org63f59ff" class="outline-2">
+<h2 id="org63f59ff">Fun with Mypy: Reifying Runtime Relations on Types</h2>
+<div class="outline-text-2" id="text-org63f59ff">
+<p>
+I'm a big fan of type checkers for Python, like <a href="http://mypy-lang.org/">Mypy</a>. One fun aspect of these
+tools is that their type systems tend to have features that reflect the dynamic
+nature of Python, like <a href="https://mypy.readthedocs.io/en/latest/type_narrowing.html">type narrowing</a>. This post describes another,
+less-documented way to use runtime evidence of type information.
+</p>
+
+<p>
+First, consider the  <code>cast</code> operation in in the <code>typing</code> module. <a href="https://docs.python.org/3/library/typing.html#typing.cast">The docs</a> say:
+</p>
+<blockquote>
+<p>
+<code>typing.cast(typ, val)</code>
+</p>
+
+<p>
+Cast a value to a type.
+</p>
+
+<p>
+This returns the value unchanged. To the type checker this signals that the
+return value has the designated type, but at runtime we intentionally don’t
+check anything (we want this to be as fast as possible).
+</p>
+</blockquote>
+
+<p>
+In other words, it's up to the programmer to ensure that the runtime type of the
+value argument really is a subtype of the type argument. What if we could make a
+version of <code>cast</code>, perhaps <code>safe_cast</code>, that makes sure that's the case? It would
+need to meet two requirements:
+</p>
+
+<ol class="org-ol">
+<li>Performance: No overhead at calls to <code>safe_cast</code>, just like <code>cast</code>. No
+assertions, no conditionals.</li>
+<li>Safety: It should be the case that every call to <code>safe_cast</code> is guaranteed (up
+to bugs in Mypy or programmers doing something obviously tricky) to succeed.</li>
+</ol>
+
+<p>
+Well, there's good news! We can:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #3a81c3; font-weight: bold;">from</span> __future__ <span style="color: #3a81c3; font-weight: bold;">import</span> annotations
+
+<span style="color: #3a81c3; font-weight: bold;">from</span> dataclasses <span style="color: #3a81c3; font-weight: bold;">import</span> dataclass
+<span style="color: #3a81c3; font-weight: bold;">from</span> typing <span style="color: #3a81c3; font-weight: bold;">import</span> Generic, Type, TypeVar, final
+
+<span style="color: #715ab1;">Sub</span> = TypeVar<span style="color: #3a81c3;">(</span><span style="color: #2d9574;">"Sub"</span><span style="color: #3a81c3;">)</span>
+<span style="color: #715ab1;">Super</span> = TypeVar<span style="color: #3a81c3;">(</span><span style="color: #2d9574;">"Super"</span><span style="color: #3a81c3;">)</span>
+
+
+<span style="color: #ba2f59; font-weight: bold;">@final</span>
+<span style="color: #3a81c3; font-weight: bold;">class</span> <span style="color: #ba2f59; font-weight: bold;">Subclass_</span><span style="color: #3a81c3;">(</span>Generic<span style="color: #6c3163;">[</span>Sub, Super<span style="color: #6c3163;">]</span><span style="color: #3a81c3;">)</span>:
+    <span style="color: #3a81c3; font-weight: bold;">def</span> <span style="color: #6c3163; font-weight: bold;">__init__</span><span style="color: #3a81c3;">(</span><span style="color: #3a81c3; font-weight: bold;">self</span>, sub: Type<span style="color: #6c3163;">[</span>Sub<span style="color: #6c3163;">]</span>, sup: Type<span style="color: #6c3163;">[</span>Super<span style="color: #6c3163;">]</span><span style="color: #3a81c3;">)</span> -&gt; <span style="color: #4e3163;">None</span>:
+        <span style="color: #3a81c3; font-weight: bold;">assert</span> <span style="color: #3a81c3;">issubclass</span><span style="color: #3a81c3;">(</span>sub, sup<span style="color: #3a81c3;">)</span>
+
+
+<span style="color: #3a81c3; font-weight: bold;">def</span> <span style="color: #6c3163; font-weight: bold;">safe_cast</span><span style="color: #3a81c3;">(</span>evidence: Subclass<span style="color: #6c3163;">[</span>Sub, Super<span style="color: #6c3163;">]</span>, value: Sub<span style="color: #3a81c3;">)</span> -&gt; Super:
+    <span style="color: #3a81c3; font-weight: bold;">return</span> value  <span style="color: #2aa1ae; background-color: #ecf3ec;"># </span><span style="color: #2aa1ae; background-color: #ecf3ec;">type: ignore[return-value]</span>
+</pre>
+</div>
+
+<p>
+Here's what it looks like at the REPL:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">&gt;&gt;&gt; Subclass_<span style="color: #3a81c3;">(</span><span style="color: #3a81c3;">bool</span>, <span style="color: #3a81c3;">int</span><span style="color: #3a81c3;">)</span>
+Subclass_<span style="color: #3a81c3;">()</span>
+&gt;&gt;&gt; Subclass_<span style="color: #3a81c3;">(</span><span style="color: #3a81c3;">bool</span>, <span style="color: #3a81c3;">str</span><span style="color: #3a81c3;">)</span>
+Traceback <span style="color: #3a81c3;">(</span>most recent call last<span style="color: #3a81c3;">)</span>:
+  File <span style="color: #2d9574;">"&lt;stdin&gt;"</span>, line <span style="color: #4e3163;">1</span>, <span style="color: #3a81c3; font-weight: bold;">in</span> &lt;module&gt;
+  File <span style="color: #2d9574;">"/blog/reify.py"</span>, line <span style="color: #4e3163;">13</span>, <span style="color: #3a81c3; font-weight: bold;">in</span> __init__
+    <span style="color: #3a81c3; font-weight: bold;">assert</span> <span style="color: #3a81c3;">issubclass</span><span style="color: #3a81c3;">(</span>sub, sup<span style="color: #3a81c3;">)</span>
+<span style="color: #ba2f59; font-weight: bold;">AssertionError</span>
+&gt;&gt;&gt; safe_cast<span style="color: #3a81c3;">(</span>Subclass_<span style="color: #6c3163;">(</span><span style="color: #3a81c3;">bool</span>, <span style="color: #3a81c3;">int</span><span style="color: #6c3163;">)</span>, <span style="color: #4e3163;">True</span><span style="color: #3a81c3;">)</span> + <span style="color: #4e3163;">2</span>
+<span style="color: #4e3163;">3</span>
+</pre>
+</div>
+
+<p>
+So how does this work? Well, if you've got a value of type <code>Subclass[Sub,
+Super]</code> in scope, then (unless you've done something <i>really</i> tricky) it must be
+the case that at some point, the assertion written in <code>Subclass.__init__</code>
+passed. This means that <code>Sub</code> is a subclass of <code>Super</code>, and so by the Liskov
+substitution principle you can use any value of type <code>Sub</code> in a context where a
+<code>Super</code> is expected.
+</p>
+
+<p>
+To understand the technique in generality, let's refine this example and take a
+look at a few more.
+</p>
+</div>
+
+<div id="outline-container-org310c023" class="outline-3">
+<h3 id="org310c023"><code>Subclass</code></h3>
+<div class="outline-text-3" id="text-org310c023">
+<p>
+For the sake of usability, let's extend the code with three additional features:
+</p>
+
+<ul class="org-ul">
+<li>Throw a custom exception instead of using assertions</li>
+<li>Add the types as fields (for reasons explained below)</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #ba2f59; font-weight: bold;">@dataclass</span><span style="color: #3a81c3;">(</span>frozen=<span style="color: #4e3163;">True</span><span style="color: #3a81c3;">)</span>
+<span style="color: #3a81c3; font-weight: bold;">class</span> <span style="color: #ba2f59; font-weight: bold;">NotASubclass</span><span style="color: #3a81c3;">(</span>Generic<span style="color: #6c3163;">[</span>Sub, Super<span style="color: #6c3163;">]</span>, <span style="color: #ba2f59; font-weight: bold;">Exception</span><span style="color: #3a81c3;">)</span>:
+    sub: Type<span style="color: #3a81c3;">[</span>Sub<span style="color: #3a81c3;">]</span>
+    sup: Type<span style="color: #3a81c3;">[</span>Super<span style="color: #3a81c3;">]</span>
+
+    <span style="color: #3a81c3; font-weight: bold;">def</span> <span style="color: #6c3163; font-weight: bold;">__str__</span><span style="color: #3a81c3;">(</span><span style="color: #3a81c3; font-weight: bold;">self</span><span style="color: #3a81c3;">)</span> -&gt; <span style="color: #3a81c3;">str</span>:
+        <span style="color: #3a81c3; font-weight: bold;">return</span> f<span style="color: #2d9574;">"{self.sub} is not a subclass of {self.sup}"</span>
+
+
+<span style="color: #ba2f59; font-weight: bold;">@final</span>
+<span style="color: #ba2f59; font-weight: bold;">@dataclass</span>
+<span style="color: #3a81c3; font-weight: bold;">class</span> <span style="color: #ba2f59; font-weight: bold;">Subclass</span><span style="color: #3a81c3;">(</span>Generic<span style="color: #6c3163;">[</span>Sub, Super<span style="color: #6c3163;">]</span><span style="color: #3a81c3;">)</span>:
+
+    sub: Type<span style="color: #3a81c3;">[</span>Sub<span style="color: #3a81c3;">]</span>
+    sup: Type<span style="color: #3a81c3;">[</span>Super<span style="color: #3a81c3;">]</span>
+
+    <span style="color: #3a81c3; font-weight: bold;">def</span> <span style="color: #6c3163; font-weight: bold;">__init__</span><span style="color: #3a81c3;">(</span><span style="color: #3a81c3; font-weight: bold;">self</span>, sub: Type<span style="color: #6c3163;">[</span>Sub<span style="color: #6c3163;">]</span>, sup: Type<span style="color: #6c3163;">[</span>Super<span style="color: #6c3163;">]</span><span style="color: #3a81c3;">)</span> -&gt; <span style="color: #4e3163;">None</span>:
+        <span style="color: #3a81c3; font-weight: bold;">self</span>.sub = sub
+        <span style="color: #3a81c3; font-weight: bold;">self</span>.sup = sup
+        <span style="color: #3a81c3; font-weight: bold;">if</span> <span style="color: #3a81c3; font-weight: bold;">not</span> <span style="color: #3a81c3;">issubclass</span><span style="color: #3a81c3;">(</span>sub, sup<span style="color: #3a81c3;">)</span>:
+            <span style="color: #3a81c3; font-weight: bold;">raise</span> NotASubclass<span style="color: #3a81c3;">(</span>sub, sup<span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+
+<p>
+So why add the types as fields? It's not <i>necessary</i>, but it does extend the reach
+of our reasoning by enabling us to add "lemmas" like this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #715ab1;">T1</span> = TypeVar<span style="color: #3a81c3;">(</span><span style="color: #2d9574;">"T1"</span><span style="color: #3a81c3;">)</span>
+<span style="color: #715ab1;">T2</span> = TypeVar<span style="color: #3a81c3;">(</span><span style="color: #2d9574;">"T2"</span><span style="color: #3a81c3;">)</span>
+<span style="color: #715ab1;">T3</span> = TypeVar<span style="color: #3a81c3;">(</span><span style="color: #2d9574;">"T3"</span><span style="color: #3a81c3;">)</span>
+
+<span style="color: #3a81c3; font-weight: bold;">def</span> <span style="color: #6c3163; font-weight: bold;">subclass_transitive</span><span style="color: #3a81c3;">(</span>
+        evidence1: Subclass<span style="color: #6c3163;">[</span>T1, T2<span style="color: #6c3163;">]</span>,
+        evidence2: Subclass<span style="color: #6c3163;">[</span>T2, T3<span style="color: #6c3163;">]</span><span style="color: #3a81c3;">)</span> -&gt; Subclass<span style="color: #3a81c3;">[</span>T1, T3<span style="color: #3a81c3;">]</span>:
+    <span style="color: #3a81c3; font-weight: bold;">return</span> Subclass<span style="color: #3a81c3;">(</span>evidence1.sub, evidence2.sup<span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+
+<p>
+If you don't like the memory overhead, you can instead "axiomatize" lemmas, by
+returning a sentinel value such as <code>Subclass[object, object]</code> with a
+<code># type: ignore[return-value]</code> comment.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org4e09a98" class="outline-3">
+<h3 id="org4e09a98"><code>SameType</code></h3>
+<div class="outline-text-3" id="text-org4e09a98">
+<p>
+Subclassing is a partial order on types, and in particular, it's antisymmetric.
+If two types are both subclasses of each other, they're the same type:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #ba2f59; font-weight: bold;">@final</span>
+<span style="color: #ba2f59; font-weight: bold;">@dataclass</span>
+<span style="color: #3a81c3; font-weight: bold;">class</span> <span style="color: #ba2f59; font-weight: bold;">SameType</span><span style="color: #3a81c3;">(</span>Generic<span style="color: #6c3163;">[</span>T1, T2<span style="color: #6c3163;">]</span><span style="color: #3a81c3;">)</span>:
+
+    ty: Type<span style="color: #3a81c3;">[</span>T1<span style="color: #3a81c3;">]</span>
+
+    <span style="color: #3a81c3; font-weight: bold;">def</span> <span style="color: #6c3163; font-weight: bold;">__init__</span><span style="color: #3a81c3;">(</span><span style="color: #3a81c3; font-weight: bold;">self</span>, evidence1: Subclass<span style="color: #6c3163;">[</span>T1, T2<span style="color: #6c3163;">]</span>,
+                 evidence2: Subclass<span style="color: #6c3163;">[</span>T2, T1<span style="color: #6c3163;">]</span><span style="color: #3a81c3;">)</span> -&gt; <span style="color: #4e3163;">None</span>:
+        <span style="color: #3a81c3; font-weight: bold;">self</span>.ty = evidence1.sub
+
+    <span style="color: #2aa1ae; background-color: #ecf3ec;"># </span><span style="color: #2aa1ae; background-color: #ecf3ec;">These would be necessary for writing any lemmas:</span>
+
+    <span style="color: #3a81c3; font-weight: bold;">def</span> <span style="color: #6c3163; font-weight: bold;">get1</span><span style="color: #3a81c3;">(</span><span style="color: #3a81c3; font-weight: bold;">self</span><span style="color: #3a81c3;">)</span> -&gt; Type<span style="color: #3a81c3;">[</span>T1<span style="color: #3a81c3;">]</span>:
+        <span style="color: #3a81c3; font-weight: bold;">return</span> <span style="color: #3a81c3; font-weight: bold;">self</span>.ty
+
+    <span style="color: #3a81c3; font-weight: bold;">def</span> <span style="color: #6c3163; font-weight: bold;">get2</span><span style="color: #3a81c3;">(</span><span style="color: #3a81c3; font-weight: bold;">self</span><span style="color: #3a81c3;">)</span> -&gt; Type<span style="color: #3a81c3;">[</span>T2<span style="color: #3a81c3;">]</span>:
+        <span style="color: #2aa1ae; background-color: #ecf3ec;"># </span><span style="color: #2aa1ae; background-color: #ecf3ec;">Could also save the evidence and use safe_cast here</span>
+        <span style="color: #3a81c3; font-weight: bold;">return</span> <span style="color: #3a81c3; font-weight: bold;">self</span>.ty  <span style="color: #2aa1ae; background-color: #ecf3ec;"># </span><span style="color: #2aa1ae; background-color: #ecf3ec;">type: ignore[return-value]</span>
+
+</pre>
+</div>
+
+<p>
+Here, we don't need a custom exception type nor any assertion in the
+constructor, since both of these are "inherited" from <code>Subclass</code>.
+</p>
+
+<p>
+Some ideas for lemmas:
+</p>
+
+<ul class="org-ul">
+<li><code>SameType[T1, T2]</code> implies <code>Subclass[T1, T2]</code></li>
+<li><code>SameType</code> is symmetric</li>
+<li><code>SameType</code> is transitive</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org447504a" class="outline-3">
+<h3 id="org447504a"><code>InTuple</code></h3>
+<div class="outline-text-3" id="text-org447504a">
+<p>
+Now for something a bit more involved. Recall <a href="https://www.python.org/dev/peps/pep-0585">PEP 585: Type Hinting Generics In
+Standard Collections</a>. This PEP obviates <code>typing.Dict</code>, <code>typing.List</code>, <code>typing.Tuple</code>,
+and more by allowing us to write the corresponding types directly inside type
+signatures:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #3a81c3; font-weight: bold;">def</span> <span style="color: #6c3163; font-weight: bold;">repeat</span><span style="color: #3a81c3;">(</span>i: <span style="color: #3a81c3;">int</span>, n: <span style="color: #3a81c3;">int</span><span style="color: #3a81c3;">)</span> -&gt; <span style="color: #3a81c3;">list</span><span style="color: #3a81c3;">[</span><span style="color: #3a81c3;">int</span><span style="color: #3a81c3;">]</span>:
+    <span style="color: #3a81c3; font-weight: bold;">pass</span>
+
+<span style="color: #2aa1ae; background-color: #ecf3ec;"># </span><span style="color: #2aa1ae; background-color: #ecf3ec;">Old style (equivalent):</span>
+
+<span style="color: #3a81c3; font-weight: bold;">from</span> typing <span style="color: #3a81c3; font-weight: bold;">import</span> List
+
+<span style="color: #3a81c3; font-weight: bold;">def</span> <span style="color: #6c3163; font-weight: bold;">repeat_old</span><span style="color: #3a81c3;">(</span>i: <span style="color: #3a81c3;">int</span>, n: <span style="color: #3a81c3;">int</span><span style="color: #3a81c3;">)</span> -&gt; List<span style="color: #3a81c3;">[</span><span style="color: #3a81c3;">int</span><span style="color: #3a81c3;">]</span>:
+    <span style="color: #3a81c3; font-weight: bold;">pass</span>
+</pre>
+</div>
+
+<p>
+Crucially, types like <code>dict[int, str]</code> are also values:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">&gt;&gt;&gt; <span style="color: #3a81c3;">dict</span><span style="color: #3a81c3;">[</span><span style="color: #3a81c3;">int</span>, <span style="color: #3a81c3;">str</span><span style="color: #3a81c3;">]</span>
+<span style="color: #3a81c3;">dict</span><span style="color: #3a81c3;">[</span><span style="color: #3a81c3;">int</span>, <span style="color: #3a81c3;">str</span><span style="color: #3a81c3;">]</span>
+</pre>
+</div>
+
+<p>
+Moreover, their type arguments <a href="https://www.python.org/dev/peps/pep-0585/#parameters-to-generics-are-available-at-runtime">are available at runtime</a>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">&gt;&gt;&gt; <span style="color: #3a81c3;">dict</span><span style="color: #3a81c3;">[</span><span style="color: #3a81c3;">int</span>, <span style="color: #3a81c3;">str</span><span style="color: #3a81c3;">]</span>.__args__
+<span style="color: #3a81c3;">(</span>&lt;<span style="color: #3a81c3; font-weight: bold;">class</span> <span style="color: #2d9574;">'int'</span>&gt;, &lt;<span style="color: #3a81c3; font-weight: bold;">class</span> <span style="color: #2d9574;">'str'</span>&gt;<span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+
+<p>
+So what can we do with this? Here's a generic class <code>InTuple[T, Tup]</code>. It has two
+type parameters, the second of which is bounded above by <code>Tuple[Any, ...]</code>. If you
+can construct one, it means that the type <code>T</code> is one of the types in the tuple
+type <code>Tup</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #3a81c3; font-weight: bold;">from</span> typing <span style="color: #3a81c3; font-weight: bold;">import</span> Any, Tuple
+
+<span style="color: #2aa1ae; background-color: #ecf3ec;"># </span><span style="color: #2aa1ae; background-color: #ecf3ec;">For some reason, tuple[Any, ...] doesn't work here, even though it is valid as</span>
+<span style="color: #2aa1ae; background-color: #ecf3ec;"># </span><span style="color: #2aa1ae; background-color: #ecf3ec;">a value at the REPL.</span>
+<span style="color: #715ab1;">Tup</span> = TypeVar<span style="color: #3a81c3;">(</span><span style="color: #2d9574;">"Tup"</span>, bound=Tuple<span style="color: #6c3163;">[</span>Any, ...<span style="color: #6c3163;">]</span><span style="color: #3a81c3;">)</span>
+<span style="color: #715ab1;">T</span> = TypeVar<span style="color: #3a81c3;">(</span><span style="color: #2d9574;">"T"</span><span style="color: #3a81c3;">)</span>
+
+
+<span style="color: #ba2f59; font-weight: bold;">@dataclass</span><span style="color: #3a81c3;">(</span>frozen=<span style="color: #4e3163;">True</span><span style="color: #3a81c3;">)</span>
+<span style="color: #3a81c3; font-weight: bold;">class</span> <span style="color: #ba2f59; font-weight: bold;">NotInTuple</span><span style="color: #3a81c3;">(</span>Generic<span style="color: #6c3163;">[</span>T, Tup<span style="color: #6c3163;">]</span>, <span style="color: #ba2f59; font-weight: bold;">Exception</span><span style="color: #3a81c3;">)</span>:
+    ty: Type<span style="color: #3a81c3;">[</span>T<span style="color: #3a81c3;">]</span>
+    tup: Type<span style="color: #3a81c3;">[</span>Tup<span style="color: #3a81c3;">]</span>
+
+    <span style="color: #3a81c3; font-weight: bold;">def</span> <span style="color: #6c3163; font-weight: bold;">__str__</span><span style="color: #3a81c3;">(</span><span style="color: #3a81c3; font-weight: bold;">self</span><span style="color: #3a81c3;">)</span> -&gt; <span style="color: #3a81c3;">str</span>:
+        <span style="color: #3a81c3; font-weight: bold;">return</span> f<span style="color: #2d9574;">"Type {self.ty} is not in tuple type {self.tup}"</span>
+
+
+<span style="color: #ba2f59; font-weight: bold;">@final</span>
+<span style="color: #ba2f59; font-weight: bold;">@dataclass</span>
+<span style="color: #3a81c3; font-weight: bold;">class</span> <span style="color: #ba2f59; font-weight: bold;">InTuple</span><span style="color: #3a81c3;">(</span>Generic<span style="color: #6c3163;">[</span>T, Tup<span style="color: #6c3163;">]</span><span style="color: #3a81c3;">)</span>:
+    <span style="color: #da8b55;">"""Witness that ``T`` is in ``Tup``."""</span>
+
+    ty: Type<span style="color: #3a81c3;">[</span>T<span style="color: #3a81c3;">]</span>
+    tup: Type<span style="color: #3a81c3;">[</span>Tup<span style="color: #3a81c3;">]</span>
+
+    <span style="color: #3a81c3; font-weight: bold;">def</span> <span style="color: #6c3163; font-weight: bold;">__init__</span><span style="color: #3a81c3;">(</span><span style="color: #3a81c3; font-weight: bold;">self</span>, ty: Type<span style="color: #6c3163;">[</span>T<span style="color: #6c3163;">]</span>, tup: Type<span style="color: #6c3163;">[</span>Tup<span style="color: #6c3163;">]</span><span style="color: #3a81c3;">)</span> -&gt; <span style="color: #4e3163;">None</span>:
+        <span style="color: #3a81c3; font-weight: bold;">self</span>.ty = ty
+        <span style="color: #3a81c3; font-weight: bold;">self</span>.tup = tup
+        <span style="color: #2aa1ae; background-color: #ecf3ec;"># </span><span style="color: #2aa1ae; background-color: #ecf3ec;">Mypy version 0.910 doesn't acknowledge that this attribute is defined,</span>
+        <span style="color: #2aa1ae; background-color: #ecf3ec;"># </span><span style="color: #2aa1ae; background-color: #ecf3ec;">but it is.</span>
+        <span style="color: #3a81c3; font-weight: bold;">for</span> tup_ty <span style="color: #3a81c3; font-weight: bold;">in</span> tup.__args__:  <span style="color: #2aa1ae; background-color: #ecf3ec;"># </span><span style="color: #2aa1ae; background-color: #ecf3ec;">type: ignore[attr-defined]</span>
+            <span style="color: #3a81c3; font-weight: bold;">if</span> ty == tup_ty:
+                <span style="color: #3a81c3; font-weight: bold;">return</span>
+        <span style="color: #3a81c3; font-weight: bold;">raise</span> NotInTuple<span style="color: #3a81c3;">(</span>ty, tup<span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+
+<p>
+Let's try it out:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">&gt;&gt;&gt; InTuple<span style="color: #3a81c3;">(</span><span style="color: #3a81c3;">int</span>, <span style="color: #3a81c3;">tuple</span><span style="color: #6c3163;">[</span><span style="color: #3a81c3;">int</span>, <span style="color: #3a81c3;">str</span><span style="color: #6c3163;">]</span><span style="color: #3a81c3;">)</span>
+InTuple<span style="color: #3a81c3;">(</span>ty=&lt;<span style="color: #3a81c3; font-weight: bold;">class</span> <span style="color: #2d9574;">'int'</span>&gt;, tup=<span style="color: #3a81c3;">tuple</span><span style="color: #6c3163;">[</span><span style="color: #3a81c3;">int</span>, <span style="color: #3a81c3;">str</span><span style="color: #6c3163;">]</span><span style="color: #3a81c3;">)</span>
+
+&gt;&gt;&gt; InTuple<span style="color: #3a81c3;">(</span><span style="color: #3a81c3;">int</span>, <span style="color: #3a81c3;">tuple</span><span style="color: #6c3163;">[</span><span style="color: #3a81c3;">str</span>, <span style="color: #3a81c3;">list</span><span style="color: #2d9574;">[</span><span style="color: #3a81c3;">str</span><span style="color: #2d9574;">]</span>, <span style="color: #3a81c3;">bool</span><span style="color: #6c3163;">]</span><span style="color: #3a81c3;">)</span>
+Traceback <span style="color: #3a81c3;">(</span>most recent call last<span style="color: #3a81c3;">)</span>:
+  File <span style="color: #2d9574;">"&lt;stdin&gt;"</span>, line <span style="color: #4e3163;">1</span>, <span style="color: #3a81c3; font-weight: bold;">in</span> &lt;module&gt;
+  File <span style="color: #2d9574;">"/blog/reify.py"</span>, line <span style="color: #4e3163;">44</span>, <span style="color: #3a81c3; font-weight: bold;">in</span> __init__
+    <span style="color: #3a81c3; font-weight: bold;">raise</span> NotInTuple<span style="color: #3a81c3;">(</span>ty, tup<span style="color: #3a81c3;">)</span>
+__main__.NotIn: Type &lt;<span style="color: #3a81c3; font-weight: bold;">class</span> <span style="color: #2d9574;">'int'</span>&gt; <span style="color: #3a81c3; font-weight: bold;">is</span> <span style="color: #3a81c3; font-weight: bold;">not</span> <span style="color: #3a81c3; font-weight: bold;">in</span> <span style="color: #3a81c3;">tuple</span> <span style="color: #3a81c3;">type</span> <span style="color: #3a81c3;">tuple</span><span style="color: #3a81c3;">[</span><span style="color: #3a81c3;">str</span>, <span style="color: #3a81c3;">list</span><span style="color: #6c3163;">[</span><span style="color: #3a81c3;">str</span><span style="color: #6c3163;">]</span>, <span style="color: #3a81c3;">bool</span><span style="color: #3a81c3;">]</span>
+</pre>
+</div>
+
+<p>
+So what can we do with this? Well, probably lots of things! We can write a
+function that gets the first value of a given type out of a tuple, regardless of
+its index:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #3a81c3; font-weight: bold;">def</span> <span style="color: #6c3163; font-weight: bold;">first</span><span style="color: #3a81c3;">(</span>evidence: InTuple<span style="color: #6c3163;">[</span>T, Tup<span style="color: #6c3163;">]</span>, tup: Tup<span style="color: #3a81c3;">)</span> -&gt; T:
+    <span style="color: #3a81c3; font-weight: bold;">for</span> elem <span style="color: #3a81c3; font-weight: bold;">in</span> tup:
+        <span style="color: #3a81c3; font-weight: bold;">if</span> <span style="color: #3a81c3;">isinstance</span><span style="color: #3a81c3;">(</span>elem, evidence.ty<span style="color: #3a81c3;">)</span>:
+            <span style="color: #3a81c3; font-weight: bold;">return</span> elem
+    <span style="color: #3a81c3; font-weight: bold;">assert</span> <span style="color: #4e3163;">False</span>, f<span style="color: #2d9574;">"Impossible: Bad 'InTuple' value {evidence=} {tup=}"</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-python">&gt;&gt;&gt; first<span style="color: #3a81c3;">(</span>InTuple<span style="color: #6c3163;">(</span><span style="color: #3a81c3;">int</span>, <span style="color: #3a81c3;">tuple</span><span style="color: #2d9574;">[</span><span style="color: #3a81c3;">str</span>, <span style="color: #3a81c3;">int</span>, <span style="color: #3a81c3;">bool</span>, <span style="color: #3a81c3;">int</span><span style="color: #2d9574;">]</span><span style="color: #6c3163;">)</span>, <span style="color: #6c3163;">(</span><span style="color: #2d9574;">"string"</span>, <span style="color: #4e3163;">5</span>, <span style="color: #4e3163;">False</span>, <span style="color: #4e3163;">10</span><span style="color: #6c3163;">)</span><span style="color: #3a81c3;">)</span>
+<span style="color: #4e3163;">5</span>
+</pre>
+</div>
+
+<p>
+This isn't so impressive when we construct a literal <code>InTuple</code> value as the first
+argument, but might be helpful in more polymorphic scenarios.
+</p>
+
+<p>
+It's also worth noting that this function can be a bit unintuitive when combined
+with certain subclass relationships:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">&gt;&gt;&gt; <span style="color: #3a81c3;">issubclass</span><span style="color: #3a81c3;">(</span><span style="color: #3a81c3;">bool</span>, <span style="color: #3a81c3;">int</span><span style="color: #3a81c3;">)</span>
+<span style="color: #4e3163;">True</span>
+&gt;&gt;&gt; first<span style="color: #3a81c3;">(</span>InTuple<span style="color: #6c3163;">(</span><span style="color: #3a81c3;">int</span>, <span style="color: #3a81c3;">tuple</span><span style="color: #2d9574;">[</span><span style="color: #3a81c3;">bool</span>, <span style="color: #3a81c3;">int</span>, <span style="color: #3a81c3;">str</span>, <span style="color: #3a81c3;">int</span><span style="color: #2d9574;">]</span><span style="color: #6c3163;">)</span>, <span style="color: #6c3163;">(</span><span style="color: #4e3163;">False</span>, <span style="color: #4e3163;">5</span>, <span style="color: #2d9574;">"string"</span>, <span style="color: #4e3163;">10</span><span style="color: #6c3163;">)</span><span style="color: #3a81c3;">)</span>
+<span style="color: #4e3163;">False</span>
+</pre>
+</div>
+
+<p>
+It's worth noting that any of these predicates or relationships could be
+negated, simply by inverting the conditional and renaming the class. You could
+probably have a lemma that the negation of this relationship is reflexive, but I
+can't think of how you'd use it.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org9d0b0f1" class="outline-3">
+<h3 id="org9d0b0f1"><code>IsGenericArgument</code></h3>
+<div class="outline-text-3" id="text-org9d0b0f1">
+<p>
+In fact, parameters to <i>all</i> generic types are available at runtime:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">&gt;&gt;&gt; <span style="color: #3a81c3; font-weight: bold;">from</span> typing <span style="color: #3a81c3; font-weight: bold;">import</span> Mapping, Generic, TypeVar
+
+&gt;&gt;&gt; Mapping<span style="color: #3a81c3;">[</span><span style="color: #3a81c3;">int</span>, <span style="color: #3a81c3;">str</span><span style="color: #3a81c3;">]</span>.__args__
+<span style="color: #3a81c3;">(</span>&lt;<span style="color: #3a81c3; font-weight: bold;">class</span> <span style="color: #2d9574;">'int'</span>&gt;, &lt;<span style="color: #3a81c3; font-weight: bold;">class</span> <span style="color: #2d9574;">'str'</span>&gt;<span style="color: #3a81c3;">)</span>
+
+&gt;&gt;&gt; <span style="color: #715ab1;">T</span> = TypeVar<span style="color: #3a81c3;">(</span><span style="color: #2d9574;">"T"</span><span style="color: #3a81c3;">)</span>
+&gt;&gt;&gt; <span style="color: #3a81c3; font-weight: bold;">class</span> <span style="color: #ba2f59; font-weight: bold;">G</span><span style="color: #3a81c3;">(</span>Generic<span style="color: #6c3163;">[</span>T<span style="color: #6c3163;">]</span><span style="color: #3a81c3;">)</span>:
+...     <span style="color: #3a81c3; font-weight: bold;">pass</span>
+...
+&gt;&gt;&gt; G<span style="color: #3a81c3;">[</span><span style="color: #3a81c3;">int</span><span style="color: #3a81c3;">]</span>.__args__
+<span style="color: #3a81c3;">(</span>&lt;<span style="color: #3a81c3; font-weight: bold;">class</span> <span style="color: #2d9574;">'int'</span>&gt;,<span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+
+<p>
+So we can handily generalize the previous example just by creating a new
+exception type, replacing the <code>Tup</code> variable with something unconstrained, and
+renaming the class to <code>IsGenericArgument</code>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgb6a5b37" class="outline-3">
+<h3 id="orgb6a5b37"><code>NewtypeOf</code></h3>
+<div class="outline-text-3" id="text-orgb6a5b37">
+<p>
+How can we tell if a given type is just a <code>NewType</code> wrapper around another one?
+Well, let's investigate:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">&gt;&gt;&gt; <span style="color: #3a81c3; font-weight: bold;">from</span> typing <span style="color: #3a81c3; font-weight: bold;">import</span> NewType
+&gt;&gt;&gt; <span style="color: #715ab1;">Pos</span> = NewType<span style="color: #3a81c3;">(</span><span style="color: #2d9574;">"Pos"</span>, <span style="color: #3a81c3;">int</span><span style="color: #3a81c3;">)</span>
+&gt;&gt;&gt; Pos
+&lt;function NewType.&lt;<span style="color: #3a81c3;">locals</span>&gt;.new_type at <span style="color: #4e3163;">0x7fa08729b4c0</span>&gt;
+&gt;&gt;&gt; <span style="color: #3a81c3;">dir</span><span style="color: #3a81c3;">(</span>Pos<span style="color: #3a81c3;">)</span>
+<span style="color: #3a81c3;">[</span>..., <span style="color: #2d9574;">'__supertype__'</span><span style="color: #3a81c3;">]</span>
+&gt;&gt;&gt; Pos.__supertype__
+&lt;<span style="color: #3a81c3; font-weight: bold;">class</span> <span style="color: #2d9574;">'int'</span>&gt;
+</pre>
+</div>
+
+<p>
+Ah, that's <i>just</i> what we need!
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #3a81c3; font-weight: bold;">from</span> typing <span style="color: #3a81c3; font-weight: bold;">import</span> Callable
+
+
+<span style="color: #ba2f59; font-weight: bold;">@dataclass</span><span style="color: #3a81c3;">(</span>frozen=<span style="color: #4e3163;">True</span><span style="color: #3a81c3;">)</span>
+<span style="color: #3a81c3; font-weight: bold;">class</span> <span style="color: #ba2f59; font-weight: bold;">NotANewtypeOf</span><span style="color: #3a81c3;">(</span>Generic<span style="color: #6c3163;">[</span>Sub, Super<span style="color: #6c3163;">]</span>, <span style="color: #ba2f59; font-weight: bold;">Exception</span><span style="color: #3a81c3;">)</span>:
+    sub: Callable<span style="color: #3a81c3;">[</span><span style="color: #6c3163;">[</span>Super<span style="color: #6c3163;">]</span>, Sub<span style="color: #3a81c3;">]</span>
+    sup: Type<span style="color: #3a81c3;">[</span>Super<span style="color: #3a81c3;">]</span>
+
+    <span style="color: #3a81c3; font-weight: bold;">def</span> <span style="color: #6c3163; font-weight: bold;">__str__</span><span style="color: #3a81c3;">(</span><span style="color: #3a81c3; font-weight: bold;">self</span><span style="color: #3a81c3;">)</span> -&gt; <span style="color: #3a81c3;">str</span>:
+        <span style="color: #3a81c3; font-weight: bold;">return</span> f<span style="color: #2d9574;">'{getattr(self.sub, "__name__", "&lt;unknown&gt;")} is not a newtype of {self.sup}'</span>
+
+
+<span style="color: #ba2f59; font-weight: bold;">@final</span>
+<span style="color: #ba2f59; font-weight: bold;">@dataclass</span>
+<span style="color: #3a81c3; font-weight: bold;">class</span> <span style="color: #ba2f59; font-weight: bold;">NewtypeOf</span><span style="color: #3a81c3;">(</span>Generic<span style="color: #6c3163;">[</span>Sub, Super<span style="color: #6c3163;">]</span><span style="color: #3a81c3;">)</span>:
+
+    sub: Callable<span style="color: #3a81c3;">[</span><span style="color: #6c3163;">[</span>Super<span style="color: #6c3163;">]</span>, Sub<span style="color: #3a81c3;">]</span>
+    sup: Type<span style="color: #3a81c3;">[</span>Super<span style="color: #3a81c3;">]</span>
+
+    <span style="color: #3a81c3; font-weight: bold;">def</span> <span style="color: #6c3163; font-weight: bold;">__init__</span><span style="color: #3a81c3;">(</span><span style="color: #3a81c3; font-weight: bold;">self</span>, sub: Callable<span style="color: #6c3163;">[</span><span style="color: #2d9574;">[</span>Super<span style="color: #2d9574;">]</span>, Sub<span style="color: #6c3163;">]</span>, sup: Type<span style="color: #6c3163;">[</span>Super<span style="color: #6c3163;">]</span><span style="color: #3a81c3;">)</span> -&gt; <span style="color: #4e3163;">None</span>:
+        <span style="color: #2aa1ae; background-color: #ecf3ec;"># </span><span style="color: #2aa1ae; background-color: #ecf3ec;">Mypy has trouble with Callable fields...</span>
+        <span style="color: #3a81c3; font-weight: bold;">self</span>.sub = sub  <span style="color: #2aa1ae; background-color: #ecf3ec;"># </span><span style="color: #2aa1ae; background-color: #ecf3ec;">type: ignore[assignment]</span>
+        <span style="color: #3a81c3; font-weight: bold;">self</span>.sup = sup
+        <span style="color: #3a81c3; font-weight: bold;">if</span> <span style="color: #3a81c3; font-weight: bold;">not</span> <span style="color: #3a81c3;">getattr</span><span style="color: #3a81c3;">(</span>sub, <span style="color: #2d9574;">"__supertype__"</span><span style="color: #3a81c3;">)</span> == sup:
+            <span style="color: #3a81c3; font-weight: bold;">raise</span> NotANewtypeOf<span style="color: #3a81c3;">(</span>sub, sup<span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+
+<p>
+Some ideas for lemmas:
+</p>
+
+<ul class="org-ul">
+<li>Is this transitive?</li>
+<li><code>NewtypeOf</code> implies <code>Subtype</code></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org446b46e" class="outline-3">
+<h3 id="org446b46e"><code>Newtype</code></h3>
+<div class="outline-text-3" id="text-org446b46e">
+<p>
+The above example also leads naturally to our first <i>predicate</i> or <i>property</i> of
+interest on types, rather than a <i>relationship between</i> types, namely, whether or
+not a given type is in fact a <code>NewType</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #ba2f59; font-weight: bold;">@dataclass</span><span style="color: #3a81c3;">(</span>frozen=<span style="color: #4e3163;">True</span><span style="color: #3a81c3;">)</span>
+<span style="color: #3a81c3; font-weight: bold;">class</span> <span style="color: #ba2f59; font-weight: bold;">NotANewtype</span><span style="color: #3a81c3;">(</span>Generic<span style="color: #6c3163;">[</span>Sub, Super<span style="color: #6c3163;">]</span>, <span style="color: #ba2f59; font-weight: bold;">Exception</span><span style="color: #3a81c3;">)</span>:
+    sub: Callable<span style="color: #3a81c3;">[</span><span style="color: #6c3163;">[</span>Super<span style="color: #6c3163;">]</span>, Sub<span style="color: #3a81c3;">]</span>
+
+    <span style="color: #3a81c3; font-weight: bold;">def</span> <span style="color: #6c3163; font-weight: bold;">__str__</span><span style="color: #3a81c3;">(</span><span style="color: #3a81c3; font-weight: bold;">self</span><span style="color: #3a81c3;">)</span> -&gt; <span style="color: #3a81c3;">str</span>:
+        <span style="color: #3a81c3; font-weight: bold;">return</span> f<span style="color: #2d9574;">'{getattr(self.sub, "__name__", "&lt;unknown&gt;")} is not a newtype'</span>
+
+
+<span style="color: #ba2f59; font-weight: bold;">@final</span>
+<span style="color: #ba2f59; font-weight: bold;">@dataclass</span>
+<span style="color: #3a81c3; font-weight: bold;">class</span> <span style="color: #ba2f59; font-weight: bold;">Newtype</span><span style="color: #3a81c3;">(</span>Generic<span style="color: #6c3163;">[</span>Sub, Super<span style="color: #6c3163;">]</span><span style="color: #3a81c3;">)</span>:
+
+    sub: Callable<span style="color: #3a81c3;">[</span><span style="color: #6c3163;">[</span>Super<span style="color: #6c3163;">]</span>, Sub<span style="color: #3a81c3;">]</span>
+
+    <span style="color: #3a81c3; font-weight: bold;">def</span> <span style="color: #6c3163; font-weight: bold;">__init__</span><span style="color: #3a81c3;">(</span><span style="color: #3a81c3; font-weight: bold;">self</span>, sub: Callable<span style="color: #6c3163;">[</span><span style="color: #2d9574;">[</span>Super<span style="color: #2d9574;">]</span>, Sub<span style="color: #6c3163;">]</span><span style="color: #3a81c3;">)</span> -&gt; <span style="color: #4e3163;">None</span>:
+        <span style="color: #3a81c3; font-weight: bold;">self</span>.sub = sub  <span style="color: #2aa1ae; background-color: #ecf3ec;"># </span><span style="color: #2aa1ae; background-color: #ecf3ec;">type: ignore[assignment]</span>
+        <span style="color: #3a81c3; font-weight: bold;">if</span> <span style="color: #3a81c3;">getattr</span><span style="color: #3a81c3;">(</span>sub, <span style="color: #2d9574;">"__supertype__"</span><span style="color: #3a81c3;">)</span> <span style="color: #3a81c3; font-weight: bold;">is</span> <span style="color: #4e3163;">None</span>:
+            <span style="color: #3a81c3; font-weight: bold;">raise</span> NotANewtype<span style="color: #3a81c3;">(</span>sub<span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgcb090f4" class="outline-3">
+<h3 id="orgcb090f4">More Ideas</h3>
+<div class="outline-text-3" id="text-orgcb090f4">
+<p>
+What other predicates on and relations between types do we care about? A few
+ideas:
+</p>
+
+<ul class="org-ul">
+<li><code>Subclassable</code>: Some types aren't! For example, <code>&lt;class 'function'&gt;</code> (try
+<code>type(lambda: None)</code> in the REPL).</li>
+
+<li><code>IsAbstract</code>, or <code>NotAbstract</code>: I don't know if it's possible to check this at
+runtime, but it would be cool if it were!</li>
+
+<li><code>HasMetaclass</code>: Check that a class has a given metaclass.</li>
+</ul>
+
+<p>
+Do you have other ideas or use-cases? Drop me a line!
+</p>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>
