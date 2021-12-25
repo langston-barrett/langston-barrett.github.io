@@ -3,14 +3,13 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2021-10-27 Wed 19:51 -->
+<!-- 2021-12-24 Fri 18:48 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Fun with Mypy: Reifying Runtime Relations on Types</title>
-<meta name="generator" content="Org mode" />
-<meta name="author" content="Langston" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
              margin-bottom: .2em; }
   .subtitle { text-align: center;
@@ -31,8 +30,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -41,21 +41,21 @@
   pre.src {
     position: relative;
     overflow: auto;
-    padding-top: 1.2em;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
   pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -191,62 +191,39 @@
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
   .org-svg { width: 90%; }
-  /*]]>*/-->
 </style>
 <link rel="stylesheet" type="text/css" href="static/mine.css" />
 <link rel="stylesheet" type="text/css" href="../static/mine.css" />
-<script type="text/javascript">
-// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
-<!--/*--><![CDATA[/*><!--*/
-     function CodeHighlightOn(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-         elem.classList.add("code-highlighted");
-         target.classList.add("code-highlighted");
-       }
-     }
-     function CodeHighlightOff(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-         elem.classList.remove("code-highlighted");
-         target.classList.remove("code-highlighted");
-       }
-     }
-    /*]]>*///-->
-// @license-end
-</script>
 </head>
 <body>
 <div id="org-div-home-and-up">
  <a accesskey="h" href="/index.html"> UP </a>
  |
  <a accesskey="H" href="/index.html"> HOME </a>
-</div><div id="content">
+</div><div id="content" class="content">
 <h1 class="title">Fun with Mypy: Reifying Runtime Relations on Types</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org63f59ff">Fun with Mypy: Reifying Runtime Relations on Types</a>
+<li><a href="#org853a59b">Fun with Mypy: Reifying Runtime Relations on Types</a>
 <ul>
-<li><a href="#org310c023"><code>Subclass</code></a></li>
-<li><a href="#org4e09a98"><code>SameType</code></a></li>
-<li><a href="#org447504a"><code>InTuple</code></a></li>
-<li><a href="#org9d0b0f1"><code>IsGenericArgument</code></a></li>
-<li><a href="#orgb6a5b37"><code>NewtypeOf</code></a></li>
-<li><a href="#org446b46e"><code>Newtype</code></a></li>
-<li><a href="#orgcb090f4">More Ideas</a></li>
+<li><a href="#org29b3d67"><code>Subclass</code></a></li>
+<li><a href="#org57dfd76"><code>SameType</code></a></li>
+<li><a href="#orge48db4c"><code>InTuple</code></a></li>
+<li><a href="#org0640b6f"><code>IsGenericArgument</code></a></li>
+<li><a href="#orgb79e04c"><code>NewtypeOf</code></a></li>
+<li><a href="#orgcfc7c29"><code>Newtype</code></a></li>
+<li><a href="#org9d7da78">More Ideas</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org63f59ff" class="outline-2">
-<h2 id="org63f59ff">Fun with Mypy: Reifying Runtime Relations on Types</h2>
-<div class="outline-text-2" id="text-org63f59ff">
+<div id="outline-container-org853a59b" class="outline-2">
+<h2 id="org853a59b">Fun with Mypy: Reifying Runtime Relations on Types</h2>
+<div class="outline-text-2" id="text-org853a59b">
 <p>
 I'm a big fan of type checkers for Python, like <a href="http://mypy-lang.org/">Mypy</a>. One fun aspect of these
 tools is that their type systems tend to have features that reflect the dynamic
@@ -307,7 +284,7 @@ Well, there's good news! We can:
         <span style="color: #3a81c3; font-weight: bold;">assert</span> <span style="color: #3a81c3;">issubclass</span><span style="color: #3a81c3;">(</span>sub, sup<span style="color: #3a81c3;">)</span>
 
 
-<span style="color: #3a81c3; font-weight: bold;">def</span> <span style="color: #6c3163; font-weight: bold;">safe_cast</span><span style="color: #3a81c3;">(</span>evidence: Subclass<span style="color: #6c3163;">[</span>Sub, Super<span style="color: #6c3163;">]</span>, value: Sub<span style="color: #3a81c3;">)</span> -&gt; Super:
+<span style="color: #3a81c3; font-weight: bold;">def</span> <span style="color: #6c3163; font-weight: bold;">safe_cast</span><span style="color: #3a81c3;">(</span>evidence: Subclass_<span style="color: #6c3163;">[</span>Sub, Super<span style="color: #6c3163;">]</span>, value: Sub<span style="color: #3a81c3;">)</span> -&gt; Super:
     <span style="color: #3a81c3; font-weight: bold;">return</span> value  <span style="color: #2aa1ae; background-color: #ecf3ec;"># </span><span style="color: #2aa1ae; background-color: #ecf3ec;">type: ignore[return-value]</span>
 </pre>
 </div>
@@ -331,9 +308,9 @@ Traceback <span style="color: #3a81c3;">(</span>most recent call last<span style
 </div>
 
 <p>
-So how does this work? Well, if you've got a value of type <code>Subclass[Sub,
+So how does this work? Well, if you've got a value of type <code>Subclass_[Sub,
 Super]</code> in scope, then (unless you've done something <i>really</i> tricky) it must be
-the case that at some point, the assertion written in <code>Subclass.__init__</code>
+the case that at some point, the assertion written in <code>Subclass_.__init__</code>
 passed. This means that <code>Sub</code> is a subclass of <code>Super</code>, and so by the Liskov
 substitution principle you can use any value of type <code>Sub</code> in a context where a
 <code>Super</code> is expected.
@@ -345,9 +322,9 @@ look at a few more.
 </p>
 </div>
 
-<div id="outline-container-org310c023" class="outline-3">
-<h3 id="org310c023"><code>Subclass</code></h3>
-<div class="outline-text-3" id="text-org310c023">
+<div id="outline-container-org29b3d67" class="outline-3">
+<h3 id="org29b3d67"><code>Subclass</code></h3>
+<div class="outline-text-3" id="text-org29b3d67">
 <p>
 For the sake of usability, let's extend the code with three additional features:
 </p>
@@ -364,7 +341,7 @@ For the sake of usability, let's extend the code with three additional features:
     sup: Type<span style="color: #3a81c3;">[</span>Super<span style="color: #3a81c3;">]</span>
 
     <span style="color: #3a81c3; font-weight: bold;">def</span> <span style="color: #6c3163; font-weight: bold;">__str__</span><span style="color: #3a81c3;">(</span><span style="color: #3a81c3; font-weight: bold;">self</span><span style="color: #3a81c3;">)</span> -&gt; <span style="color: #3a81c3;">str</span>:
-        <span style="color: #3a81c3; font-weight: bold;">return</span> f<span style="color: #2d9574;">"{self.sub} is not a subclass of {self.sup}"</span>
+        <span style="color: #3a81c3; font-weight: bold;">return</span> f<span style="color: #2d9574;">"</span>{<span style="color: #3a81c3; font-weight: bold;">self</span>.sub}<span style="color: #2d9574;"> is not a subclass of </span>{<span style="color: #3a81c3; font-weight: bold;">self</span>.sup}<span style="color: #2d9574;">"</span>
 
 
 <span style="color: #ba2f59; font-weight: bold;">@final</span>
@@ -407,9 +384,9 @@ returning a sentinel value such as <code>Subclass[object, object]</code> with a
 </div>
 </div>
 
-<div id="outline-container-org4e09a98" class="outline-3">
-<h3 id="org4e09a98"><code>SameType</code></h3>
-<div class="outline-text-3" id="text-org4e09a98">
+<div id="outline-container-org57dfd76" class="outline-3">
+<h3 id="org57dfd76"><code>SameType</code></h3>
+<div class="outline-text-3" id="text-org57dfd76">
 <p>
 Subclassing is a partial order on types, and in particular, it's antisymmetric.
 If two types are both subclasses of each other, they're the same type:
@@ -455,9 +432,9 @@ Some ideas for lemmas:
 </div>
 </div>
 
-<div id="outline-container-org447504a" class="outline-3">
-<h3 id="org447504a"><code>InTuple</code></h3>
-<div class="outline-text-3" id="text-org447504a">
+<div id="outline-container-orge48db4c" class="outline-3">
+<h3 id="orge48db4c"><code>InTuple</code></h3>
+<div class="outline-text-3" id="text-orge48db4c">
 <p>
 Now for something a bit more involved. Recall <a href="https://www.python.org/dev/peps/pep-0585">PEP 585: Type Hinting Generics In
 Standard Collections</a>. This PEP obviates <code>typing.Dict</code>, <code>typing.List</code>, <code>typing.Tuple</code>,
@@ -511,7 +488,7 @@ type <code>Tup</code>.
 <span style="color: #2aa1ae; background-color: #ecf3ec;"># </span><span style="color: #2aa1ae; background-color: #ecf3ec;">For some reason, tuple[Any, ...] doesn't work here, even though it is valid as</span>
 <span style="color: #2aa1ae; background-color: #ecf3ec;"># </span><span style="color: #2aa1ae; background-color: #ecf3ec;">a value at the REPL.</span>
 <span style="color: #715ab1;">Tup</span> = TypeVar<span style="color: #3a81c3;">(</span><span style="color: #2d9574;">"Tup"</span>, bound=Tuple<span style="color: #6c3163;">[</span>Any, ...<span style="color: #6c3163;">]</span><span style="color: #3a81c3;">)</span>
-<span style="color: #715ab1;">T</span> = TypeVar<span style="color: #3a81c3;">(</span><span style="color: #2d9574;">"T"</span><span style="color: #3a81c3;">)</span>
+T = TypeVar<span style="color: #3a81c3;">(</span><span style="color: #2d9574;">"T"</span><span style="color: #3a81c3;">)</span>
 
 
 <span style="color: #ba2f59; font-weight: bold;">@dataclass</span><span style="color: #3a81c3;">(</span>frozen=<span style="color: #4e3163;">True</span><span style="color: #3a81c3;">)</span>
@@ -520,7 +497,7 @@ type <code>Tup</code>.
     tup: Type<span style="color: #3a81c3;">[</span>Tup<span style="color: #3a81c3;">]</span>
 
     <span style="color: #3a81c3; font-weight: bold;">def</span> <span style="color: #6c3163; font-weight: bold;">__str__</span><span style="color: #3a81c3;">(</span><span style="color: #3a81c3; font-weight: bold;">self</span><span style="color: #3a81c3;">)</span> -&gt; <span style="color: #3a81c3;">str</span>:
-        <span style="color: #3a81c3; font-weight: bold;">return</span> f<span style="color: #2d9574;">"Type {self.ty} is not in tuple type {self.tup}"</span>
+        <span style="color: #3a81c3; font-weight: bold;">return</span> f<span style="color: #2d9574;">"Type </span>{<span style="color: #3a81c3; font-weight: bold;">self</span>.ty}<span style="color: #2d9574;"> is not in tuple type </span>{<span style="color: #3a81c3; font-weight: bold;">self</span>.tup}<span style="color: #2d9574;">"</span>
 
 
 <span style="color: #ba2f59; font-weight: bold;">@final</span>
@@ -567,11 +544,11 @@ its index:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #3a81c3; font-weight: bold;">def</span> <span style="color: #6c3163; font-weight: bold;">first</span><span style="color: #3a81c3;">(</span>evidence: InTuple<span style="color: #6c3163;">[</span>T, Tup<span style="color: #6c3163;">]</span>, tup: Tup<span style="color: #3a81c3;">)</span> -&gt; T:
+<pre class="src src-python"><span style="color: #3a81c3; font-weight: bold;">def</span> <span style="color: #6c3163; font-weight: bold;">first</span><span style="color: #3a81c3;">(</span>evidence: InTuple<span style="color: #6c3163;">[</span>T, Tup<span style="color: #6c3163;">]</span>, tup: Tup<span style="color: #3a81c3;">)</span> -&gt; <span style="color: #715ab1;">T</span>:
     <span style="color: #3a81c3; font-weight: bold;">for</span> elem <span style="color: #3a81c3; font-weight: bold;">in</span> tup:
         <span style="color: #3a81c3; font-weight: bold;">if</span> <span style="color: #3a81c3;">isinstance</span><span style="color: #3a81c3;">(</span>elem, evidence.ty<span style="color: #3a81c3;">)</span>:
             <span style="color: #3a81c3; font-weight: bold;">return</span> elem
-    <span style="color: #3a81c3; font-weight: bold;">assert</span> <span style="color: #4e3163;">False</span>, f<span style="color: #2d9574;">"Impossible: Bad 'InTuple' value {evidence=} {tup=}"</span>
+    <span style="color: #3a81c3; font-weight: bold;">assert</span> <span style="color: #4e3163;">False</span>, f<span style="color: #2d9574;">"Impossible: Bad 'InTuple' value </span>{evidence=}<span style="color: #2d9574;"> </span>{<span style="color: #715ab1;">tup</span>=}<span style="color: #2d9574;">"</span>
 </pre>
 </div>
 
@@ -602,15 +579,15 @@ with certain subclass relationships:
 <p>
 It's worth noting that any of these predicates or relationships could be
 negated, simply by inverting the conditional and renaming the class. You could
-probably have a lemma that the negation of this relationship is reflexive, but I
-can't think of how you'd use it.
+probably have a lemma that the negation of <code>InTuple</code> is reflexive, but I can't
+think of how you'd use it.
 </p>
 </div>
 </div>
 
-<div id="outline-container-org9d0b0f1" class="outline-3">
-<h3 id="org9d0b0f1"><code>IsGenericArgument</code></h3>
-<div class="outline-text-3" id="text-org9d0b0f1">
+<div id="outline-container-org0640b6f" class="outline-3">
+<h3 id="org0640b6f"><code>IsGenericArgument</code></h3>
+<div class="outline-text-3" id="text-org0640b6f">
 <p>
 In fact, parameters to <i>all</i> generic types are available at runtime:
 </p>
@@ -638,9 +615,9 @@ renaming the class to <code>IsGenericArgument</code>.
 </div>
 </div>
 
-<div id="outline-container-orgb6a5b37" class="outline-3">
-<h3 id="orgb6a5b37"><code>NewtypeOf</code></h3>
-<div class="outline-text-3" id="text-orgb6a5b37">
+<div id="outline-container-orgb79e04c" class="outline-3">
+<h3 id="orgb79e04c"><code>NewtypeOf</code></h3>
+<div class="outline-text-3" id="text-orgb79e04c">
 <p>
 How can we tell if a given type is just a <code>NewType</code> wrapper around another one?
 Well, let's investigate:
@@ -672,7 +649,7 @@ Ah, that's <i>just</i> what we need!
     sup: Type<span style="color: #3a81c3;">[</span>Super<span style="color: #3a81c3;">]</span>
 
     <span style="color: #3a81c3; font-weight: bold;">def</span> <span style="color: #6c3163; font-weight: bold;">__str__</span><span style="color: #3a81c3;">(</span><span style="color: #3a81c3; font-weight: bold;">self</span><span style="color: #3a81c3;">)</span> -&gt; <span style="color: #3a81c3;">str</span>:
-        <span style="color: #3a81c3; font-weight: bold;">return</span> f<span style="color: #2d9574;">'{getattr(self.sub, "__name__", "&lt;unknown&gt;")} is not a newtype of {self.sup}'</span>
+        <span style="color: #3a81c3; font-weight: bold;">return</span> f<span style="color: #2d9574;">'</span>{<span style="color: #3a81c3;">getattr</span>(<span style="color: #3a81c3; font-weight: bold;">self</span>.sub, "<span style="color: #3a81c3;">__name__</span>", "&lt;unknown&gt;")}<span style="color: #2d9574;"> is not a newtype of </span>{<span style="color: #3a81c3; font-weight: bold;">self</span>.sup}<span style="color: #2d9574;">'</span>
 
 
 <span style="color: #ba2f59; font-weight: bold;">@final</span>
@@ -702,9 +679,9 @@ Some ideas for lemmas:
 </div>
 </div>
 
-<div id="outline-container-org446b46e" class="outline-3">
-<h3 id="org446b46e"><code>Newtype</code></h3>
-<div class="outline-text-3" id="text-org446b46e">
+<div id="outline-container-orgcfc7c29" class="outline-3">
+<h3 id="orgcfc7c29"><code>Newtype</code></h3>
+<div class="outline-text-3" id="text-orgcfc7c29">
 <p>
 The above example also leads naturally to our first <i>predicate</i> or <i>property</i> of
 interest on types, rather than a <i>relationship between</i> types, namely, whether or
@@ -717,7 +694,7 @@ not a given type is in fact a <code>NewType</code>.
     sub: Callable<span style="color: #3a81c3;">[</span><span style="color: #6c3163;">[</span>Super<span style="color: #6c3163;">]</span>, Sub<span style="color: #3a81c3;">]</span>
 
     <span style="color: #3a81c3; font-weight: bold;">def</span> <span style="color: #6c3163; font-weight: bold;">__str__</span><span style="color: #3a81c3;">(</span><span style="color: #3a81c3; font-weight: bold;">self</span><span style="color: #3a81c3;">)</span> -&gt; <span style="color: #3a81c3;">str</span>:
-        <span style="color: #3a81c3; font-weight: bold;">return</span> f<span style="color: #2d9574;">'{getattr(self.sub, "__name__", "&lt;unknown&gt;")} is not a newtype'</span>
+        <span style="color: #3a81c3; font-weight: bold;">return</span> f<span style="color: #2d9574;">'</span>{<span style="color: #3a81c3;">getattr</span>(<span style="color: #3a81c3; font-weight: bold;">self</span>.sub, "<span style="color: #3a81c3;">__name__</span>", "&lt;unknown&gt;")}<span style="color: #2d9574;"> is not a newtype'</span>
 
 
 <span style="color: #ba2f59; font-weight: bold;">@final</span>
@@ -735,9 +712,9 @@ not a given type is in fact a <code>NewType</code>.
 </div>
 </div>
 
-<div id="outline-container-orgcb090f4" class="outline-3">
-<h3 id="orgcb090f4">More Ideas</h3>
-<div class="outline-text-3" id="text-orgcb090f4">
+<div id="outline-container-org9d7da78" class="outline-3">
+<h3 id="org9d7da78">More Ideas</h3>
+<div class="outline-text-3" id="text-org9d7da78">
 <p>
 What other predicates on and relations between types do we care about? A few
 ideas:

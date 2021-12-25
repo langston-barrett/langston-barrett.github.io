@@ -6,7 +6,7 @@
 <!-- 2021-12-24 Fri 19:03 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Index</title>
+<title>Python Style Guide</title>
 <meta name="generator" content="Org Mode" />
 <style>
   #content { max-width: 60em; margin: auto; }
@@ -193,6 +193,7 @@
   .org-svg { width: 90%; }
 </style>
 <link rel="stylesheet" type="text/css" href="static/mine.css" />
+<link rel="stylesheet" type="text/css" href="../static/mine.css" />
 </head>
 <body>
 <div id="org-div-home-and-up">
@@ -200,23 +201,131 @@
  |
  <a accesskey="H" href="/index.html"> HOME </a>
 </div><div id="content" class="content">
-<h1 class="title">Index</h1>
-<ul class="org-ul">
-<li><a href="about.html">About</a></li>
-<li><a href="rss.html">langston-barrett.github.io</a></li>
-<li>posts
-<ul class="org-ul">
-<li><a href="posts/setoids.html">A Quick Tutorial on Setoids in Coq</a></li>
-<li><a href="posts/mypy-reify.html">Fun with Mypy: Reifying Runtime Relations on Types</a></li>
-</ul></li>
-<li>style
-<ul class="org-ul">
-<li><a href="style/meta.html">Meta Style Guide</a></li>
-<li><a href="style/programming.html">Programming Style Guide</a></li>
-<li><a href="style/python.html">Python Style Guide</a></li>
-<li><a href="style/index.html">Style Guides</a></li>
-</ul></li>
+<h1 class="title">Python Style Guide</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org1ccdcc1">Python Style Guide</a>
+<ul>
+<li><a href="#org70e5dc9">Use Dataclasses</a>
+<ul>
+<li><a href="#org8a1e27d">Example</a></li>
+<li><a href="#org4c5d581">Justification</a></li>
 </ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org1ccdcc1" class="outline-2">
+<h2 id="org1ccdcc1">Python Style Guide</h2>
+<div class="outline-text-2" id="text-org1ccdcc1">
+<p>
+This is my personal style guide for writing Python code. As with all style
+guides, this guide is incomplete, fallible, and its recommendations aren't
+appropriate for every circumstance.
+</p>
+
+<p>
+I've only recently started writing this, so it's obviously particularly
+incomplete. Hopefully, it will grow as I learn and think more!
+</p>
+
+<p>
+This guide is focused only on recommendations that <i>aren't</i> universal across
+programming languages, for such recommendations see my <a href="programming.html#org38e3d5f">Programming Style Guide</a>.
+Additionally, I don't currently publish any recommendations that concern
+third-party libraries.
+</p>
+
+<p>
+Its intended audience is intermediate or advanced Python programmers who
+endeavor especially to write reliable, correct code. In particular, I'm often
+willing to err on the side of reliability over "Pythonic" or "idiomatic" code,
+e.g., by changing code so that it can get more mileage/guarantees from a static
+type checker like Mypy, or by using less mutation than might be "expected".
+But to be honest, I mostly publish this so I have somewhere with thorough
+explanations that I can point people to when I make comments during code
+reviews.
+</p>
+
+<p>
+This document aspires to confirm to <a href="./meta.html">my Meta Style Guide</a>.
+</p>
+
+<p>
+Do you have ideas for this guide? <a href="../about.html">Contact me</a>!
+</p>
+</div>
+
+<div id="outline-container-org70e5dc9" class="outline-3">
+<h3 id="org70e5dc9">Use Dataclasses</h3>
+<div class="outline-text-3" id="text-org70e5dc9">
+<p>
+Every class should be annotated with the <code>dataclasses.dataclass</code> decorator (<a href="https://docs.python.org/3/library/dataclasses.html#dataclasses.dataclass">doc</a>)
+unless there is a specific reason not to. This still applies if you have to
+write an <code>__init__</code> method.
+</p>
+</div>
+
+<div id="outline-container-org8a1e27d" class="outline-4">
+<h4 id="org8a1e27d">Example</h4>
+<div class="outline-text-4" id="text-org8a1e27d">
+<p>
+Instead of
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #3a81c3; font-weight: bold;">class</span> <span style="color: #ba2f59; font-weight: bold;">C</span>:
+    <span style="color: #3a81c3; font-weight: bold;">def</span> <span style="color: #6c3163; font-weight: bold;">__init__</span><span style="color: #3a81c3;">(</span><span style="color: #3a81c3; font-weight: bold;">self</span>, x: <span style="color: #3a81c3;">int</span><span style="color: #3a81c3;">)</span> -&gt; <span style="color: #4e3163;">None</span>:
+        <span style="color: #3a81c3; font-weight: bold;">self</span>.x = x
+</pre>
+</div>
+<p>
+write
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #ba2f59; font-weight: bold;">@dataclass</span>
+<span style="color: #3a81c3; font-weight: bold;">class</span> <span style="color: #ba2f59; font-weight: bold;">C</span>:
+    x: <span style="color: #3a81c3;">int</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4c5d581" class="outline-4">
+<h4 id="org4c5d581">Justification</h4>
+<div class="outline-text-4" id="text-org4c5d581">
+<p>
+The <code>dataclass</code> decorator can generate all sorts of "dunder" methods that you
+normally have to write by hand, such as <code>__init__</code> and <code>__eq__</code>. This saves both the
+writer and reader of the code some time!
+</p>
+
+<p>
+Dialing in on <code>__eq__</code>: the implementation generated by <code>dataclass</code> compares
+instances of the class field-wise. This is almost universally more meaningful
+than pointer/reference equality, which is the default for classes that inherit
+from <code>object</code>. Consider this example:
+</p>
+<div class="org-src-container">
+<pre class="src src-python">C<span style="color: #3a81c3;">(</span><span style="color: #4e3163;">5</span><span style="color: #3a81c3;">)</span> == C<span style="color: #3a81c3;">(</span><span style="color: #4e3163;">5</span><span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+<p>
+With the former implementation of <code>C</code>, this evaluates to <code>False</code> whereas with the
+<code>dataclass</code> version it evaluates to <code>True</code>. If you think this is unimportant because
+you don't intend to compare instances of your class for equality, consider
+overriding the <code>__eq__</code> method manually and raising an exception if it gets called
+to make that assumption explicit. If you don't do that, <i>strongly</i> consider using
+<code>dataclass</code>.
+</p>
+</div>
+</div>
+</div>
+</div>
 </div>
 </body>
 </html>
