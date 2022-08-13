@@ -3,14 +3,13 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2021-10-27 Wed 09:34 -->
+<!-- 2022-08-12 Fri 17:39 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>A Quick Tutorial on Setoids in Coq</title>
-<meta name="generator" content="Org mode" />
-<meta name="author" content="Langston" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
              margin-bottom: .2em; }
   .subtitle { text-align: center;
@@ -31,8 +30,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -41,21 +41,21 @@
   pre.src {
     position: relative;
     overflow: auto;
-    padding-top: 1.2em;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
   pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -191,43 +191,20 @@
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
   .org-svg { width: 90%; }
-  /*]]>*/-->
 </style>
 <link rel="stylesheet" type="text/css" href="static/mine.css" />
 <link rel="stylesheet" type="text/css" href="../static/mine.css" />
-<script type="text/javascript">
-// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
-<!--/*--><![CDATA[/*><!--*/
-     function CodeHighlightOn(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-         elem.classList.add("code-highlighted");
-         target.classList.add("code-highlighted");
-       }
-     }
-     function CodeHighlightOff(elem, id)
-     {
-       var target = document.getElementById(id);
-       if(null != target) {
-         elem.classList.remove("code-highlighted");
-         target.classList.remove("code-highlighted");
-       }
-     }
-    /*]]>*///-->
-// @license-end
-</script>
 </head>
 <body>
 <div id="org-div-home-and-up">
  <a accesskey="h" href="/index.html"> UP </a>
  |
  <a accesskey="H" href="/index.html"> HOME </a>
-</div><div id="content">
+</div><div id="content" class="content">
 <h1 class="title">A Quick Tutorial on Setoids in Coq</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
 <li><a href="#a-quick-tutorial-on-setoids-in-coq">A Quick Tutorial on Setoids in Coq</a>
 <ul>
@@ -260,7 +237,7 @@ properties that get in the way: ordering and duplication. Building a
 lists equivalent if they have the same elements.
 </p>
 
-<pre class="example" id="org3862c80">
+<pre class="example" id="orgaaf8520">
   Context {A : Type}.
 
   Definition equiv_list (l1 l2 : list A) : Prop :=
@@ -273,7 +250,7 @@ automation, we make <code>list A</code> an instance of the <code>Setoid</code>
 <a href="https://softwarefoundations.cis.upenn.edu/draft/qc-current/Typeclasses.html">typeclass</a>:
 </p>
 
-<pre class="example" id="orga467035">
+<pre class="example" id="orgff94f58">
   Instance ListSetoid : Setoid (list A) :=
     { equiv := equiv_list }.
   Proof.
@@ -309,7 +286,7 @@ Suppose we have <code>l1 l2 : list A</code>. If we have <code>l1 = l2</code> (wh
 Coq's built-in equality), we can replace <code>l1</code> with <code>l2</code> in all contexts:
 </p>
 
-<pre class="example" id="org791a648">
+<pre class="example" id="orgefe871e">
   Lemma hd_eq (l1 l2 : list A) : l1 = l2 -&gt; hd l1 = hd l2.
   Proof.
     intros l1eql2.
@@ -325,7 +302,7 @@ interchangeable. Suppose further that <code>A</code> has decidable equality, and
 consider the following <code>remove</code> function:
 </p>
 
-<pre class="example" id="org3ff87de">
+<pre class="example" id="org533b4c5">
   Context {deceq : ∀ x y : A, {x = y} + {x ≠ y}}.
 
   Fixpoint remove (x : A) (lst : list A) : list A :=
@@ -344,7 +321,7 @@ Since this removes <i>all</i> occurrences of <code>x</code> in <code>lst</code>,
 to prove
 </p>
 
-<pre class="example" id="org53d515d">
+<pre class="example" id="org56cce42">
   ∀ x l1 l2, l1 == l2 -&gt; remove x l1 = remove x l2
 </pre>
 
@@ -352,7 +329,7 @@ to prove
 We state this lemma a bit oddly:
 </p>
 
-<pre class="example" id="orgf9ba796">
+<pre class="example" id="orgc39531d">
   Instance removeProper : Proper (eq ==&gt; equiv ==&gt; equiv) remove.
 </pre>
 
@@ -370,7 +347,7 @@ replace replace <code>remove x l1</code> with <code>remove x l2</code>, even whe
 nested in the goal statement:
 </p>
 
-<pre class="example" id="org58391a9">
+<pre class="example" id="org661a25a">
   Instance revProper : Proper (equiv ==&gt; equiv) (@rev A).
   Proof.
     [...]
@@ -388,7 +365,7 @@ nested in the goal statement:
 We can even compose <code>Proper</code> instances automatically:
 </p>
 
-<pre class="example" id="org1726e52">
+<pre class="example" id="org973525d">
   Require Import Coq.Program.Basics.
   Local Open Scope program_scope.
 

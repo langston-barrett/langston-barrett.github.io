@@ -3,10 +3,10 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-08-12 Fri 17:33 -->
+<!-- 2022-08-13 Sat 12:37 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>About</title>
+<title>Haskell Style Guide</title>
 <meta name="generator" content="Org Mode" />
 <style>
   #content { max-width: 60em; margin: auto; }
@@ -193,7 +193,7 @@
   .org-svg { width: 90%; }
 </style>
 <link rel="stylesheet" type="text/css" href="static/mine.css" />
-<link rel="stylesheet" type="text/css" href="static/mine.css" />
+<link rel="stylesheet" type="text/css" href="../static/mine.css" />
 </head>
 <body>
 <div id="org-div-home-and-up">
@@ -201,15 +201,115 @@
  |
  <a accesskey="H" href="/index.html"> HOME </a>
 </div><div id="content" class="content">
-<h1 class="title">About</h1>
+<h1 class="title">Haskell Style Guide</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org0e45ead">Haskell Style Guide</a>
+<ul>
+<li><a href="#orgcd91120">Write Explicit Export Lists</a>
+<ul>
+<li><a href="#org29ba9d8">Example</a></li>
+<li><a href="#org5cac07c">Justification</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org0e45ead" class="outline-2">
+<h2 id="org0e45ead">Haskell Style Guide</h2>
+<div class="outline-text-2" id="text-org0e45ead">
 <p>
-I work at <a href="https://galois.com/">Galois</a>.
+This is my personal style guide for writing Haskell code. As with all style
+guides, this guide is incomplete, fallible, and its recommendations aren't
+appropriate for every circumstance.
 </p>
 
-<ul class="org-ul">
-<li>Email://langston.barrett at gmail</li>
-<li>Github://<a href="https://github.com/langston-barrett/">langston-barrett</a></li>
-</ul>
+<p>
+I've only recently started writing this, so it's obviously particularly
+incomplete. Hopefully, it will grow as I learn and think more!
+</p>
+
+<p>
+This guide is focused only on recommendations that <i>aren't</i> universal across
+programming languages, for such recommendations see my <a href="programming.html#orgcf229b4">Programming Style Guide</a>.
+Additionally, I don't currently publish any recommendations that concern
+third-party libraries.
+</p>
+
+<p>
+Its intended audience is intermediate or advanced Haskell programmers who
+endeavor especially to write reliable, correct code. In particular, I'm often
+willing to err on the side of reliability over "simple" code, e.g., by using
+GADTs. But to be honest, I mostly publish this so I have somewhere with thorough
+explanations that I can point people to when I make comments during code
+reviews.
+</p>
+
+<p>
+This document aspires to confirm to <a href="./meta.html">my Meta Style Guide</a>.
+</p>
+
+<p>
+Do you have ideas for this guide? <a href="../about.html">Contact me</a>!
+</p>
+</div>
+
+<div id="outline-container-orgcd91120" class="outline-3">
+<h3 id="orgcd91120">Write Explicit Export Lists</h3>
+<div class="outline-text-3" id="text-orgcd91120">
+<p>
+Every module should have an explicit export list.
+</p>
+</div>
+
+<div id="outline-container-org29ba9d8" class="outline-4">
+<h4 id="org29ba9d8">Example</h4>
+<div class="outline-text-4" id="text-org29ba9d8">
+<p>
+Instead of
+</p>
+<div class="org-src-container">
+<pre class="src src-python">module Foo where
+</pre>
+</div>
+<p>
+write
+</p>
+<div class="org-src-container">
+<pre class="src src-python">module Foo
+  <span style="color: #3a81c3;">(</span> Type1<span style="color: #6c3163;">(</span>field1<span style="color: #6c3163;">)</span>
+  , function1
+  <span style="color: #3a81c3;">)</span> where
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5cac07c" class="outline-4">
+<h4 id="org5cac07c">Justification</h4>
+<div class="outline-text-4" id="text-org5cac07c">
+<p>
+Using an explicit export list, a module may choose to not export certain
+functions. This leaves the module free to change their implementations or remove
+them entirely, with no concern that other modules (possibly even in other
+packages) might depend on them. Similarly, if a type's constructor is not
+exported, the representation of that type may be freely changed.
+</p>
+
+<p>
+A module with an explicit export list also has a clear API: it consists of the
+functions and types that have been exported. This makes it easier to reuse the
+functionality in the module.
+</p>
+</div>
+</div>
+</div>
+</div>
 </div>
 </body>
 </html>

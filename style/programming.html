@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2021-12-24 Fri 18:44 -->
+<!-- 2022-08-13 Sat 12:37 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Programming Style Guide</title>
@@ -206,13 +206,13 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org38e3d5f">Programming Style Guide</a>
+<li><a href="#orgcf229b4">Programming Style Guide</a>
 <ul>
-<li><a href="#org985f3f2">Formatting</a>
+<li><a href="#orge8f7c84">Formatting</a>
 <ul>
-<li><a href="#org236e8f3">Expressions in the Upper Left</a></li>
-<li><a href="#orgc87623f">Indentation Shouldn't Depend on Identifiers</a></li>
-<li><a href="#org45fc3db">Use Trailing Commas</a></li>
+<li><a href="#org27f1cc7">Expressions in the Upper Left</a></li>
+<li><a href="#orgd2e11b8">Indentation Shouldn't Depend on Identifiers</a></li>
+<li><a href="#orga51f584">Use Trailing Commas</a></li>
 </ul>
 </li>
 </ul>
@@ -221,9 +221,9 @@
 </div>
 </div>
 
-<div id="outline-container-org38e3d5f" class="outline-2">
-<h2 id="org38e3d5f">Programming Style Guide</h2>
-<div class="outline-text-2" id="text-org38e3d5f">
+<div id="outline-container-orgcf229b4" class="outline-2">
+<h2 id="orgcf229b4">Programming Style Guide</h2>
+<div class="outline-text-2" id="text-orgcf229b4">
 <p>
 This is my personal style guide for writing code. As with all style guides, this
 guide is incomplete, fallible, and its recommendations aren't appropriate for
@@ -258,9 +258,9 @@ Do you have ideas for this guide? <a href="../about.html">Contact me</a>!
 </p>
 </div>
 
-<div id="outline-container-org985f3f2" class="outline-3">
-<h3 id="org985f3f2">Formatting</h3>
-<div class="outline-text-3" id="text-org985f3f2">
+<div id="outline-container-orge8f7c84" class="outline-3">
+<h3 id="orge8f7c84">Formatting</h3>
+<div class="outline-text-3" id="text-orge8f7c84">
 <p>
 I often use an automatic code formatter like Black or YAPF for Python. When
 that's not an option, I tend to follow these recommendations on formatting code.
@@ -274,7 +274,7 @@ subjectively more readable, and reduces the number of decisions you have to
 make when writing code.</li>
 <li>Speed of reading, writing, and editing code.</li>
 <li>Minimizing diffs: This is helpful for focused code review, and when reviewing
-git history to understand a regression. See e.g. <a href="#org45fc3db">Use Trailing Commas</a>.</li>
+git history to understand a regression. See e.g. <a href="#orga51f584">Use Trailing Commas</a>.</li>
 </ul>
 
 <p>
@@ -283,9 +283,9 @@ These goals are not usual crucial, so the following recommendations are quite
 </p>
 </div>
 
-<div id="outline-container-org236e8f3" class="outline-4">
-<h4 id="org236e8f3">Expressions in the Upper Left</h4>
-<div class="outline-text-4" id="text-org236e8f3">
+<div id="outline-container-org27f1cc7" class="outline-4">
+<h4 id="org27f1cc7">Expressions in the Upper Left</h4>
+<div class="outline-text-4" id="text-org27f1cc7">
 <p>
 You may consider formatting expressions such that the syntax that begins the
 expression appears in the upper left-hand corner of the smallest box containing
@@ -294,8 +294,8 @@ the expression.
 </div>
 
 <ul class="org-ul">
-<li><a id="orgb5776e3"></a>Examples<br />
-<div class="outline-text-5" id="text-orgb5776e3">
+<li><a id="orgc421523"></a>Examples<br />
+<div class="outline-text-5" id="text-orgc421523">
 <p>
 In Haskell, it's common to write expressions using <code>do</code>-notation like this:
 </p>
@@ -317,8 +317,8 @@ This is inconsistent with this recommendation, so I would write the above like s
 </div>
 </li>
 
-<li><a id="org41ad49c"></a>Justification<br />
-<div class="outline-text-5" id="text-org41ad49c">
+<li><a id="orga5f3b4b"></a>Justification<br />
+<div class="outline-text-5" id="text-orga5f3b4b">
 <p>
 This is just for consistency and uniformity: it gives a general guideline if
 you're unsure of how you might decide to format a given expression.
@@ -328,9 +328,9 @@ you're unsure of how you might decide to format a given expression.
 </ul>
 </div>
 
-<div id="outline-container-orgc87623f" class="outline-4">
-<h4 id="orgc87623f">Indentation Shouldn't Depend on Identifiers</h4>
-<div class="outline-text-4" id="text-orgc87623f">
+<div id="outline-container-orgd2e11b8" class="outline-4">
+<h4 id="orgd2e11b8">Indentation Shouldn't Depend on Identifiers</h4>
+<div class="outline-text-4" id="text-orgd2e11b8">
 <p>
 The indentation of a line shouldn't depend on the length of any identifier in
 your program.
@@ -338,8 +338,8 @@ your program.
 </div>
 
 <ul class="org-ul">
-<li><a id="org679b5c8"></a>Examples<br />
-<div class="outline-text-5" id="text-org679b5c8">
+<li><a id="org3a335f2"></a>Examples<br />
+<div class="outline-text-5" id="text-org3a335f2">
 <p>
 In Haskell, it's possible to write expressions using <code>do</code>-notation like this:
 </p>
@@ -384,8 +384,8 @@ instead like this:
 </div>
 </li>
 
-<li><a id="orga96a4a8"></a>Justification<br />
-<div class="outline-text-5" id="text-orga96a4a8">
+<li><a id="org3dce977"></a>Justification<br />
+<div class="outline-text-5" id="text-org3dce977">
 <p>
 This is for speed and minimizing diffs: You shouldn't have to re-indent a bunch
 of lines that don't contain a given identifier when that identifier changes.
@@ -395,17 +395,17 @@ of lines that don't contain a given identifier when that identifier changes.
 </ul>
 </div>
 
-<div id="outline-container-org45fc3db" class="outline-4">
-<h4 id="org45fc3db">Use Trailing Commas</h4>
-<div class="outline-text-4" id="text-org45fc3db">
+<div id="outline-container-orga51f584" class="outline-4">
+<h4 id="orga51f584">Use Trailing Commas</h4>
+<div class="outline-text-4" id="text-orga51f584">
 <p>
 Use trailing commas on multi-line datastructures.
 </p>
 </div>
 
 <ul class="org-ul">
-<li><a id="org851819f"></a>Example<br />
-<div class="outline-text-5" id="text-org851819f">
+<li><a id="orgbdcd08d"></a>Example<br />
+<div class="outline-text-5" id="text-orgbdcd08d">
 <p>
 Instead of:
 </p>
@@ -431,8 +431,8 @@ Write:
 </div>
 </li>
 
-<li><a id="org287afae"></a>Justification<br />
-<div class="outline-text-5" id="text-org287afae">
+<li><a id="org8b7fd57"></a>Justification<br />
+<div class="outline-text-5" id="text-org8b7fd57">
 <p>
 This minimizes diffs. If you add something after the last element, the only line
 that appears in the diff is the one you added.

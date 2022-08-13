@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2021-12-24 Fri 18:48 -->
+<!-- 2022-08-12 Fri 17:39 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Fun with Mypy: Reifying Runtime Relations on Types</title>
@@ -206,24 +206,24 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org853a59b">Fun with Mypy: Reifying Runtime Relations on Types</a>
+<li><a href="#org1a1757d">Fun with Mypy: Reifying Runtime Relations on Types</a>
 <ul>
-<li><a href="#org29b3d67"><code>Subclass</code></a></li>
-<li><a href="#org57dfd76"><code>SameType</code></a></li>
-<li><a href="#orge48db4c"><code>InTuple</code></a></li>
-<li><a href="#org0640b6f"><code>IsGenericArgument</code></a></li>
-<li><a href="#orgb79e04c"><code>NewtypeOf</code></a></li>
-<li><a href="#orgcfc7c29"><code>Newtype</code></a></li>
-<li><a href="#org9d7da78">More Ideas</a></li>
+<li><a href="#orge259453"><code>Subclass</code></a></li>
+<li><a href="#org7e6133d"><code>SameType</code></a></li>
+<li><a href="#orgc739002"><code>InTuple</code></a></li>
+<li><a href="#org298afa2"><code>IsGenericArgument</code></a></li>
+<li><a href="#org5651165"><code>NewtypeOf</code></a></li>
+<li><a href="#org6a0ce35"><code>Newtype</code></a></li>
+<li><a href="#org0b23b1a">More Ideas</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org853a59b" class="outline-2">
-<h2 id="org853a59b">Fun with Mypy: Reifying Runtime Relations on Types</h2>
-<div class="outline-text-2" id="text-org853a59b">
+<div id="outline-container-org1a1757d" class="outline-2">
+<h2 id="org1a1757d">Fun with Mypy: Reifying Runtime Relations on Types</h2>
+<div class="outline-text-2" id="text-org1a1757d">
 <p>
 I'm a big fan of type checkers for Python, like <a href="http://mypy-lang.org/">Mypy</a>. One fun aspect of these
 tools is that their type systems tend to have features that reflect the dynamic
@@ -322,9 +322,9 @@ look at a few more.
 </p>
 </div>
 
-<div id="outline-container-org29b3d67" class="outline-3">
-<h3 id="org29b3d67"><code>Subclass</code></h3>
-<div class="outline-text-3" id="text-org29b3d67">
+<div id="outline-container-orge259453" class="outline-3">
+<h3 id="orge259453"><code>Subclass</code></h3>
+<div class="outline-text-3" id="text-orge259453">
 <p>
 For the sake of usability, let's extend the code with three additional features:
 </p>
@@ -384,9 +384,9 @@ returning a sentinel value such as <code>Subclass[object, object]</code> with a
 </div>
 </div>
 
-<div id="outline-container-org57dfd76" class="outline-3">
-<h3 id="org57dfd76"><code>SameType</code></h3>
-<div class="outline-text-3" id="text-org57dfd76">
+<div id="outline-container-org7e6133d" class="outline-3">
+<h3 id="org7e6133d"><code>SameType</code></h3>
+<div class="outline-text-3" id="text-org7e6133d">
 <p>
 Subclassing is a partial order on types, and in particular, it's antisymmetric.
 If two types are both subclasses of each other, they're the same type:
@@ -432,9 +432,9 @@ Some ideas for lemmas:
 </div>
 </div>
 
-<div id="outline-container-orge48db4c" class="outline-3">
-<h3 id="orge48db4c"><code>InTuple</code></h3>
-<div class="outline-text-3" id="text-orge48db4c">
+<div id="outline-container-orgc739002" class="outline-3">
+<h3 id="orgc739002"><code>InTuple</code></h3>
+<div class="outline-text-3" id="text-orgc739002">
 <p>
 Now for something a bit more involved. Recall <a href="https://www.python.org/dev/peps/pep-0585">PEP 585: Type Hinting Generics In
 Standard Collections</a>. This PEP obviates <code>typing.Dict</code>, <code>typing.List</code>, <code>typing.Tuple</code>,
@@ -585,9 +585,9 @@ think of how you'd use it.
 </div>
 </div>
 
-<div id="outline-container-org0640b6f" class="outline-3">
-<h3 id="org0640b6f"><code>IsGenericArgument</code></h3>
-<div class="outline-text-3" id="text-org0640b6f">
+<div id="outline-container-org298afa2" class="outline-3">
+<h3 id="org298afa2"><code>IsGenericArgument</code></h3>
+<div class="outline-text-3" id="text-org298afa2">
 <p>
 In fact, parameters to <i>all</i> generic types are available at runtime:
 </p>
@@ -615,9 +615,9 @@ renaming the class to <code>IsGenericArgument</code>.
 </div>
 </div>
 
-<div id="outline-container-orgb79e04c" class="outline-3">
-<h3 id="orgb79e04c"><code>NewtypeOf</code></h3>
-<div class="outline-text-3" id="text-orgb79e04c">
+<div id="outline-container-org5651165" class="outline-3">
+<h3 id="org5651165"><code>NewtypeOf</code></h3>
+<div class="outline-text-3" id="text-org5651165">
 <p>
 How can we tell if a given type is just a <code>NewType</code> wrapper around another one?
 Well, let's investigate:
@@ -679,9 +679,9 @@ Some ideas for lemmas:
 </div>
 </div>
 
-<div id="outline-container-orgcfc7c29" class="outline-3">
-<h3 id="orgcfc7c29"><code>Newtype</code></h3>
-<div class="outline-text-3" id="text-orgcfc7c29">
+<div id="outline-container-org6a0ce35" class="outline-3">
+<h3 id="org6a0ce35"><code>Newtype</code></h3>
+<div class="outline-text-3" id="text-org6a0ce35">
 <p>
 The above example also leads naturally to our first <i>predicate</i> or <i>property</i> of
 interest on types, rather than a <i>relationship between</i> types, namely, whether or
@@ -712,9 +712,9 @@ not a given type is in fact a <code>NewType</code>.
 </div>
 </div>
 
-<div id="outline-container-org9d7da78" class="outline-3">
-<h3 id="org9d7da78">More Ideas</h3>
-<div class="outline-text-3" id="text-org9d7da78">
+<div id="outline-container-org0b23b1a" class="outline-3">
+<h3 id="org0b23b1a">More Ideas</h3>
+<div class="outline-text-3" id="text-org0b23b1a">
 <p>
 What other predicates on and relations between types do we care about? A few
 ideas:

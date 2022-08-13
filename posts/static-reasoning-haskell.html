@@ -1,0 +1,1500 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-08-13 Sat 12:32 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Survey of Static Reasoning in Haskell</title>
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+</style>
+<link rel="stylesheet" type="text/css" href="static/mine.css" />
+<link rel="stylesheet" type="text/css" href="../static/mine.css" />
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/index.html"> UP </a>
+ |
+ <a accesskey="H" href="/index.html"> HOME </a>
+</div><div id="content" class="content">
+<h1 class="title">Survey of Static Reasoning in Haskell</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#static-reasoning-haskell">Survey of Static Reasoning in Haskell</a>
+<ul>
+<li><a href="#orged823b5">The Specification</a></li>
+<li><a href="#org5823cdf">Vanilla Haskell</a></li>
+<li><a href="#org1ce83fc">Smart Constructors and the Existential Trick</a></li>
+<li><a href="#org2a7afcc">GADTs, or Dependent Types</a></li>
+<li><a href="#org9feb322">Ghosts of Departed Proofs</a>
+<ul>
+<li><a href="#orgc9fb9b6">GDP Infrastructure</a></li>
+<li><a href="#org9c6315c">GDP Implementation of Association Lists</a></li>
+</ul>
+</li>
+<li><a href="#org2fe2e6d">Liquid Haskell</a></li>
+<li><a href="#org0a694e5">Conclusions</a>
+<ul>
+<li><a href="#org64e260e">Smart Constructors and the Existential Trick</a></li>
+<li><a href="#orga02f820">GADTs, or Dependent Types</a></li>
+<li><a href="#org718a511">GDP</a></li>
+<li><a href="#org80f9976">Liquid Haskell</a></li>
+<li><a href="#orged9c775">Comparison and Takeaways</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-static-reasoning-haskell" class="outline-2">
+<h2 id="static-reasoning-haskell">Survey of Static Reasoning in Haskell</h2>
+<div class="outline-text-2" id="text-static-reasoning-haskell">
+<p>
+This post surveys a few techniques for achieving high confidence in Haskell code
+<i>at type-checking time</i>. (It will not cover any aspects of testing.) To compare
+the approaches, I'll implement a single interface with each of them.
+</p>
+
+<p>
+The surveyed techniques are fairly complicated. I'll try to explain a bit about
+each, but please refer to their documentation for additional background. This
+post will also assume familiarity with a lot of Haskell: existential
+quantification <code>(-XExistentialQuantification</code>, <code>-XGADTs</code>, or <code>-XRank2Types</code>),
+existential quantification with higher-rank polymorphism (<code>-XRankNTypes</code>), safe
+coercions (<code>Data.Coerce</code>), phantom types, constraint kinds (<code>-XConstraintKinds</code>),
+GADTs, and data kinds (<code>-XDataKinds</code> and <code>-XPolyKinds</code>).
+</p>
+
+<p>
+This post probably should have included <a href="https://github.com/plclub/hs-to-coq">hs-to-coq</a>, but I'm unfamiliar with it
+and perfection is the enemy of completion.
+</p>
+</div>
+
+<div id="outline-container-orged823b5" class="outline-3">
+<h3 id="orged823b5">The Specification</h3>
+<div class="outline-text-3" id="text-orged823b5">
+<p>
+The interface in question is for lists of key/value pairs, also known as
+<i>association lists</i>. For the sake of brevity, we'll only require four operations:
+</p>
+
+<ul class="org-ul">
+<li><code>empty</code>: An empty association list</li>
+<li><code>insert</code>: Takes a key and value and inserts the pair into the list</li>
+<li><code>lookup</code>: Takes a key and returns a value associated with it</li>
+<li><code>fmap</code>: The association list type must be a functor over the value type</li>
+</ul>
+
+<p>
+The point is to do a broad-strokes comparison, so we'll adopt a very minimal
+specification, only requiring that
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">forall</span> k v assoc<span style="color: #715ab1;">.</span> lookup k <span style="color: #3a81c3;">(</span>insert k v assoc<span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">==</span> v
+</pre>
+</div>
+
+<p>
+along with the usual functor laws. The asymptotics should be:
+</p>
+
+<ul class="org-ul">
+<li><code>empty</code>: <i>O(1)</i></li>
+<li><code>insert</code>: <i>O(1)</i></li>
+<li><code>lookup</code>: <i>O(n)</i></li>
+<li><code>fmap f</code>: <i>O(n)</i> if <code>f</code> takes constant time</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org5823cdf" class="outline-3">
+<h3 id="org5823cdf">Vanilla Haskell</h3>
+<div class="outline-text-3" id="text-org5823cdf">
+<p>
+First, let's see what an implementation in "plain Haskell" might look like:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163;">{-# LANGUAGE DeriveFunctor #-}</span>
+
+<span style="color: #3a81c3; font-weight: bold;">module</span> <span style="color: #ba2f59; font-weight: bold;">Vanilla</span>
+  <span style="color: #3a81c3;">(</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span>
+  , empty
+  , insert
+  , lookup
+  , lookupMaybe
+  <span style="color: #3a81c3;">)</span> <span style="color: #3a81c3; font-weight: bold;">where</span>
+
+<span style="color: #3a81c3; font-weight: bold;">import</span> <span style="color: #ba2f59; font-weight: bold;">Prelude</span> <span style="color: #3a81c3; font-weight: bold;">hiding</span> <span style="color: #3a81c3;">(</span>lookup<span style="color: #3a81c3;">)</span>
+
+<span style="color: #3a81c3; font-weight: bold;">newtype</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> k v <span style="color: #715ab1;">=</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> <span style="color: #3a81c3;">[</span><span style="color: #6c3163;">(</span>k, v<span style="color: #6c3163;">)</span><span style="color: #3a81c3;">]</span>
+  <span style="color: #3a81c3; font-weight: bold;">deriving</span> <span style="color: #ba2f59; font-weight: bold;">Functor</span>
+
+<span style="color: #6c3163; font-weight: bold;">empty</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> k v
+<span style="color: #6c3163; font-weight: bold;">empty</span> <span style="color: #715ab1;">=</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> <span style="color: #3a81c3; font-weight: bold;">[]</span>
+
+<span style="color: #6c3163; font-weight: bold;">insert</span> <span style="color: #715ab1;">::</span> k <span style="color: #715ab1;">-&gt;</span> v <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> k v <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> k v
+<span style="color: #6c3163; font-weight: bold;">insert</span> k v <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Assoc</span> assoc<span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">=</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> <span style="color: #3a81c3;">(</span><span style="color: #6c3163;">(</span>k, v<span style="color: #6c3163;">)</span><span style="color: #ba2f59; font-weight: bold;">:</span>assoc<span style="color: #3a81c3;">)</span>
+
+<span style="color: #6c3163; font-weight: bold;">lookup</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Eq</span> k <span style="color: #715ab1;">=&gt;</span> k <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> k v <span style="color: #715ab1;">-&gt;</span> v
+<span style="color: #6c3163; font-weight: bold;">lookup</span> k <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Assoc</span> assoc<span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">=</span>
+  <span style="color: #3a81c3; font-weight: bold;">case</span> assoc <span style="color: #3a81c3; font-weight: bold;">of</span>
+    <span style="color: #3a81c3; font-weight: bold;">[]</span> <span style="color: #715ab1;">-&gt;</span> error <span style="color: #2d9574;">"Failure!"</span>
+    <span style="color: #3a81c3;">(</span><span style="color: #6c3163;">(</span>k', v<span style="color: #6c3163;">)</span><span style="color: #ba2f59; font-weight: bold;">:</span>rest<span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">-&gt;</span>
+      <span style="color: #3a81c3; font-weight: bold;">if</span> k <span style="color: #715ab1;">==</span> k'
+      <span style="color: #3a81c3; font-weight: bold;">then</span> v
+      <span style="color: #3a81c3; font-weight: bold;">else</span> lookup k <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Assoc</span> rest<span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+
+<p>
+Short and sweet! Using the API is pretty simple, too:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">test</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">String</span>
+<span style="color: #6c3163; font-weight: bold;">test</span> <span style="color: #715ab1;">=</span> lookup <span style="color: #4e3163;">2</span> <span style="color: #3a81c3;">(</span>insert <span style="color: #4e3163;">2</span> <span style="color: #2d9574;">""</span> empty<span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+
+<p>
+But there's one problem: <code>lookup</code> calls <code>error</code>, which can cause the program to fail
+at run-time. How can we gain more assurance that a program written using this
+interface won't unexpectedly fail? A common answer would be to reify the
+partiality in the return type, e.g., with <code>Maybe</code> or <code>Either</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">lookupMaybe</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Eq</span> k <span style="color: #715ab1;">=&gt;</span> k <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> k v <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Maybe</span> v
+<span style="color: #6c3163; font-weight: bold;">lookupMaybe</span> k <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Assoc</span> assoc<span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">=</span>
+  <span style="color: #3a81c3; font-weight: bold;">case</span> assoc <span style="color: #3a81c3; font-weight: bold;">of</span>
+    <span style="color: #3a81c3; font-weight: bold;">[]</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Nothing</span>
+    <span style="color: #3a81c3;">(</span><span style="color: #6c3163;">(</span>k', v<span style="color: #6c3163;">)</span><span style="color: #ba2f59; font-weight: bold;">:</span>rest<span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">-&gt;</span>
+      <span style="color: #3a81c3; font-weight: bold;">if</span> k <span style="color: #715ab1;">==</span> k'
+      <span style="color: #3a81c3; font-weight: bold;">then</span> <span style="color: #ba2f59; font-weight: bold;">Just</span> v
+      <span style="color: #3a81c3; font-weight: bold;">else</span> lookupMaybe k <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Assoc</span> rest<span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+
+<p>
+This amounts to passing the buck. Every caller of <code>lookupMaybe</code> has to decide how
+to handle the <code>Nothing</code> case; they can choose to "infect" their own return type
+with partiality, or to risk a run-time error by using a partial function like
+<code>fromJust :: Maybe a -&gt; a</code>.
+</p>
+
+<p>
+In general, API authors choose between four options to deal with
+partiality:<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup>
+</p>
+
+<ol class="org-ol">
+<li>Run-time failure, as in <code>lookup</code></li>
+<li>Returning a "default" value, as in a division function that returns zero when
+given a zero divisor</li>
+<li>Reifying the partiality in the return type, as in <code>lookupMaybe</code></li>
+<li>Restricting the function's domain, e.g., <code>head :: NonEmpty a -&gt; a</code></li>
+</ol>
+
+<p>
+What if we want to the avoid runtime failure in (1), the ambiguity of (2), and
+give callers more flexibility than (3)? (In the <code>lookup</code> example, it's not even
+clear that (4) is at all applicable.) Well hold on to your hats, because there
+are at least four different ways to do it and they all involve quite a bit of
+type-system tomfoolery.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1ce83fc" class="outline-3">
+<h3 id="org1ce83fc">Smart Constructors and the Existential Trick</h3>
+<div class="outline-text-3" id="text-org1ce83fc">
+<p>
+Types are the main tool that Haskell programmers use to get static guarantees
+about their programs. But type signatures like <code>Int -&gt; Bool</code> encode statements
+about <i>sets</i> of values (in this case, this is a function that will take <i>any</i> <code>Int</code> as
+an input), whereas the precondition of <code>lookup</code> is a relationship between the
+<i>particular values</i> of the key and association list. <code>lookup</code> requires that <i>this</i> key
+is present in <i>this specific association list</i>. We need some way to attach unique
+type-level names to each association list, and to tie keys to particular names.
+</p>
+
+<p>
+First, we'll add a type variable <code>name</code> to both parameters that acts as a unique
+identifier for the association list. <code>Assoc name k v</code> is an association list with
+name <code>name</code>, and <code>Key name k</code> is a key into the association list with name <code>name</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163;">{-# LANGUAGE DeriveFunctor #-}</span>
+<span style="color: #6c3163;">{-# LANGUAGE ExistentialQuantification #-}</span>
+
+<span style="color: #3a81c3; font-weight: bold;">module</span> <span style="color: #ba2f59; font-weight: bold;">Smart</span>
+  <span style="color: #3a81c3;">(</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span>
+  , <span style="color: #ba2f59; font-weight: bold;">Key</span>
+  , <span style="color: #ba2f59; font-weight: bold;">SomeAssoc</span><span style="color: #6c3163;">(</span><span style="color: #715ab1;">..</span><span style="color: #6c3163;">)</span>
+  , empty
+  , insert
+  , isKey
+  , lookup
+  <span style="color: #3a81c3;">)</span> <span style="color: #3a81c3; font-weight: bold;">where</span>
+
+<span style="color: #3a81c3; font-weight: bold;">import</span> <span style="color: #ba2f59; font-weight: bold;">Prelude</span> <span style="color: #3a81c3; font-weight: bold;">hiding</span> <span style="color: #3a81c3;">(</span>lookup<span style="color: #3a81c3;">)</span>
+
+<span style="color: #3a81c3; font-weight: bold;">newtype</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> name k v <span style="color: #715ab1;">=</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> <span style="color: #3a81c3;">[</span><span style="color: #6c3163;">(</span>k, v<span style="color: #6c3163;">)</span><span style="color: #3a81c3;">]</span>
+  <span style="color: #3a81c3; font-weight: bold;">deriving</span> <span style="color: #ba2f59; font-weight: bold;">Functor</span>
+
+<span style="color: #3a81c3; font-weight: bold;">newtype</span> <span style="color: #ba2f59; font-weight: bold;">Key</span> name k <span style="color: #715ab1;">=</span> <span style="color: #ba2f59; font-weight: bold;">Key</span> k
+</pre>
+</div>
+
+<p>
+The question is now: How do we make sure each new <code>Assoc</code> has a fresh <code>name</code> and
+can't be confused with any other <code>Assoc</code>? The trick that makes this work is
+<i>existential quantification</i>. Consider the type <code>Something</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #3a81c3; font-weight: bold;">data</span> <span style="color: #ba2f59; font-weight: bold;">Something</span> <span style="color: #715ab1;">=</span> forall a<span style="color: #715ab1;">.</span> <span style="color: #ba2f59; font-weight: bold;">Something</span> a
+</pre>
+</div>
+
+<p>
+Say that I give you two <code>Something</code> values, and you pattern match on them:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">you</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Something</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Something</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Int</span>
+<span style="color: #6c3163; font-weight: bold;">you</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Something</span> x<span style="color: #3a81c3;">)</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Something</span> y<span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">=</span> <span style="color: #3a81c3; font-weight: bold;">_</span>
+
+<span style="color: #6c3163; font-weight: bold;">me</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Int</span>
+<span style="color: #6c3163; font-weight: bold;">me</span> <span style="color: #715ab1;">=</span> you <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Something</span> <span style="color: #6c3163; font-weight: bold;">()</span><span style="color: #3a81c3;">)</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Something</span> <span style="color: #2d9574;">"foo"</span><span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+
+<p>
+What can you do with the data I've given you? In short, pretty much nothing. You
+can't use <code>x</code> and <code>y</code> in any meaningful way, they have completely unknown and
+unrelated types (GHC will name their types something like <code>a</code> and <code>a1</code>). In other
+words, we've given <code>x</code> and <code>y</code> <i>unique type-level labels</i>. The same trick will work
+for <code>Assoc</code>!
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #3a81c3; font-weight: bold;">data</span> <span style="color: #ba2f59; font-weight: bold;">SomeAssoc</span> k v <span style="color: #715ab1;">=</span> forall name<span style="color: #715ab1;">.</span> <span style="color: #ba2f59; font-weight: bold;">SomeAssoc</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Assoc</span> name k v<span style="color: #3a81c3;">)</span>
+
+<span style="color: #6c3163; font-weight: bold;">empty</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">SomeAssoc</span> k v
+<span style="color: #6c3163; font-weight: bold;">empty</span> <span style="color: #715ab1;">=</span> <span style="color: #ba2f59; font-weight: bold;">SomeAssoc</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Assoc</span> <span style="color: #6c3163; font-weight: bold;">[]</span><span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+
+<p>
+Since we didn't export the constructor of <code>Assoc</code> but we <i>did</i> export that of
+<code>SomeAssoc</code>, the only way to make a new association list is to pattern match on
+the existentially-quantified <code>empty</code> value, which invents a new type-level <code>name</code>
+for each <code>Assoc</code>.
+</p>
+
+<p>
+<code>insert</code> and <code>lookup</code> much the same, modulo slightly changed types:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">insert</span> <span style="color: #715ab1;">::</span> k <span style="color: #715ab1;">-&gt;</span> v <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> name k v <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> name k v
+<span style="color: #6c3163; font-weight: bold;">insert</span> k v <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Assoc</span> assoc<span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">=</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> <span style="color: #3a81c3;">(</span><span style="color: #6c3163;">(</span>k, v<span style="color: #6c3163;">)</span><span style="color: #ba2f59; font-weight: bold;">:</span>assoc<span style="color: #3a81c3;">)</span>
+
+<span style="color: #6c3163; font-weight: bold;">lookup</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Eq</span> k <span style="color: #715ab1;">=&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Key</span> name k <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> name k v <span style="color: #715ab1;">-&gt;</span> v
+<span style="color: #6c3163; font-weight: bold;">lookup</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Key</span> k<span style="color: #3a81c3;">)</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Assoc</span> assoc<span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">=</span>
+  <span style="color: #3a81c3; font-weight: bold;">case</span> assoc <span style="color: #3a81c3; font-weight: bold;">of</span>
+    <span style="color: #3a81c3; font-weight: bold;">[]</span> <span style="color: #715ab1;">-&gt;</span> error <span style="color: #2d9574;">"Impossible"</span>
+    <span style="color: #3a81c3;">(</span><span style="color: #6c3163;">(</span>k', v<span style="color: #6c3163;">)</span><span style="color: #ba2f59; font-weight: bold;">:</span>rest<span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">-&gt;</span>
+      <span style="color: #3a81c3; font-weight: bold;">if</span> k <span style="color: #715ab1;">==</span> k'
+      <span style="color: #3a81c3; font-weight: bold;">then</span> v
+      <span style="color: #3a81c3; font-weight: bold;">else</span> lookup <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Key</span> k<span style="color: #3a81c3;">)</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Assoc</span> rest<span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+
+<p>
+It <i>looks</i> like <code>lookup</code> is still partial, but by carefully controlling how clients
+get a <code>Key</code>, we can ensure that it's total. And the only way we'll let them do so
+is with <code>isKey</code> (note that the constructor of <code>Key</code>, like that of <code>Assoc</code>, is not
+exported):
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">isKey</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Eq</span> k <span style="color: #715ab1;">=&gt;</span> k <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> name k v <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Maybe</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Key</span> name k<span style="color: #3a81c3;">)</span>
+<span style="color: #6c3163; font-weight: bold;">isKey</span> k <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Assoc</span> assoc<span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">=</span>
+  <span style="color: #3a81c3; font-weight: bold;">case</span> assoc <span style="color: #3a81c3; font-weight: bold;">of</span>
+    <span style="color: #3a81c3; font-weight: bold;">[]</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Nothing</span>
+    <span style="color: #3a81c3;">(</span><span style="color: #6c3163;">(</span>k', <span style="color: #3a81c3; font-weight: bold;">_</span><span style="color: #6c3163;">)</span><span style="color: #ba2f59; font-weight: bold;">:</span>rest<span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">-&gt;</span>
+      <span style="color: #3a81c3; font-weight: bold;">if</span> k <span style="color: #715ab1;">==</span> k'
+      <span style="color: #3a81c3; font-weight: bold;">then</span> <span style="color: #ba2f59; font-weight: bold;">Just</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Key</span> k<span style="color: #3a81c3;">)</span>
+      <span style="color: #3a81c3; font-weight: bold;">else</span> isKey k <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Assoc</span> rest<span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+
+<p>
+It's basically identical to <code>lookup</code>: it searches through the list and only yields
+a <code>Key</code> if <code>k</code> really is a key in the list. Since this is the only way to get a <code>Key</code>,
+every <code>lookup</code> is guaranteed to succeed.
+</p>
+
+<p>
+Here's an example usage:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">test</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">String</span>
+<span style="color: #6c3163; font-weight: bold;">test</span> <span style="color: #715ab1;">=</span>
+  <span style="color: #3a81c3; font-weight: bold;">case</span> empty <span style="color: #3a81c3; font-weight: bold;">of</span>
+    <span style="color: #ba2f59; font-weight: bold;">SomeAssoc</span> emp <span style="color: #715ab1;">-&gt;</span>
+      <span style="color: #3a81c3; font-weight: bold;">let</span> assoc <span style="color: #715ab1;">=</span> insert <span style="color: #4e3163;">2</span> <span style="color: #2d9574;">""</span> emp
+      <span style="color: #3a81c3; font-weight: bold;">in</span> <span style="color: #3a81c3; font-weight: bold;">case</span> isKey <span style="color: #4e3163;">2</span> assoc <span style="color: #3a81c3; font-weight: bold;">of</span>
+           <span style="color: #ba2f59; font-weight: bold;">Just</span> k <span style="color: #715ab1;">-&gt;</span> lookup k assoc
+           <span style="color: #ba2f59; font-weight: bold;">Nothing</span> <span style="color: #715ab1;">-&gt;</span> error <span style="color: #2d9574;">"not a key"</span>
+</pre>
+</div>
+
+<p>
+Note that while <code>isKey</code> introduces a <code>Maybe</code>, the actual <code>lookup</code> operation doesn't.
+You can, e.g., store keys in a list and look them up later, without introducing
+partiality at the lookup. This still isn't ideal; one way to work around it in
+some cases would be to have <code>insert</code> return a <code>Key</code>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org2a7afcc" class="outline-3">
+<h3 id="org2a7afcc">GADTs, or Dependent Types</h3>
+<div class="outline-text-3" id="text-org2a7afcc">
+<p>
+<i>Dependent types</i> are (roughly speaking) types that can mention values. Haskell
+doesn't have "full" dependent types, but GADTs make the type system quite
+expressive. Let's see what we can do with them!
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163;">{-# LANGUAGE DataKinds #-}</span>
+<span style="color: #6c3163;">{-# LANGUAGE GADTs #-}</span>
+<span style="color: #6c3163;">{-# LANGUAGE LambdaCase #-}</span>
+<span style="color: #6c3163;">{-# LANGUAGE PolyKinds #-}</span>
+<span style="color: #6c3163;">{-# LANGUAGE TypeOperators #-}</span>
+
+<span style="color: #3a81c3; font-weight: bold;">module</span> <span style="color: #ba2f59; font-weight: bold;">GADT</span>
+  <span style="color: #3a81c3;">(</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span>
+  , <span style="color: #ba2f59; font-weight: bold;">NatRepr</span><span style="color: #6c3163;">(</span><span style="color: #715ab1;">..</span><span style="color: #6c3163;">)</span>
+  , <span style="color: #ba2f59; font-weight: bold;">Key</span>
+  , empty
+  , insert
+  , isKey
+  , lookup
+  <span style="color: #3a81c3;">)</span> <span style="color: #3a81c3; font-weight: bold;">where</span>
+
+<span style="color: #3a81c3; font-weight: bold;">import</span> <span style="color: #ba2f59; font-weight: bold;">Prelude</span> <span style="color: #3a81c3; font-weight: bold;">hiding</span> <span style="color: #3a81c3;">(</span>lookup<span style="color: #3a81c3;">)</span>
+<span style="color: #3a81c3; font-weight: bold;">import</span> <span style="color: #ba2f59; font-weight: bold;">Data.Kind</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Type</span><span style="color: #3a81c3;">)</span>
+<span style="color: #3a81c3; font-weight: bold;">import</span> <span style="color: #ba2f59; font-weight: bold;">Data.Type.Equality</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">TestEquality</span><span style="color: #6c3163;">(</span>testEquality<span style="color: #6c3163;">)</span>, <span style="color: #6c3163;">(</span><span style="color: #ba2f59; font-weight: bold;">:~:</span><span style="color: #6c3163;">)(</span><span style="color: #ba2f59; font-weight: bold;">Refl</span><span style="color: #6c3163;">)</span><span style="color: #3a81c3;">)</span>
+<span style="color: #3a81c3; font-weight: bold;">import</span> <span style="color: #ba2f59; font-weight: bold;">GHC.TypeLits</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Nat</span>, <span style="color: #3a81c3; font-weight: bold;">type</span> <span style="color: #6c3163;">(</span><span style="color: #715ab1;">+</span><span style="color: #6c3163;">)</span><span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+
+<p>
+For the sake of concreteness, we'll fix the keys to be natural numbers:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #3a81c3; font-weight: bold;">data</span> <span style="color: #ba2f59; font-weight: bold;">NatRepr</span> <span style="color: #3a81c3;">(</span>n <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Nat</span><span style="color: #3a81c3;">)</span> <span style="color: #3a81c3; font-weight: bold;">where</span>
+  <span style="color: #ba2f59; font-weight: bold;">Zero</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">NatRepr</span> <span style="color: #4e3163;">0</span>
+  <span style="color: #ba2f59; font-weight: bold;">Succ</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">NatRepr</span> n <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">NatRepr</span> <span style="color: #3a81c3;">(</span>n <span style="color: #715ab1;">+</span> <span style="color: #4e3163;">1</span><span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+
+<p>
+<code>NatRepr</code> is a <i>singleton type</i> meaning each value has a unique type. For example,
+<code>Zero :: NatRepr 0</code> and <code>Succ Zero :: NatRepr 1</code>.
+</p>
+
+<p>
+Just as <code>lookup</code> had an <code>Eq</code> constraint above, <code>NatRepr</code> needs a <code>TestEquality</code>
+instance, which <a href="https://hackage.haskell.org/package/base-4.17.0.0/docs/Data-Type-Equality.html#t:TestEquality">is similar but for singletons</a>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #3a81c3; font-weight: bold;">instance</span> <span style="color: #ba2f59; font-weight: bold;">TestEquality</span> <span style="color: #ba2f59; font-weight: bold;">NatRepr</span> <span style="color: #3a81c3; font-weight: bold;">where</span>
+  testEquality n m <span style="color: #715ab1;">=</span>
+    <span style="color: #3a81c3; font-weight: bold;">case</span> <span style="color: #3a81c3;">(</span>n, m<span style="color: #3a81c3;">)</span> <span style="color: #3a81c3; font-weight: bold;">of</span>
+      <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Succ</span> <span style="color: #3a81c3; font-weight: bold;">_</span>, <span style="color: #ba2f59; font-weight: bold;">Zero</span><span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Nothing</span>
+      <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Zero</span>, <span style="color: #ba2f59; font-weight: bold;">Succ</span> <span style="color: #3a81c3; font-weight: bold;">_</span><span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Nothing</span>
+      <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Zero</span>, <span style="color: #ba2f59; font-weight: bold;">Zero</span><span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Just</span> <span style="color: #ba2f59; font-weight: bold;">Refl</span>
+      <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Succ</span> n', <span style="color: #ba2f59; font-weight: bold;">Succ</span> m'<span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">-&gt;</span>
+        <span style="color: #3a81c3; font-weight: bold;">case</span> testEquality n' m' <span style="color: #3a81c3; font-weight: bold;">of</span>
+          <span style="color: #ba2f59; font-weight: bold;">Just</span> <span style="color: #ba2f59; font-weight: bold;">Refl</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Just</span> <span style="color: #ba2f59; font-weight: bold;">Refl</span>
+          <span style="color: #ba2f59; font-weight: bold;">Nothing</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Nothing</span>
+</pre>
+</div>
+
+<p>
+The <code>Assoc</code> type carries a type-level list of its keys:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #3a81c3; font-weight: bold;">data</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> <span style="color: #3a81c3;">(</span>keys <span style="color: #715ab1;">::</span> <span style="color: #6c3163;">[</span><span style="color: #ba2f59; font-weight: bold;">Nat</span><span style="color: #6c3163;">]</span><span style="color: #3a81c3;">)</span> <span style="color: #3a81c3;">(</span>a <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Type</span><span style="color: #3a81c3;">)</span> <span style="color: #3a81c3; font-weight: bold;">where</span>
+  <span style="color: #ba2f59; font-weight: bold;">Nil</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> '<span style="color: #3a81c3; font-weight: bold;">[]</span> a
+  <span style="color: #ba2f59; font-weight: bold;">Cons</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">NatRepr</span> n <span style="color: #715ab1;">-&gt;</span> a <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> keys a <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> <span style="color: #3a81c3;">(</span>n '<span style="color: #ba2f59; font-weight: bold;">:</span> keys<span style="color: #3a81c3;">)</span> a
+</pre>
+</div>
+
+<p>
+Because this is a GADT, we can no longer derive <code>Functor</code>, we have to write it
+ourselves:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #3a81c3; font-weight: bold;">instance</span> <span style="color: #ba2f59; font-weight: bold;">Functor</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Assoc</span> keys<span style="color: #3a81c3;">)</span> <span style="color: #3a81c3; font-weight: bold;">where</span>
+  fmap f <span style="color: #715ab1;">=</span>
+    <span style="color: #715ab1;">\</span><span style="color: #3a81c3; font-weight: bold;">case</span>
+      <span style="color: #ba2f59; font-weight: bold;">Nil</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Nil</span>
+      <span style="color: #ba2f59; font-weight: bold;">Cons</span> n a rest <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Cons</span> n <span style="color: #3a81c3;">(</span>f a<span style="color: #3a81c3;">)</span> <span style="color: #3a81c3;">(</span>fmap f rest<span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+
+<p>
+<code>empty</code> has an empty type-level list of keys:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">empty</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> '<span style="color: #3a81c3; font-weight: bold;">[]</span> a
+<span style="color: #6c3163; font-weight: bold;">empty</span> <span style="color: #715ab1;">=</span> <span style="color: #ba2f59; font-weight: bold;">Nil</span>
+</pre>
+</div>
+
+<p>
+<code>insert</code> adds one key to the front of the type-level list. In fact, <code>insert</code> is just <code>Cons</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">insert</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">NatRepr</span> n <span style="color: #715ab1;">-&gt;</span> a <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> keys a <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> <span style="color: #3a81c3;">(</span>n '<span style="color: #ba2f59; font-weight: bold;">:</span> keys<span style="color: #3a81c3;">)</span> a
+<span style="color: #6c3163; font-weight: bold;">insert</span> <span style="color: #715ab1;">=</span> <span style="color: #ba2f59; font-weight: bold;">Cons</span>
+</pre>
+</div>
+
+<p>
+As in the smart constructor approach, we use a new type <code>Key</code> to track the
+relationship between a key and an association list. Unlike the smart constructor
+approach, we don't have to trust the implementation of <code>isKey</code>; the types force it
+to be correct.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #3a81c3; font-weight: bold;">data</span> <span style="color: #ba2f59; font-weight: bold;">Key</span> <span style="color: #3a81c3;">(</span>n <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Nat</span><span style="color: #3a81c3;">)</span> <span style="color: #3a81c3;">(</span>keys <span style="color: #715ab1;">::</span> <span style="color: #6c3163;">[</span><span style="color: #ba2f59; font-weight: bold;">Nat</span><span style="color: #6c3163;">]</span><span style="color: #3a81c3;">)</span> <span style="color: #3a81c3; font-weight: bold;">where</span>
+  <span style="color: #ba2f59; font-weight: bold;">KeyHere</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Key</span> n <span style="color: #3a81c3;">(</span>n '<span style="color: #ba2f59; font-weight: bold;">:</span> l<span style="color: #3a81c3;">)</span>
+  <span style="color: #ba2f59; font-weight: bold;">KeyThere</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Key</span> n keys <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Key</span> n <span style="color: #3a81c3;">(</span>m '<span style="color: #ba2f59; font-weight: bold;">:</span> keys<span style="color: #3a81c3;">)</span>
+
+<span style="color: #6c3163; font-weight: bold;">isKey</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">NatRepr</span> n <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> keys a <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Maybe</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Key</span> n keys<span style="color: #3a81c3;">)</span>
+<span style="color: #6c3163; font-weight: bold;">isKey</span> n assoc <span style="color: #715ab1;">=</span>
+  <span style="color: #3a81c3; font-weight: bold;">case</span> assoc <span style="color: #3a81c3; font-weight: bold;">of</span>
+    <span style="color: #ba2f59; font-weight: bold;">Nil</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Nothing</span>
+    <span style="color: #ba2f59; font-weight: bold;">Cons</span> m <span style="color: #3a81c3; font-weight: bold;">_</span> rest <span style="color: #715ab1;">-&gt;</span>
+      <span style="color: #3a81c3; font-weight: bold;">case</span> testEquality n m <span style="color: #3a81c3; font-weight: bold;">of</span>
+        <span style="color: #ba2f59; font-weight: bold;">Just</span> <span style="color: #ba2f59; font-weight: bold;">Refl</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Just</span> <span style="color: #ba2f59; font-weight: bold;">KeyHere</span>
+        <span style="color: #ba2f59; font-weight: bold;">Nothing</span> <span style="color: #715ab1;">-&gt;</span>
+          <span style="color: #3a81c3; font-weight: bold;">case</span> isKey n rest <span style="color: #3a81c3; font-weight: bold;">of</span>
+            <span style="color: #ba2f59; font-weight: bold;">Nothing</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Nothing</span>
+            <span style="color: #ba2f59; font-weight: bold;">Just</span> key <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Just</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">KeyThere</span> key<span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+
+<p>
+In <code>lookup</code>, GHC's pattern match checker can tell that if there's a <code>Key n keys</code>,
+then the type-level list <code>keys</code> can't be empty, so there's no need to handle the
+<code>Nil</code> case:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">lookup</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Key</span> n keys <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> keys a <span style="color: #715ab1;">-&gt;</span> a
+<span style="color: #6c3163; font-weight: bold;">lookup</span> key assoc <span style="color: #715ab1;">=</span>
+  <span style="color: #3a81c3; font-weight: bold;">case</span> <span style="color: #3a81c3;">(</span>key, assoc<span style="color: #3a81c3;">)</span> <span style="color: #3a81c3; font-weight: bold;">of</span>
+    <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">KeyHere</span>, <span style="color: #ba2f59; font-weight: bold;">Cons</span> <span style="color: #3a81c3; font-weight: bold;">_</span> a <span style="color: #3a81c3; font-weight: bold;">_</span><span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">-&gt;</span> a
+    <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">KeyThere</span> key', <span style="color: #ba2f59; font-weight: bold;">Cons</span> <span style="color: #3a81c3; font-weight: bold;">_</span> <span style="color: #3a81c3; font-weight: bold;">_</span> rest<span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">-&gt;</span> lookup key' rest
+</pre>
+</div>
+
+<p>
+Here's an example usage:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">test</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">String</span>
+<span style="color: #6c3163; font-weight: bold;">test</span> <span style="color: #715ab1;">=</span>
+  <span style="color: #3a81c3; font-weight: bold;">case</span> isKey two assoc <span style="color: #3a81c3; font-weight: bold;">of</span>
+    <span style="color: #ba2f59; font-weight: bold;">Just</span> k <span style="color: #715ab1;">-&gt;</span> lookup k assoc
+    <span style="color: #ba2f59; font-weight: bold;">Nothing</span> <span style="color: #715ab1;">-&gt;</span> error <span style="color: #2d9574;">"not a key"</span>
+  <span style="color: #3a81c3; font-weight: bold;">where</span>
+    two <span style="color: #715ab1;">=</span> <span style="color: #ba2f59; font-weight: bold;">Succ</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Succ</span> <span style="color: #ba2f59; font-weight: bold;">Zero</span><span style="color: #3a81c3;">)</span>
+    assoc <span style="color: #715ab1;">=</span> insert two <span style="color: #2d9574;">""</span> empty
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9feb322" class="outline-3">
+<h3 id="org9feb322">Ghosts of Departed Proofs</h3>
+<div class="outline-text-3" id="text-org9feb322">
+<p>
+<a href="https://dl.acm.org/doi/abs/10.1145/3242744.3242755">The Ghosts of Departed Proofs (GDP) paper</a> (<a href="http://kataskeue.com/gdp.pdf">PDF</a>) outlined several insights that
+supercharge the smart constructor/existential trick above.
+</p>
+
+<p>
+It's worth noting that I'm not an expert in GDP.
+</p>
+</div>
+
+<div id="outline-container-orgc9fb9b6" class="outline-4">
+<h4 id="orgc9fb9b6">GDP Infrastructure</h4>
+<div class="outline-text-4" id="text-orgc9fb9b6">
+<p>
+The following introduction to the core GDP infrastructure is fairly cursory,
+please check out the paper for more information. I'm defining all this here to
+make this post self-contained, but the combinators in this module are available
+in the <code>gdp</code> package <a href="https://hackage.haskell.org/package/gdp">on Hackage</a>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163;">{-# LANGUAGE ConstraintKinds #-}</span>
+<span style="color: #6c3163;">{-# LANGUAGE DefaultSignatures #-}</span>
+<span style="color: #6c3163;">{-# LANGUAGE DeriveFunctor #-}</span>
+<span style="color: #6c3163;">{-# LANGUAGE FlexibleContexts #-}</span>
+<span style="color: #6c3163;">{-# LANGUAGE FlexibleInstances #-}</span>
+<span style="color: #6c3163;">{-# LANGUAGE FunctionalDependencies #-}</span>
+<span style="color: #6c3163;">{-# LANGUAGE MultiParamTypeClasses #-}</span>
+<span style="color: #6c3163;">{-# LANGUAGE RankNTypes #-}</span>
+<span style="color: #6c3163;">{-# LANGUAGE TypeOperators #-}</span>
+
+<span style="color: #3a81c3; font-weight: bold;">module</span> <span style="color: #ba2f59; font-weight: bold;">GDP.Named</span>
+  <span style="color: #3a81c3;">(</span> <span style="color: #ba2f59; font-weight: bold;">Named</span>
+  , name
+  , the
+  , <span style="color: #ba2f59; font-weight: bold;">SuchThat</span>
+  , suchThat
+  , <span style="color: #ba2f59; font-weight: bold;">Defn</span>
+  , <span style="color: #ba2f59; font-weight: bold;">Proof</span>
+  , axiom
+  , <span style="color: #3a81c3; font-weight: bold;">type</span> <span style="color: #6c3163;">(</span><span style="color: #715ab1;">--&gt;</span><span style="color: #6c3163;">)</span>
+  , implElim
+  <span style="color: #3a81c3;">)</span> <span style="color: #3a81c3; font-weight: bold;">where</span>
+
+<span style="color: #3a81c3; font-weight: bold;">import</span> <span style="color: #ba2f59; font-weight: bold;">Prelude</span> <span style="color: #3a81c3; font-weight: bold;">hiding</span> <span style="color: #3a81c3;">(</span>lookup<span style="color: #3a81c3;">)</span>
+<span style="color: #3a81c3; font-weight: bold;">import</span> <span style="color: #ba2f59; font-weight: bold;">Data.Coerce</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Coercible</span>, coerce<span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+
+<p>
+First, the <code>Named</code> type and <code>name</code> function generalize the existential introduction
+of type-level names for values, using an equivalence between rank-2 types (the
+<code>forall</code> in the second parameter to <code>name</code>) and existential types:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #da8b55;">-- | Called @~~@ in GDP.</span>
+<span style="color: #3a81c3; font-weight: bold;">newtype</span> <span style="color: #ba2f59; font-weight: bold;">Named</span> name a <span style="color: #715ab1;">=</span> <span style="color: #ba2f59; font-weight: bold;">Named</span> a
+  <span style="color: #3a81c3; font-weight: bold;">deriving</span> <span style="color: #ba2f59; font-weight: bold;">Functor</span>
+
+<span style="color: #6c3163; font-weight: bold;">name</span> <span style="color: #715ab1;">::</span> a <span style="color: #715ab1;">-&gt;</span> <span style="color: #3a81c3;">(</span><span style="color: #3a81c3; font-weight: bold;">forall</span> name<span style="color: #715ab1;">.</span> <span style="color: #ba2f59; font-weight: bold;">Named</span> name a <span style="color: #715ab1;">-&gt;</span> t<span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">-&gt;</span> t
+<span style="color: #6c3163; font-weight: bold;">name</span> x k <span style="color: #715ab1;">=</span> coerce k x
+<span style="color: #6c3163;">{-# INLINE name #-}</span>
+</pre>
+</div>
+
+<p>
+To extract a <code>Named</code> value, clients use <code>the</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #3a81c3; font-weight: bold;">class</span> <span style="color: #ba2f59; font-weight: bold;">The</span> x a <span style="color: #715ab1;">|</span> x <span style="color: #715ab1;">-&gt;</span> a <span style="color: #3a81c3; font-weight: bold;">where</span>
+  the <span style="color: #715ab1;">::</span> x <span style="color: #715ab1;">-&gt;</span> a
+  <span style="color: #3a81c3; font-weight: bold;">default</span> the <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Coercible</span> x a <span style="color: #715ab1;">=&gt;</span> x <span style="color: #715ab1;">-&gt;</span> a
+  the <span style="color: #715ab1;">=</span> coerce
+
+<span style="color: #3a81c3; font-weight: bold;">instance</span> <span style="color: #ba2f59; font-weight: bold;">The</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Named</span> name a<span style="color: #3a81c3;">)</span> a <span style="color: #3a81c3; font-weight: bold;">where</span>
+</pre>
+</div>
+
+<p>
+Modules can give type-level names to functions using <code>Defn</code> (demonstrated later):
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #3a81c3; font-weight: bold;">data</span> <span style="color: #ba2f59; font-weight: bold;">Defn</span> <span style="color: #715ab1;">=</span> <span style="color: #ba2f59; font-weight: bold;">Defn</span>
+
+<span style="color: #3a81c3; font-weight: bold;">type</span> <span style="color: #ba2f59; font-weight: bold;">Defining</span> name <span style="color: #715ab1;">=</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Coercible</span> <span style="color: #ba2f59; font-weight: bold;">Defn</span> name, <span style="color: #ba2f59; font-weight: bold;">Coercible</span> name <span style="color: #ba2f59; font-weight: bold;">Defn</span><span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+
+<p>
+Type-level propositions are called <code>Proof</code>, and can be manipulated with axioms
+like <code>implElim</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #3a81c3; font-weight: bold;">data</span> <span style="color: #ba2f59; font-weight: bold;">Proof</span> a <span style="color: #715ab1;">=</span> <span style="color: #ba2f59; font-weight: bold;">Proof</span>  <span style="color: #2aa1ae; background-color: #ecf3ec;">-- </span><span style="color: #2aa1ae; background-color: #ecf3ec;">called QED in GDP</span>
+
+<span style="color: #6c3163; font-weight: bold;">axiom</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Proof</span> a
+<span style="color: #6c3163; font-weight: bold;">axiom</span> <span style="color: #715ab1;">=</span> <span style="color: #ba2f59; font-weight: bold;">Proof</span>
+
+<span style="color: #3a81c3; font-weight: bold;">data</span> p <span style="color: #715ab1;">--&gt;</span> q
+
+<span style="color: #6c3163; font-weight: bold;">implElim</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Proof</span> <span style="color: #3a81c3;">(</span>p <span style="color: #715ab1;">--&gt;</span> q<span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Proof</span> p <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Proof</span> q
+<span style="color: #6c3163; font-weight: bold;">implElim</span> <span style="color: #3a81c3; font-weight: bold;">_</span> <span style="color: #3a81c3; font-weight: bold;">_</span> <span style="color: #715ab1;">=</span> axiom
+</pre>
+</div>
+
+<p>
+Type-level propositions can be attached to values with <code>SuchThat</code> (which can also
+be cast away with <code>the</code>):
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #da8b55;">-- | Called @:::@ in GDP.</span>
+<span style="color: #3a81c3; font-weight: bold;">newtype</span> <span style="color: #ba2f59; font-weight: bold;">SuchThat</span> p a <span style="color: #715ab1;">=</span> <span style="color: #ba2f59; font-weight: bold;">SuchThat</span> a
+  <span style="color: #3a81c3; font-weight: bold;">deriving</span> <span style="color: #ba2f59; font-weight: bold;">Functor</span>
+
+<span style="color: #3a81c3; font-weight: bold;">instance</span> <span style="color: #ba2f59; font-weight: bold;">The</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">SuchThat</span> p a<span style="color: #3a81c3;">)</span> a <span style="color: #3a81c3; font-weight: bold;">where</span>
+
+<span style="color: #6c3163; font-weight: bold;">suchThat</span> <span style="color: #715ab1;">::</span> a <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Proof</span> p <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">SuchThat</span> p a
+<span style="color: #6c3163; font-weight: bold;">suchThat</span> x <span style="color: #3a81c3; font-weight: bold;">_</span> <span style="color: #715ab1;">=</span> coerce x
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9c6315c" class="outline-4">
+<h4 id="org9c6315c">GDP Implementation of Association Lists</h4>
+<div class="outline-text-4" id="text-org9c6315c">
+<p>
+Now let's take a look at using those tools to provide more assurance for the
+<code>Assoc</code> API. Happily, we can directly reuse <code>Assoc</code> and <code>empty</code> from the vanilla
+Haskell implementation!
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163;">{-# LANGUAGE DeriveFunctor #-}</span>
+<span style="color: #6c3163;">{-# LANGUAGE ExplicitNamespaces #-}</span>
+<span style="color: #6c3163;">{-# LANGUAGE RoleAnnotations #-}</span>
+<span style="color: #6c3163;">{-# LANGUAGE TypeOperators #-}</span>
+
+<span style="color: #3a81c3; font-weight: bold;">module</span> <span style="color: #ba2f59; font-weight: bold;">GDP</span>
+  <span style="color: #3a81c3;">(</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span>
+  , Vanilla.empty
+  , <span style="color: #ba2f59; font-weight: bold;">IsKey</span>
+  , <span style="color: #ba2f59; font-weight: bold;">Insert</span>
+  , insert
+  , lookup
+  <span style="color: #3a81c3;">)</span> <span style="color: #3a81c3; font-weight: bold;">where</span>
+
+<span style="color: #3a81c3; font-weight: bold;">import</span>           <span style="color: #ba2f59; font-weight: bold;">Prelude</span> <span style="color: #3a81c3; font-weight: bold;">hiding</span> <span style="color: #3a81c3;">(</span>lookup<span style="color: #3a81c3;">)</span>
+
+<span style="color: #3a81c3; font-weight: bold;">import</span> <span style="color: #3a81c3; font-weight: bold;">qualified</span> <span style="color: #ba2f59; font-weight: bold;">GDP.Named</span> <span style="color: #3a81c3; font-weight: bold;">as</span> <span style="color: #ba2f59; font-weight: bold;">GDP</span>
+<span style="color: #3a81c3; font-weight: bold;">import</span>           <span style="color: #ba2f59; font-weight: bold;">GDP.Named</span> <span style="color: #3a81c3;">(</span><span style="color: #3a81c3; font-weight: bold;">type</span> <span style="color: #6c3163;">(</span><span style="color: #715ab1;">--&gt;</span><span style="color: #6c3163;">)</span><span style="color: #3a81c3;">)</span>
+<span style="color: #3a81c3; font-weight: bold;">import</span>           <span style="color: #ba2f59; font-weight: bold;">GDP.Maybe</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">IsJust</span><span style="color: #3a81c3;">)</span>
+<span style="color: #3a81c3; font-weight: bold;">import</span> <span style="color: #3a81c3; font-weight: bold;">qualified</span> <span style="color: #ba2f59; font-weight: bold;">GDP.Maybe</span> <span style="color: #3a81c3; font-weight: bold;">as</span> <span style="color: #ba2f59; font-weight: bold;">GDP</span>
+<span style="color: #3a81c3; font-weight: bold;">import</span> <span style="color: #3a81c3; font-weight: bold;">qualified</span> <span style="color: #ba2f59; font-weight: bold;">Vanilla</span> <span style="color: #3a81c3; font-weight: bold;">as</span> <span style="color: #ba2f59; font-weight: bold;">Vanilla</span>
+<span style="color: #3a81c3; font-weight: bold;">import</span>           <span style="color: #ba2f59; font-weight: bold;">Vanilla</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Assoc</span><span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+
+<p>
+Instead of a separate <code>Key</code> type, we create a type-level proposition <code>IsKey</code>. A
+<code>GPD.Proof (IsKey kn assocn)</code> means that the key of type <code>GDP.Named kn k</code> is present
+in the association list of type <code>GDP.Named assocn (Assoc k v)</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #da8b55;">-- | @kn@ is a key of association list @assocn@</span>
+<span style="color: #3a81c3; font-weight: bold;">data</span> <span style="color: #ba2f59; font-weight: bold;">IsKey</span> kn assocn
+<span style="color: #3a81c3; font-weight: bold;">type</span> <span style="color: #3a81c3; font-weight: bold;">role</span> <span style="color: #ba2f59; font-weight: bold;">IsKey</span> nominal nominal
+</pre>
+</div>
+
+<p>
+<code>lookup</code> takes a key with an additional <code>IsKey</code> proof as a parameter and then just
+shells out to the underlying vanilla Haskell <code>lookup</code> implementation. The return
+type and the <code>Lookup</code> newtype will be explained in just a moment.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #da8b55;">-- | Type-level name of 'lookup' for use in lemmas.</span>
+<span style="color: #3a81c3; font-weight: bold;">newtype</span> <span style="color: #ba2f59; font-weight: bold;">Lookup</span> kn assocn <span style="color: #715ab1;">=</span> <span style="color: #ba2f59; font-weight: bold;">Lookup</span> <span style="color: #ba2f59; font-weight: bold;">GDP.Defn</span>
+<span style="color: #3a81c3; font-weight: bold;">type</span> <span style="color: #3a81c3; font-weight: bold;">role</span> <span style="color: #ba2f59; font-weight: bold;">Lookup</span> nominal nominal
+
+<span style="color: #6c3163; font-weight: bold;">lookup</span> <span style="color: #715ab1;">::</span>
+  <span style="color: #ba2f59; font-weight: bold;">Eq</span> k <span style="color: #715ab1;">=&gt;</span>
+  <span style="color: #ba2f59; font-weight: bold;">GDP.SuchThat</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">IsKey</span> kn assocn<span style="color: #3a81c3;">)</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">GDP.Named</span> kn k<span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">-&gt;</span>
+  <span style="color: #ba2f59; font-weight: bold;">GDP.Named</span> assocn <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Assoc</span> k v<span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">-&gt;</span>
+  <span style="color: #ba2f59; font-weight: bold;">GDP.Named</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Lookup</span> kn assocn<span style="color: #3a81c3;">)</span> v
+<span style="color: #6c3163; font-weight: bold;">lookup</span> k assoc <span style="color: #715ab1;">=</span>
+  GDP.defn <span style="color: #3a81c3;">(</span>Vanilla.lookup <span style="color: #6c3163;">(</span>GDP.the <span style="color: #2d9574;">(</span>GDP.the k<span style="color: #2d9574;">)</span><span style="color: #6c3163;">)</span> <span style="color: #6c3163;">(</span>GDP.the assoc<span style="color: #6c3163;">)</span><span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+
+<p>
+<code>insert</code> works much the same way, but it doesn't have any preconditions and so
+doesn't use <code>SuchThat</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #da8b55;">-- | Type-level name of 'insert' for use in lemmas.</span>
+<span style="color: #3a81c3; font-weight: bold;">newtype</span> <span style="color: #ba2f59; font-weight: bold;">Insert</span> kn vn assocn <span style="color: #715ab1;">=</span> <span style="color: #ba2f59; font-weight: bold;">Insert</span> <span style="color: #ba2f59; font-weight: bold;">GDP.Defn</span>
+<span style="color: #3a81c3; font-weight: bold;">type</span> <span style="color: #3a81c3; font-weight: bold;">role</span> <span style="color: #ba2f59; font-weight: bold;">Insert</span> nominal nominal nominal
+
+<span style="color: #6c3163; font-weight: bold;">insert</span> <span style="color: #715ab1;">::</span>
+  <span style="color: #ba2f59; font-weight: bold;">GDP.Named</span> kn k <span style="color: #715ab1;">-&gt;</span>
+  <span style="color: #ba2f59; font-weight: bold;">GDP.Named</span> vn v <span style="color: #715ab1;">-&gt;</span>
+  <span style="color: #ba2f59; font-weight: bold;">GDP.Named</span> assocn <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Assoc</span> k v<span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">-&gt;</span>
+  <span style="color: #ba2f59; font-weight: bold;">GDP.Named</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Insert</span> kn vn assocn<span style="color: #3a81c3;">)</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Assoc</span> k v<span style="color: #3a81c3;">)</span>
+<span style="color: #6c3163; font-weight: bold;">insert</span> k v assoc <span style="color: #715ab1;">=</span>
+  GDP.defn <span style="color: #3a81c3;">(</span>Vanilla.insert <span style="color: #6c3163;">(</span>GDP.the k<span style="color: #6c3163;">)</span> <span style="color: #6c3163;">(</span>GDP.the v<span style="color: #6c3163;">)</span> <span style="color: #6c3163;">(</span>GDP.the assoc<span style="color: #6c3163;">)</span><span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+
+<p>
+So how do clients construct a <code>GDP.SuchThat (IsKey kn assocn) (GDP.Named kn k)</code> to
+pass to <code>lookup</code>? One of the nice parts of GDP is that library authors can
+determine how clients reason about propositions they define, like <code>IsKey</code>. In
+particular, library authors can introduce type-level names for their API
+functions like <code>Lookup</code> and <code>Insert</code>, and export axioms that describe how the API
+relates to the propositions.
+</p>
+
+<p>
+One way to know that a key is in a map is if we just inserted that key. We can
+express this fact by exporting an axiom:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">insertIsKey</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">GDP.Proof</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">IsKey</span> kn <span style="color: #6c3163;">(</span><span style="color: #ba2f59; font-weight: bold;">Insert</span> kn vn assocn<span style="color: #6c3163;">)</span><span style="color: #3a81c3;">)</span>
+<span style="color: #6c3163; font-weight: bold;">insertIsKey</span> <span style="color: #715ab1;">=</span> GDP.axiom
+</pre>
+</div>
+
+<p>
+With that lemma, here's an example use of this safe API:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">test</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">String</span>
+<span style="color: #6c3163; font-weight: bold;">test</span> <span style="color: #715ab1;">=</span>
+  GDP.name Vanilla.empty <span style="color: #715ab1;">$</span> <span style="color: #715ab1;">\</span>emp <span style="color: #715ab1;">-&gt;</span>
+    GDP.name <span style="color: #3a81c3;">(</span><span style="color: #4e3163;">2</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Int</span><span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">$</span> <span style="color: #715ab1;">\</span>k <span style="color: #715ab1;">-&gt;</span>
+      GDP.name <span style="color: #2d9574;">""</span> <span style="color: #715ab1;">$</span> <span style="color: #715ab1;">\</span>v <span style="color: #715ab1;">-&gt;</span>
+        GDP.the <span style="color: #715ab1;">$</span>
+          lookup
+            <span style="color: #3a81c3;">(</span>k <span style="color: #715ab1;">`GDP.suchThat`</span> insertIsKey<span style="color: #3a81c3;">)</span>
+            <span style="color: #3a81c3;">(</span>insert k v emp<span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+
+<p>
+We can also conclude <code>IsKey</code> when <code>lookupMaybe</code> returns a <code>Just</code> value, kind of like
+what <code>isKey</code> did in previous examples:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #da8b55;">-- | Type-level name of 'lookupMaybe' for use in lemmas.</span>
+<span style="color: #3a81c3; font-weight: bold;">newtype</span> <span style="color: #ba2f59; font-weight: bold;">LookupMaybe</span> kn assocn <span style="color: #715ab1;">=</span> <span style="color: #ba2f59; font-weight: bold;">LookupMaybe</span> <span style="color: #ba2f59; font-weight: bold;">GDP.Defn</span>
+
+<span style="color: #6c3163; font-weight: bold;">lookupMaybe</span> <span style="color: #715ab1;">::</span>
+  <span style="color: #ba2f59; font-weight: bold;">Eq</span> k <span style="color: #715ab1;">=&gt;</span>
+  <span style="color: #ba2f59; font-weight: bold;">GDP.Named</span> kn k <span style="color: #715ab1;">-&gt;</span>
+  <span style="color: #ba2f59; font-weight: bold;">GDP.Named</span> assocn <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Assoc</span> k v<span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">-&gt;</span>
+  <span style="color: #ba2f59; font-weight: bold;">GDP.Named</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">LookupMaybe</span> kn assocn<span style="color: #3a81c3;">)</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Maybe</span> v<span style="color: #3a81c3;">)</span>
+<span style="color: #6c3163; font-weight: bold;">lookupMaybe</span> k assoc <span style="color: #715ab1;">=</span>
+  GDP.defn <span style="color: #3a81c3;">(</span>Vanilla.lookupMaybe <span style="color: #6c3163;">(</span>GDP.the k<span style="color: #6c3163;">)</span> <span style="color: #6c3163;">(</span>GDP.the assoc<span style="color: #6c3163;">)</span><span style="color: #3a81c3;">)</span>
+
+<span style="color: #6c3163; font-weight: bold;">lookupMaybeKey</span> <span style="color: #715ab1;">::</span>
+  <span style="color: #ba2f59; font-weight: bold;">GDP.Proof</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">IsJust</span> <span style="color: #6c3163;">(</span><span style="color: #ba2f59; font-weight: bold;">LookupMaybe</span> kn assocn<span style="color: #6c3163;">)</span> <span style="color: #715ab1;">--&gt;</span> <span style="color: #ba2f59; font-weight: bold;">IsKey</span> kn assocn<span style="color: #3a81c3;">)</span>
+<span style="color: #6c3163; font-weight: bold;">lookupMaybeKey</span> <span style="color: #715ab1;">=</span> GDP.axiom
+
+<span style="color: #6c3163; font-weight: bold;">test2</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">String</span>
+<span style="color: #6c3163; font-weight: bold;">test2</span> <span style="color: #715ab1;">=</span>
+  GDP.name Vanilla.empty <span style="color: #715ab1;">$</span> <span style="color: #715ab1;">\</span>emp <span style="color: #715ab1;">-&gt;</span>
+    GDP.name <span style="color: #3a81c3;">(</span><span style="color: #4e3163;">2</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Int</span><span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">$</span> <span style="color: #715ab1;">\</span>k <span style="color: #715ab1;">-&gt;</span>
+      GDP.name <span style="color: #2d9574;">""</span> <span style="color: #715ab1;">$</span> <span style="color: #715ab1;">\</span>v <span style="color: #715ab1;">-&gt;</span>
+        GDP.the <span style="color: #715ab1;">$</span>
+          <span style="color: #3a81c3; font-weight: bold;">let</span> assoc <span style="color: #715ab1;">=</span> insert k v emp
+          <span style="color: #3a81c3; font-weight: bold;">in</span> <span style="color: #3a81c3; font-weight: bold;">case</span> GDP.maybeCase <span style="color: #3a81c3;">(</span>lookupMaybe k assoc<span style="color: #3a81c3;">)</span> <span style="color: #3a81c3; font-weight: bold;">of</span>
+               <span style="color: #ba2f59; font-weight: bold;">GDP.IsNothing</span> <span style="color: #3a81c3; font-weight: bold;">_</span> <span style="color: #715ab1;">-&gt;</span> error <span style="color: #2d9574;">"impossible"</span>
+               <span style="color: #ba2f59; font-weight: bold;">GDP.IsJust</span> isJustPf <span style="color: #3a81c3; font-weight: bold;">_</span> <span style="color: #715ab1;">-&gt;</span>
+                 lookup
+                   <span style="color: #3a81c3;">(</span>k <span style="color: #715ab1;">`GDP.suchThat`</span> GDP.implElim lookupMaybeKey isJustPf<span style="color: #3a81c3;">)</span>
+                   assoc
+</pre>
+</div>
+
+<p>
+where <code>IsJust</code> and <code>maybeCase</code> are defined in <code>GDP.Maybe</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163;">{-# LANGUAGE ExplicitNamespaces #-}</span>
+<span style="color: #6c3163;">{-# LANGUAGE TypeOperators #-}</span>
+
+<span style="color: #3a81c3; font-weight: bold;">module</span> <span style="color: #ba2f59; font-weight: bold;">GDP.Maybe</span>
+  <span style="color: #3a81c3;">(</span> <span style="color: #ba2f59; font-weight: bold;">IsNothing</span>
+  , <span style="color: #ba2f59; font-weight: bold;">IsJust</span>
+  , <span style="color: #ba2f59; font-weight: bold;">MaybeCase</span><span style="color: #6c3163;">(</span><span style="color: #ba2f59; font-weight: bold;">IsNothing</span>, <span style="color: #ba2f59; font-weight: bold;">IsJust</span><span style="color: #6c3163;">)</span>
+  , maybeCase
+  <span style="color: #3a81c3;">)</span> <span style="color: #3a81c3; font-weight: bold;">where</span>
+
+<span style="color: #3a81c3; font-weight: bold;">import</span> <span style="color: #3a81c3; font-weight: bold;">qualified</span> <span style="color: #ba2f59; font-weight: bold;">GDP.Named</span> <span style="color: #3a81c3; font-weight: bold;">as</span> <span style="color: #ba2f59; font-weight: bold;">GDP</span>
+
+<span style="color: #3a81c3; font-weight: bold;">data</span> <span style="color: #ba2f59; font-weight: bold;">IsJust</span> name
+<span style="color: #3a81c3; font-weight: bold;">data</span> <span style="color: #ba2f59; font-weight: bold;">IsNothing</span> name
+<span style="color: #3a81c3; font-weight: bold;">data</span> <span style="color: #ba2f59; font-weight: bold;">MaybeCase</span> name a
+  <span style="color: #715ab1;">=</span> <span style="color: #ba2f59; font-weight: bold;">IsNothing</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">GDP.Proof</span> <span style="color: #6c3163;">(</span><span style="color: #ba2f59; font-weight: bold;">IsNothing</span> name<span style="color: #6c3163;">)</span><span style="color: #3a81c3;">)</span>
+  <span style="color: #715ab1;">|</span> <span style="color: #ba2f59; font-weight: bold;">IsJust</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">GDP.Proof</span> <span style="color: #6c3163;">(</span><span style="color: #ba2f59; font-weight: bold;">IsJust</span> name<span style="color: #6c3163;">)</span><span style="color: #3a81c3;">)</span> a
+
+<span style="color: #da8b55;">-- | Called @classify@ in GDP.</span>
+<span style="color: #6c3163; font-weight: bold;">maybeCase</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">GDP.Named</span> name <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Maybe</span> a<span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">MaybeCase</span> name a
+<span style="color: #6c3163; font-weight: bold;">maybeCase</span> x <span style="color: #715ab1;">=</span>
+  <span style="color: #3a81c3; font-weight: bold;">case</span> GDP.the x <span style="color: #3a81c3; font-weight: bold;">of</span>
+    <span style="color: #ba2f59; font-weight: bold;">Nothing</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">IsNothing</span> GDP.axiom
+    <span style="color: #ba2f59; font-weight: bold;">Just</span> a <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">IsJust</span> GDP.axiom a
+</pre>
+</div>
+
+<p>
+Such code could clearly be defined once and for all in a library somewhere, and
+probably even generated by Template Haskell.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2fe2e6d" class="outline-3">
+<h3 id="org2fe2e6d">Liquid Haskell</h3>
+<div class="outline-text-3" id="text-org2fe2e6d">
+<p>
+<a href="https://ucsd-progsys.github.io/liquidhaskell-blog/">Liquid Haskell</a> adds <i>refinement types</i> to Haskell, which are kind of like
+dependent types. It operates as a GHC type-checking plugin, and doesn't affect
+the runtime semantics of Haskell. I'm no Liquid Haskell expert, but luckily <a href="http://ucsd-progsys.github.io/lh-workshop/05-case-study-eval.html">one
+of the case studies in the documentation</a> is on association lists. What follows
+is a slight adaptation.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163;">{-# LANGUAGE LambdaCase #-}</span>
+
+<span style="color: #3a81c3; font-weight: bold;">module</span> <span style="color: #ba2f59; font-weight: bold;">Liquid</span>
+  <span style="color: #3a81c3;">(</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span>
+  , empty
+  , insert
+  , lookup
+  <span style="color: #3a81c3;">)</span> <span style="color: #3a81c3; font-weight: bold;">where</span>
+
+<span style="color: #3a81c3; font-weight: bold;">import</span> <span style="color: #ba2f59; font-weight: bold;">Prelude</span> <span style="color: #3a81c3; font-weight: bold;">hiding</span> <span style="color: #3a81c3;">(</span>lookup<span style="color: #3a81c3;">)</span>
+
+<span style="color: #3a81c3; font-weight: bold;">import</span>           <span style="color: #ba2f59; font-weight: bold;">Data.Set</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Set</span><span style="color: #3a81c3;">)</span>
+<span style="color: #3a81c3; font-weight: bold;">import</span> <span style="color: #3a81c3; font-weight: bold;">qualified</span> <span style="color: #ba2f59; font-weight: bold;">Data.Set</span> <span style="color: #3a81c3; font-weight: bold;">as</span> <span style="color: #ba2f59; font-weight: bold;">Set</span>
+</pre>
+</div>
+
+<p>
+The <code>Assoc</code> type is isomorphic to the vanilla implementation:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #3a81c3; font-weight: bold;">data</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> k v
+  <span style="color: #715ab1;">=</span> <span style="color: #ba2f59; font-weight: bold;">Nil</span>
+  <span style="color: #715ab1;">|</span> <span style="color: #ba2f59; font-weight: bold;">Cons</span> k v <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Assoc</span> k v<span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+
+<p>
+<code>keys</code> retrieves the set of keys in the association list. It's only used at the
+type level. Using <code>keys</code>, we can refine the type of <code>empty</code> to state that <code>empty</code> has
+no keys. Types like <code>{ v : T | C v }</code> should be read like "values of type <code>T</code> that
+additionally satisfy constraint <code>C</code>". The base type <code>T</code> can almost always be
+omitted, as it can be inferred from the vanilla-Haskell type signature.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163;">{-@ measure keys @-}</span>
+<span style="color: #6c3163; font-weight: bold;">keys</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Ord</span> k <span style="color: #715ab1;">=&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> k v <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Set</span> k
+<span style="color: #6c3163; font-weight: bold;">keys</span> <span style="color: #715ab1;">=</span>
+  <span style="color: #715ab1;">\</span><span style="color: #3a81c3; font-weight: bold;">case</span>
+    <span style="color: #ba2f59; font-weight: bold;">Nil</span> <span style="color: #715ab1;">-&gt;</span> Set.empty
+    <span style="color: #ba2f59; font-weight: bold;">Cons</span> k <span style="color: #3a81c3; font-weight: bold;">_</span> rest <span style="color: #715ab1;">-&gt;</span> Set.union <span style="color: #3a81c3;">(</span>Set.singleton k<span style="color: #3a81c3;">)</span> <span style="color: #3a81c3;">(</span>keys rest<span style="color: #3a81c3;">)</span>
+
+<span style="color: #6c3163;">{-@ empty :: { v : _ | keys v == Set.empty } @-}</span>
+<span style="color: #6c3163; font-weight: bold;">empty</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> k v
+<span style="color: #6c3163; font-weight: bold;">empty</span> <span style="color: #715ab1;">=</span> <span style="color: #ba2f59; font-weight: bold;">Nil</span>
+</pre>
+</div>
+
+<p>
+Similarly, the function <code>addKey</code> is used to refine the type of <code>insert</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163;">{-@ inline addKey @-}</span>
+<span style="color: #6c3163; font-weight: bold;">addKey</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Ord</span> k <span style="color: #715ab1;">=&gt;</span> k <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> k v <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Set</span> k
+<span style="color: #6c3163; font-weight: bold;">addKey</span> k kvs <span style="color: #715ab1;">=</span> Set.union <span style="color: #3a81c3;">(</span>Set.singleton k<span style="color: #3a81c3;">)</span> <span style="color: #3a81c3;">(</span>keys kvs<span style="color: #3a81c3;">)</span>
+
+<span style="color: #6c3163;">{-@ insert :: k : _ -&gt; _ -&gt; assoc : _ -&gt; { v : _ | keys v = addKey k assoc } @-}</span>
+<span style="color: #6c3163; font-weight: bold;">insert</span> <span style="color: #715ab1;">::</span> k <span style="color: #715ab1;">-&gt;</span> v <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> k v <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> k v
+<span style="color: #6c3163; font-weight: bold;">insert</span> <span style="color: #715ab1;">=</span> <span style="color: #ba2f59; font-weight: bold;">Cons</span>
+</pre>
+</div>
+
+<p>
+Finally, <code>has</code> is used to express the precondition on <code>lookup</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163;">{-@ inline has @-}</span>
+<span style="color: #6c3163; font-weight: bold;">has</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Ord</span> k <span style="color: #715ab1;">=&gt;</span> k <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> k v <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Bool</span>
+<span style="color: #6c3163; font-weight: bold;">has</span> k assoc <span style="color: #715ab1;">=</span> Set.member k <span style="color: #3a81c3;">(</span>keys assoc<span style="color: #3a81c3;">)</span>
+
+<span style="color: #6c3163;">{-@ lookup :: assoc : _ -&gt; k : { key : _ | has key assoc } -&gt; v @-}</span>
+<span style="color: #6c3163; font-weight: bold;">lookup</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Eq</span> k <span style="color: #715ab1;">=&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> k v <span style="color: #715ab1;">-&gt;</span> k <span style="color: #715ab1;">-&gt;</span> v
+<span style="color: #6c3163; font-weight: bold;">lookup</span> assoc k <span style="color: #715ab1;">=</span>
+  <span style="color: #3a81c3; font-weight: bold;">case</span> assoc <span style="color: #3a81c3; font-weight: bold;">of</span>
+    <span style="color: #ba2f59; font-weight: bold;">Nil</span> <span style="color: #715ab1;">-&gt;</span> error <span style="color: #2d9574;">"Impossible"</span>
+    <span style="color: #ba2f59; font-weight: bold;">Cons</span> k' v rest <span style="color: #715ab1;">-&gt;</span>
+      <span style="color: #3a81c3; font-weight: bold;">if</span> k <span style="color: #715ab1;">==</span> k'
+      <span style="color: #3a81c3; font-weight: bold;">then</span> v
+      <span style="color: #3a81c3; font-weight: bold;">else</span> lookup rest k
+</pre>
+</div>
+
+<p>
+Note that the order of parameters to <code>lookup</code> has to be flipped so that <code>assoc</code> is
+in scope in the refinement type for <code>k</code>.
+</p>
+
+<p>
+Using this API looks almost exactly like it does for the vanilla implementation:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">test</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">String</span>
+<span style="color: #6c3163; font-weight: bold;">test</span> <span style="color: #715ab1;">=</span> lookup <span style="color: #3a81c3;">(</span>insert <span style="color: #4e3163;">2</span> <span style="color: #2d9574;">""</span> empty<span style="color: #3a81c3;">)</span> <span style="color: #4e3163;">2</span>
+</pre>
+</div>
+
+<p>
+The type-checker will catch invalid calls to <code>lookup</code>:
+</p>
+
+<pre class="example">
+src/Liquid.hs:58:36-45: error:
+    Liquid Type Mismatch
+    .
+    The inferred type
+      VV : {v : GHC.Types.Int | v == 3}
+    .
+    is not a subtype of the required type
+      VV : {VV : GHC.Types.Int | Set_mem VV (Liquid.keys ?d)}
+    .
+    in the context
+      ?b : {?b : (Liquid.Assoc GHC.Types.Int [GHC.Types.Char]) | Liquid.keys ?b == Set_empty 0}
+
+      ?d : {?d : (Liquid.Assoc GHC.Types.Int [GHC.Types.Char]) | Liquid.keys ?d == Set_cup (Set_sng 2) (Liquid.keys ?b)}
+   |
+58 | test2 = lookup (insert 2 "" empty) (3 :: Int)
+   |                                    ^^^^^^^^^^
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org0a694e5" class="outline-3">
+<h3 id="org0a694e5">Conclusions</h3>
+<div class="outline-text-3" id="text-org0a694e5">
+</div>
+<div id="outline-container-org64e260e" class="outline-4">
+<h4 id="org64e260e">Smart Constructors and the Existential Trick</h4>
+<div class="outline-text-4" id="text-org64e260e">
+<p>
+Smart constructors and the existential trick are likely the most accessible of
+all of the above techniques. They require only a single fairly conservative
+extension to Haskell 2010 (<code>-XExistentialQuantification</code> or <code>-XRank2Types</code>).
+However, the safety argument relies on the correct implementation of the <code>newtype</code>
+abstraction by the library author; in this case it would be easy enough to
+accidentally export the <code>Key</code> constructor or provide some other way of
+constructing a <code>Key</code> that violates the intended invariant. Also, a new <code>newtype</code> and
+smart constructor generally have to be custom-built for each desired safety
+property.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orga02f820" class="outline-4">
+<h4 id="orga02f820">GADTs, or Dependent Types</h4>
+<div class="outline-text-4" id="text-orga02f820">
+<p>
+Dependent types significantly reduce the possibility of programmer error. Once
+appropriate definitions for <code>Assoc</code> and <code>Key</code> are found, it is impossible for the
+library author to mis-implement <code>isKey</code>. Like smart constructors and the vanilla
+Haskell code, they require no external tooling nor libraries. However,
+programming with dependently-typed techniques has its downsides:
+</p>
+
+<ul class="org-ul">
+<li>It requires knowledge of lots of complex GHC extensions like GADTs, type families
+(<code>-XTypeFamilies</code>), data kinds/polykinds, and rank-n types.</li>
+<li>Since types carry proof-relevant information (such as the <code>keys</code> type index on
+the <code>Assoc</code> type), you can end up with a ton of slight variations on a single
+interface depending on the properties you need to prove.</li>
+<li>It's hard to write dependently-typed code, so in practice you can end up with
+inefficient code due to the difficulty of proving efficient code correct. This
+is pretty much why this post focused on association lists instead of a more
+efficient map structure: I think it would probably be pretty hairy to write
+one up with GADTs. Consider also that <code>Key</code> is linearly sized in the size of the
+association map.</li>
+<li>GADTs are not well-supported by existing infrastructure, so we can't e.g.
+derive <code>TestEquality</code> nor <code>Functor</code> instances, we have to write them ourselves.
+It's also generally impossible even to hand-write instances for hugely useful
+typeclasses like <code>Generic</code> and <code>Data</code>. In fact, many important type classes
+relating to singletons aren't even defined in <code>base</code> (see, e.g., the typeclasses
+in <code>parameterized-utils</code>). Libraries like <code>singletons</code> and <code>parameterized-utils</code> do
+have Template Haskell techniques for generating instances for certain of these
+classes.</li>
+<li>Error messages involving dependently typed Haskell extensions continue a
+venerable tradition of flummoxing learners.</li>
+</ul>
+
+<p>
+I'm very familiar with dependent types, which likely partially accounts for why
+this list is so extensive.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org718a511" class="outline-4">
+<h4 id="org718a511">GDP</h4>
+<div class="outline-text-4" id="text-org718a511">
+<p>
+The GDP approach is remarkably flexible. The ability to define arbitrary lemmas
+about an API gives the API consumers a huge amount of power. For example, it was
+possible to provide two ways to produce an <code>IsKey</code> proof without changing the
+actual implementation. Furthermore, the GDP approach was able to directly reuse
+the vanilla Haskell implementation by simply providing wrappers with more
+interesting type signatures.
+</p>
+
+<p>
+On the other hand, understanding the GDP approach requires a good deal of study.
+GDP also requires trusting the library author to provide sound reasoning
+principles. The GDP paper outlines a few possible approaches (including use of
+Liquid Haskell) to improve confidence in the exported lemmas.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org80f9976" class="outline-4">
+<h4 id="org80f9976">Liquid Haskell</h4>
+<div class="outline-text-4" id="text-org80f9976">
+<p>
+Liquid Haskell was a bit difficult to install, some of the project's packages
+had too-restrictive bounds (resulting in Cabal being unable to find a build
+plan) whereas others had too-permissive bounds (resulting in compilation
+failures when Cabal did find a plan). Generally, Liquid Haskell is the
+unfortunate combination of an impressive amount of infrastructure and code
+that's maintained mostly by academics. They've done a great job of making it
+<i>fairly</i> easy to get started, but I wouldn't rely on it for a commercial project
+for mundane reasons like not being able to upgrade to the latest GHC until the
+Liquid Haskell team releases a corresponding version of <code>liquid-base</code>.
+</p>
+
+<p>
+Liquid Haskell sometimes requires you to write code in a particular way,
+rejecting semantically equivalent (and arguably, clearer) rewrites. For
+instance, I originally tried to write <code>keys</code> like so:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163;">{-@ measure keys @-}</span>
+<span style="color: #6c3163; font-weight: bold;">keys</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Ord</span> k <span style="color: #715ab1;">=&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> k v <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Set</span> k
+<span style="color: #6c3163; font-weight: bold;">keys</span> <span style="color: #715ab1;">=</span>
+  <span style="color: #715ab1;">\</span><span style="color: #3a81c3; font-weight: bold;">case</span>
+    <span style="color: #ba2f59; font-weight: bold;">Nil</span> <span style="color: #715ab1;">-&gt;</span> Set.empty
+    <span style="color: #ba2f59; font-weight: bold;">Cons</span> k <span style="color: #3a81c3; font-weight: bold;">_</span> rest <span style="color: #715ab1;">-&gt;</span> Set.insert k <span style="color: #3a81c3;">(</span>keys rest<span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+
+<p>
+That didn't work, Liquid Haskell said <code>Unbound symbol Data.Set.Internal.insert</code>.
+So I tried to factor the insert-via-union into a <code>where</code> binding for the sake of
+clarity like so:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163;">{-@ measure keys @-}</span>
+<span style="color: #6c3163; font-weight: bold;">keys</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Ord</span> k <span style="color: #715ab1;">=&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Assoc</span> k v <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Set</span> k
+<span style="color: #6c3163; font-weight: bold;">keys</span> <span style="color: #715ab1;">=</span>
+  <span style="color: #715ab1;">\</span><span style="color: #3a81c3; font-weight: bold;">case</span>
+    <span style="color: #ba2f59; font-weight: bold;">Nil</span> <span style="color: #715ab1;">-&gt;</span> Set.empty
+    <span style="color: #ba2f59; font-weight: bold;">Cons</span> k <span style="color: #3a81c3; font-weight: bold;">_</span> rest <span style="color: #715ab1;">-&gt;</span> setInsert k <span style="color: #3a81c3;">(</span>keys rest<span style="color: #3a81c3;">)</span>
+  <span style="color: #3a81c3; font-weight: bold;">where</span> setInsert x <span style="color: #715ab1;">=</span> Set.union <span style="color: #3a81c3;">(</span>Set.singleton x<span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+
+<p>
+This resulted in <code>Uh oh. Cannot create measure 'Liquid.keys': Does not have a
+case-of at the top-level</code>. If I understand correctly, this is probably because
+Liquid Haskell analyzes code at the GHC Core level, so it's sensitive to changes
+that look similar at the source level but compile to different Core. Such errors
+are annoying, but I was able to find workarounds whenever they came up.
+Just like "dependent Haskell", Liquid Haskell error messages leave a lot to be
+desired.
+</p>
+
+<p>
+Like dependently typed Haskell and GDP, actually understanding Liquid Haskell
+would take at least several hours if not days of study. That being said, I was
+able to get started with this example in maybe an hour or so using their
+documentation.
+</p>
+
+<p>
+Aside from the type signatures, the Liquid Haskell implementation looks pretty
+much exactly like the "vanilla" implementation. Remarkably, the API is also
+almost identical, and users could choose whether or not to use (and understand!)
+Liquid Haskell when consuming the API, unlike in the other techniques.
+</p>
+
+<p>
+As in the dependently-typed approach, less trust in the library author is
+required.
+</p>
+
+<p>
+Like GDP, I believe that Liquid Haskell provides the ability to export lemmas
+for consumers to use in constructing proofs. Unlike GDP, I believe all such
+lemmas can be machine-checked.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orged9c775" class="outline-4">
+<h4 id="orged9c775">Comparison and Takeaways</h4>
+<div class="outline-text-4" id="text-orged9c775">
+<p>
+The following table summarizes the above remarks. A table can't have much nuance
+and I'm not an expert in GDP nor Liquid Haskell, so the ratings should be taken
+with a hefty grain of salt.
+</p>
+
+<p>
+Key:
+</p>
+
+<ul class="org-ul">
+<li>Trust: How much you need to trust the library author, i.e., to what degree are
+the claims of API safety machine-checked? (Lower is better.)</li>
+<li>Knowledge: How much do you need to learn to effectively apply this technique?
+(Lower is better.)</li>
+<li>Flexibility: How much flexibility do library consumers have to prove that
+they're using the API safely? (Higher is better.)</li>
+<li>Infrastructure: How much infrastructure is necessary to make the approach
+work? (Lower is better.)</li>
+<li>Reuse: How reusable are the components, e.g., if you needed to prove a
+different property or construct a larger API? (Higher is better.)</li>
+</ul>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Approach</th>
+<th scope="col" class="org-left">Trust</th>
+<th scope="col" class="org-left">Knowledge</th>
+<th scope="col" class="org-left">Flexibility</th>
+<th scope="col" class="org-left">Infrastructure</th>
+<th scope="col" class="org-left">Reuse</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">Vanilla</td>
+<td class="org-left">n/a</td>
+<td class="org-left">Low</td>
+<td class="org-left">n/a</td>
+<td class="org-left">None</td>
+<td class="org-left">n/a</td>
+</tr>
+
+<tr>
+<td class="org-left">Smart</td>
+<td class="org-left">High</td>
+<td class="org-left">Med</td>
+<td class="org-left">Low</td>
+<td class="org-left">Low</td>
+<td class="org-left">Low</td>
+</tr>
+
+<tr>
+<td class="org-left">GADTs</td>
+<td class="org-left">Low</td>
+<td class="org-left">High</td>
+<td class="org-left">Med</td>
+<td class="org-left">Med</td>
+<td class="org-left">Med</td>
+</tr>
+
+<tr>
+<td class="org-left">GDP</td>
+<td class="org-left">High</td>
+<td class="org-left">High</td>
+<td class="org-left">High</td>
+<td class="org-left">High</td>
+<td class="org-left">High</td>
+</tr>
+
+<tr>
+<td class="org-left">Liquid</td>
+<td class="org-left">Low</td>
+<td class="org-left">High</td>
+<td class="org-left">High</td>
+<td class="org-left">Very high</td>
+<td class="org-left">High</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+My overall take is that all of these techniques are under-utilized and
+under-explored. GADTs/dependent types, GDP, and Liquid Haskell would all be much
+easier to write if there were more widely-available libraries for programming
+with them. Given the attention that dependent types have received in the Haskell
+community, I think GDP and Liquid Haskell are especially neglected.
+</p>
+
+<p>
+As the table shows at a glance, these techniques offer a wide range of benefits
+and drawbacks, which indicates that they're likely appropriate for different
+use-cases. Broad adoption of several would enable Haskell programmers to use
+techniques because they're appropriate to their goals, rather than because they
+have a paucity of options.
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+
+<div class="footdef"><sup><a id="fn.1" class="footnum" href="#fnr.1" role="doc-backlink">1</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
+These are taken from the Ghosts of Departed Proofs paper.
+</p></div></div>
+
+
+</div>
+</div></div>
+</body>
+</html>
