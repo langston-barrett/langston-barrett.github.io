@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-08-13 Sat 12:37 -->
+<!-- 2022-08-31 Wed 16:01 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Haskell Style Guide</title>
@@ -208,10 +208,17 @@
 <ul>
 <li><a href="#org0e45ead">Haskell Style Guide</a>
 <ul>
-<li><a href="#orgcd91120">Write Explicit Export Lists</a>
+<li><a href="#org9eaf00c">Strongly Recommended</a></li>
+<li><a href="#orgf664bd8">Recommended</a>
 <ul>
-<li><a href="#org29ba9d8">Example</a></li>
-<li><a href="#org5cac07c">Justification</a></li>
+<li><a href="#org42ed6dc">Create Abstract Newtypes</a></li>
+<li><a href="#orgcd91120">Write Explicit Export Lists</a></li>
+<li><a href="#org4d99019">Use <code>toInteger</code></a></li>
+</ul>
+</li>
+<li><a href="#org5cf41f9">Nice to Have</a>
+<ul>
+<li><a href="#org4862066">Minimal Polymorphism</a></li>
 </ul>
 </li>
 </ul>
@@ -251,6 +258,19 @@ reviews.
 </p>
 
 <p>
+The recommendations in this guide are split into three levels, based on the
+author's perception of their relative importance and applicability:
+</p>
+
+<ul class="org-ul">
+<li><a href="#org9eaf00c">Strongly Recommended</a>: These recommendations are broadly applicable and have a
+high value-to-weight ratio.</li>
+<li><a href="#orgf664bd8">Recommended</a>: These recommendations may apply less universally, or be less
+than essential to a strong style guide.</li>
+<li><a href="#org5cf41f9">Nice to Have</a>: These recommendations are nice but not essential.</li>
+</ul>
+
+<p>
 This document aspires to confirm to <a href="./meta.html">my Meta Style Guide</a>.
 </p>
 
@@ -259,40 +279,155 @@ Do you have ideas for this guide? <a href="../about.html">Contact me</a>!
 </p>
 </div>
 
-<div id="outline-container-orgcd91120" class="outline-3">
-<h3 id="orgcd91120">Write Explicit Export Lists</h3>
-<div class="outline-text-3" id="text-orgcd91120">
+<div id="outline-container-org9eaf00c" class="outline-3">
+<h3 id="org9eaf00c">Strongly Recommended</h3>
+</div>
+<div id="outline-container-orgf664bd8" class="outline-3">
+<h3 id="orgf664bd8">Recommended</h3>
+<div class="outline-text-3" id="text-orgf664bd8">
+</div>
+<div id="outline-container-org42ed6dc" class="outline-4">
+<h4 id="org42ed6dc">Create Abstract Newtypes</h4>
+<div class="outline-text-4" id="text-org42ed6dc">
 <p>
-Every module should have an explicit export list.
+Create many newtypes and hide their constructors. Where applicable, use the
+"smart constructor pattern".
 </p>
 </div>
 
-<div id="outline-container-org29ba9d8" class="outline-4">
-<h4 id="org29ba9d8">Example</h4>
-<div class="outline-text-4" id="text-org29ba9d8">
+<ul class="org-ul">
+<li><a id="org9dc4d4f"></a>Example<br />
+<div class="outline-text-6" id="text-org9dc4d4f">
 <p>
 Instead of
 </p>
+
 <div class="org-src-container">
-<pre class="src src-python">module Foo where
+<pre class="src src-haskell"><span style="color: #3a81c3; font-weight: bold;">module</span> <span style="color: #ba2f59; font-weight: bold;">Main</span> <span style="color: #3a81c3; font-weight: bold;">where</span>
+
+<span style="color: #6c3163; font-weight: bold;">createUser</span> <span style="color: #715ab1;">::</span>
+  <span style="color: #da8b55;">-- | First name of user. Must not contain whitespace.</span>
+  <span style="color: #ba2f59; font-weight: bold;">Text</span> <span style="color: #715ab1;">-&gt;</span>
+  <span style="color: #ba2f59; font-weight: bold;">Maybe</span> <span style="color: #ba2f59; font-weight: bold;">User</span>
+<span style="color: #6c3163; font-weight: bold;">createUser</span> nm <span style="color: #715ab1;">=</span>
+  <span style="color: #3a81c3; font-weight: bold;">if</span> textHasWhitespace nm
+  <span style="color: #3a81c3; font-weight: bold;">then</span> <span style="color: #ba2f59; font-weight: bold;">Nothing</span>
+  <span style="color: #3a81c3; font-weight: bold;">else</span> <span style="color: #ba2f59; font-weight: bold;">Just</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">User</span> nm<span style="color: #3a81c3;">)</span>
 </pre>
 </div>
 <p>
 write
 </p>
 <div class="org-src-container">
-<pre class="src src-python">module Foo
-  <span style="color: #3a81c3;">(</span> Type1<span style="color: #6c3163;">(</span>field1<span style="color: #6c3163;">)</span>
-  , function1
-  <span style="color: #3a81c3;">)</span> where
+<pre class="src src-haskell"><span style="color: #3a81c3; font-weight: bold;">module</span> <span style="color: #ba2f59; font-weight: bold;">FirstName</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">FirstName</span>, makeFirstName, getFirstName<span style="color: #3a81c3;">)</span> <span style="color: #3a81c3; font-weight: bold;">where</span>
+
+<span style="color: #da8b55;">-- | First name, e.g., of a user.</span>
+<span style="color: #da8b55;">--</span>
+<span style="color: #da8b55;">-- Invariant: Does not contain whitespace. Constructor not exported to preserve</span>
+<span style="color: #da8b55;">-- invariant.</span>
+<span style="color: #3a81c3; font-weight: bold;">newtype</span> <span style="color: #ba2f59; font-weight: bold;">FirstName</span> <span style="color: #715ab1;">=</span> <span style="color: #ba2f59; font-weight: bold;">FirstName</span> <span style="color: #3a81c3;">{</span> _getFirstName <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Text</span> <span style="color: #3a81c3;">}</span>
+  <span style="color: #3a81c3; font-weight: bold;">deriving</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">Eq</span>, <span style="color: #ba2f59; font-weight: bold;">Ord</span><span style="color: #3a81c3;">)</span>
+
+<span style="color: #6c3163; font-weight: bold;">makeFirstName</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Text</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Maybe</span> <span style="color: #ba2f59; font-weight: bold;">FirstName</span>
+<span style="color: #6c3163; font-weight: bold;">makeFirstName</span> nm <span style="color: #715ab1;">=</span>
+  <span style="color: #3a81c3; font-weight: bold;">if</span> textHasWhitespace nm
+  <span style="color: #3a81c3; font-weight: bold;">then</span> <span style="color: #ba2f59; font-weight: bold;">Nothing</span>
+  <span style="color: #3a81c3; font-weight: bold;">else</span> <span style="color: #ba2f59; font-weight: bold;">Just</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">FirstName</span> nm<span style="color: #3a81c3;">)</span>
+
+<span style="color: #2aa1ae; background-color: #ecf3ec;">-- </span><span style="color: #2aa1ae; background-color: #ecf3ec;">Note: don't export _getFirstName directly, as record selectors can break the</span>
+<span style="color: #2aa1ae; background-color: #ecf3ec;">-- </span><span style="color: #2aa1ae; background-color: #ecf3ec;">abstraction barrier we're establishing by not exporting the constructor.</span>
+<span style="color: #6c3163; font-weight: bold;">getFirstName</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">FirstName</span> <span style="color: #715ab1;">-&gt;</span> <span style="color: #ba2f59; font-weight: bold;">Text</span>
+<span style="color: #6c3163; font-weight: bold;">getFirstName</span> nm <span style="color: #715ab1;">=</span> _getFirstName
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #3a81c3; font-weight: bold;">module</span> <span style="color: #ba2f59; font-weight: bold;">Main</span> <span style="color: #3a81c3; font-weight: bold;">where</span>
+
+<span style="color: #3a81c3; font-weight: bold;">import</span> <span style="color: #ba2f59; font-weight: bold;">FirstName</span> <span style="color: #3a81c3;">(</span><span style="color: #ba2f59; font-weight: bold;">FirstName</span><span style="color: #3a81c3;">)</span>
+
+<span style="color: #6c3163; font-weight: bold;">createUser</span> <span style="color: #715ab1;">::</span>
+  <span style="color: #da8b55;">-- | First name of user.</span>
+  <span style="color: #ba2f59; font-weight: bold;">FirstName</span> <span style="color: #715ab1;">-&gt;</span>
+  <span style="color: #ba2f59; font-weight: bold;">User</span>
+<span style="color: #6c3163; font-weight: bold;">createUser</span> nm <span style="color: #715ab1;">=</span> <span style="color: #ba2f59; font-weight: bold;">User</span> nm  <span style="color: #2aa1ae; background-color: #ecf3ec;">-- </span><span style="color: #2aa1ae; background-color: #ecf3ec;">no need to check for whitespace!</span>
 </pre>
 </div>
 </div>
+</li>
+
+<li><a id="org96a4a08"></a>Justification<br />
+<div class="outline-text-6" id="text-org96a4a08">
+<p>
+A <code>newtype</code> provides semantic clarity&#x2014;the name often hints at what the
+programmer intended to represent, rather than how they intended to represent it.
+In the example above, the <code>FirstName</code> newtype essentially obviates the comment on
+the parameter of <code>createUser</code>&#x2014;it's already clear from the type what the
+parameter represents.
+</p>
+
+<p>
+A <code>newtype</code> with a hidden constructor and an exported "smart" constructor can
+maintain data structure invariants. Because these invariants are local to the
+module in which the newtype is defined, they're relatively easy to check. In the
+example above, it's easy to see that it's impossible to construct a <code>FirstName</code>
+containing whitespace outside of the module in which <code>FirstName</code> is defined. These
+invariants can also help avoid unnecessary partiality in other parts of the
+codebase, like how <code>createUser</code> no longer needs to check for whitespace, and so no
+longer needs to return a <code>Maybe</code>.
+</p>
+
+<p>
+The downside to this technique is the need to create additional modules and
+documentation. This amount of effort may not be appropriate in all
+circumstances.
+</p>
+</div>
+</li>
+
+<li><a id="org57fbef3"></a>See Also<br />
+<div class="outline-text-6" id="text-org57fbef3">
+<p>
+<a href="https://haskell-at-work.com/episodes/2018-02-26-validation-with-smart-constructors.html">https://haskell-at-work.com/episodes/2018-02-26-validation-with-smart-constructors.html</a>
+</p>
+</div>
+</li>
+</ul>
 </div>
 
-<div id="outline-container-org5cac07c" class="outline-4">
-<h4 id="org5cac07c">Justification</h4>
-<div class="outline-text-4" id="text-org5cac07c">
+<div id="outline-container-orgcd91120" class="outline-4">
+<h4 id="orgcd91120">Write Explicit Export Lists</h4>
+<div class="outline-text-4" id="text-orgcd91120">
+<p>
+Every module should have an explicit export list.
+</p>
+</div>
+
+<ul class="org-ul">
+<li><a id="org784ebb4"></a>Example<br />
+<div class="outline-text-6" id="text-org784ebb4">
+<p>
+Instead of
+</p>
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #3a81c3; font-weight: bold;">module</span> <span style="color: #ba2f59; font-weight: bold;">Foo</span> <span style="color: #3a81c3; font-weight: bold;">where</span>
+</pre>
+</div>
+<p>
+write
+</p>
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #3a81c3; font-weight: bold;">module</span> <span style="color: #ba2f59; font-weight: bold;">Foo</span>
+  <span style="color: #3a81c3;">(</span> <span style="color: #ba2f59; font-weight: bold;">Type1</span><span style="color: #6c3163;">(</span>field1<span style="color: #6c3163;">)</span>
+  , function1
+  <span style="color: #3a81c3;">)</span> <span style="color: #3a81c3; font-weight: bold;">where</span>
+</pre>
+</div>
+</div>
+</li>
+
+<li><a id="orgc85688a"></a>Justification<br />
+<div class="outline-text-6" id="text-orgc85688a">
 <p>
 Using an explicit export list, a module may choose to not export certain
 functions. This leaves the module free to change their implementations or remove
@@ -307,6 +442,127 @@ functions and types that have been exported. This makes it easier to reuse the
 functionality in the module.
 </p>
 </div>
+</li>
+</ul>
+</div>
+
+<div id="outline-container-org4d99019" class="outline-4">
+<h4 id="org4d99019">Use <code>toInteger</code></h4>
+<div class="outline-text-4" id="text-org4d99019">
+<p>
+Use <code>toInteger</code> instead of <code>fromIntegral</code> and <code>toEnum</code> when possible.
+</p>
+</div>
+
+<ul class="org-ul">
+<li><a id="org709f897"></a>Example<br />
+<div class="outline-text-5" id="text-org709f897">
+<p>
+Instead of
+</p>
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">fromIntegral</span> <span style="color: #3a81c3;">(</span><span style="color: #4e3163;">0</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Int</span><span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Integer</span>
+</pre>
+</div>
+<p>
+or
+</p>
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">toEnum</span> <span style="color: #3a81c3;">(</span><span style="color: #4e3163;">0</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Int</span><span style="color: #3a81c3;">)</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Integer</span>
+</pre>
+</div>
+<p>
+write
+</p>
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">toInteger</span> <span style="color: #3a81c3;">(</span><span style="color: #4e3163;">0</span> <span style="color: #715ab1;">::</span> <span style="color: #ba2f59; font-weight: bold;">Int</span><span style="color: #3a81c3;">)</span>
+</pre>
+</div>
+</div>
+</li>
+
+<li><a id="org6a10479"></a>Justification<br />
+<div class="outline-text-5" id="text-org6a10479">
+<p>
+<code>fromIntegral</code> and <code>toEnum</code> can throw exceptions:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fundamental">ghci&gt; (fromIntegral :: Integer -&gt; Natural) (-1)
+Exception: arithmetic underflow
+
+ghci&gt; toEnum ((-1) :: Int) :: Natural
+Exception: toEnum: unexpected negative Int
+
+ghci&gt; (toEnum :: Int -&gt; Word) (-1)
+Exception: Enum.toEnum{Word}: tag (-1) is outside of bounds (0,18446744073709551615)
+</pre>
+</div>
+
+<p>
+<code>fromIntegral</code> can also cause surprising over- and under-flow:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fundamental">ghci&gt; (fromIntegral :: Integer -&gt; Word) (-1)
+18446744073709551615
+</pre>
+</div>
+
+<p>
+Finally, it is generally more clear to use less-polymorphic functions.
+</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org5cf41f9" class="outline-3">
+<h3 id="org5cf41f9">Nice to Have</h3>
+<div class="outline-text-3" id="text-org5cf41f9">
+</div>
+<div id="outline-container-org4862066" class="outline-4">
+<h4 id="org4862066">Minimal Polymorphism</h4>
+<div class="outline-text-4" id="text-org4862066">
+<p>
+Use less-polymorphic variants of functions where possible.
+</p>
+</div>
+
+<ul class="org-ul">
+<li><a id="orgf5518e1"></a>Example<br />
+<div class="outline-text-5" id="text-orgf5518e1">
+<p>
+Instead of
+</p>
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">fmap</span> <span style="color: #3a81c3;">(</span><span style="color: #715ab1;">+</span><span style="color: #4e3163;">1</span><span style="color: #3a81c3;">)</span> <span style="color: #3a81c3;">[</span><span style="color: #4e3163;">1</span>, <span style="color: #4e3163;">2</span>, <span style="color: #4e3163;">3</span><span style="color: #3a81c3;">]</span>
+</pre>
+</div>
+<p>
+write
+</p>
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #6c3163; font-weight: bold;">map</span> <span style="color: #3a81c3;">(</span><span style="color: #715ab1;">+</span><span style="color: #4e3163;">1</span><span style="color: #3a81c3;">)</span> <span style="color: #3a81c3;">[</span><span style="color: #4e3163;">1</span>, <span style="color: #4e3163;">2</span>, <span style="color: #4e3163;">3</span><span style="color: #3a81c3;">]</span>
+</pre>
+</div>
+</div>
+</li>
+
+<li><a id="org0e95d03"></a>Justification<br />
+<div class="outline-text-5" id="text-org0e95d03">
+<p>
+The use of a polymorphic function sends a signal to the reader that the
+polymorphism was necessary. This is confusing when the polymorphism was, in
+fact, unnecessary. Furthermore, a less polymorphic function provides more
+information to the reader about the types of its arguments: in the expression
+<code>fmap f x</code>, the type of <code>x</code> could be any <code>Functor</code>, whereas in <code>Data.Set.map f x</code>, <code>x</code>
+must have type <code>Set a</code> for some <code>a</code>.
+</p>
+</div>
+</li>
+</ul>
 </div>
 </div>
 </div>
