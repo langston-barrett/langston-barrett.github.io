@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-08-31 Wed 16:01 -->
+<!-- 2022-08-31 Wed 16:05 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Haskell Style Guide</title>
@@ -213,12 +213,22 @@
 <ul>
 <li><a href="#org42ed6dc">Create Abstract Newtypes</a></li>
 <li><a href="#orgcd91120">Write Explicit Export Lists</a></li>
-<li><a href="#org4d99019">Use <code>toInteger</code></a></li>
+<li><a href="#org4d99019">Use <code>toInteger</code></a>
+<ul>
+<li><a href="#org60bb4de">Example</a></li>
+<li><a href="#org90deb65">Justification</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#org5cf41f9">Nice to Have</a>
 <ul>
-<li><a href="#org4862066">Minimal Polymorphism</a></li>
+<li><a href="#org4862066">Minimal Polymorphism</a>
+<ul>
+<li><a href="#org22ec005">Example</a></li>
+<li><a href="#org7202784">Justification</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -296,8 +306,8 @@ Create many newtypes and hide their constructors. Where applicable, use the
 </div>
 
 <ul class="org-ul">
-<li><a id="org9dc4d4f"></a>Example<br />
-<div class="outline-text-6" id="text-org9dc4d4f">
+<li><a id="orgf5518e1"></a>Example<br />
+<div class="outline-text-6" id="text-orgf5518e1">
 <p>
 Instead of
 </p>
@@ -356,8 +366,8 @@ write
 </div>
 </li>
 
-<li><a id="org96a4a08"></a>Justification<br />
-<div class="outline-text-6" id="text-org96a4a08">
+<li><a id="org0e95d03"></a>Justification<br />
+<div class="outline-text-6" id="text-org0e95d03">
 <p>
 A <code>newtype</code> provides semantic clarity&#x2014;the name often hints at what the
 programmer intended to represent, rather than how they intended to represent it.
@@ -404,8 +414,8 @@ Every module should have an explicit export list.
 </div>
 
 <ul class="org-ul">
-<li><a id="org784ebb4"></a>Example<br />
-<div class="outline-text-6" id="text-org784ebb4">
+<li><a id="org0b256ae"></a>Example<br />
+<div class="outline-text-6" id="text-org0b256ae">
 <p>
 Instead of
 </p>
@@ -426,8 +436,8 @@ write
 </div>
 </li>
 
-<li><a id="orgc85688a"></a>Justification<br />
-<div class="outline-text-6" id="text-orgc85688a">
+<li><a id="org4098231"></a>Justification<br />
+<div class="outline-text-6" id="text-org4098231">
 <p>
 Using an explicit export list, a module may choose to not export certain
 functions. This leaves the module free to change their implementations or remove
@@ -454,9 +464,9 @@ Use <code>toInteger</code> instead of <code>fromIntegral</code> and <code>toEnum
 </p>
 </div>
 
-<ul class="org-ul">
-<li><a id="org709f897"></a>Example<br />
-<div class="outline-text-5" id="text-org709f897">
+<div id="outline-container-org60bb4de" class="outline-5">
+<h5 id="org60bb4de">Example</h5>
+<div class="outline-text-5" id="text-org60bb4de">
 <p>
 Instead of
 </p>
@@ -479,10 +489,11 @@ write
 </pre>
 </div>
 </div>
-</li>
+</div>
 
-<li><a id="org6a10479"></a>Justification<br />
-<div class="outline-text-5" id="text-org6a10479">
+<div id="outline-container-org90deb65" class="outline-5">
+<h5 id="org90deb65">Justification</h5>
+<div class="outline-text-5" id="text-org90deb65">
 <p>
 <code>fromIntegral</code> and <code>toEnum</code> can throw exceptions:
 </p>
@@ -513,8 +524,7 @@ Exception: Enum.toEnum{Word}: tag (-1) is outside of bounds (0,18446744073709551
 Finally, it is generally more clear to use less-polymorphic functions.
 </p>
 </div>
-</li>
-</ul>
+</div>
 </div>
 </div>
 
@@ -530,9 +540,9 @@ Use less-polymorphic variants of functions where possible.
 </p>
 </div>
 
-<ul class="org-ul">
-<li><a id="orgf5518e1"></a>Example<br />
-<div class="outline-text-5" id="text-orgf5518e1">
+<div id="outline-container-org22ec005" class="outline-5">
+<h5 id="org22ec005">Example</h5>
+<div class="outline-text-5" id="text-org22ec005">
 <p>
 Instead of
 </p>
@@ -548,10 +558,11 @@ write
 </pre>
 </div>
 </div>
-</li>
+</div>
 
-<li><a id="org0e95d03"></a>Justification<br />
-<div class="outline-text-5" id="text-org0e95d03">
+<div id="outline-container-org7202784" class="outline-5">
+<h5 id="org7202784">Justification</h5>
+<div class="outline-text-5" id="text-org7202784">
 <p>
 The use of a polymorphic function sends a signal to the reader that the
 polymorphism was necessary. This is confusing when the polymorphism was, in
@@ -561,8 +572,7 @@ information to the reader about the types of its arguments: in the expression
 must have type <code>Set a</code> for some <code>a</code>.
 </p>
 </div>
-</li>
-</ul>
+</div>
 </div>
 </div>
 </div>
