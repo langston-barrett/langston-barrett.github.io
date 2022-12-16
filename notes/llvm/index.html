@@ -19,7 +19,7 @@
     
 <!-- NOTE! This page is PUBLIC! -->
 <h1 id="llvm">LLVM</h1>
-<p>See also <a href="learning-llvm.md">Learning LLVM</a>.</p>
+<p>See also <a href="/notes/learning-llvm">Learning LLVM</a>.</p>
 <h2 id="links">Links</h2>
 <h3 id="language-reference">Language Reference</h3>
 <h3 id="description-in-the-architecture-of-open-source-applications">Description in The Architecture of Open Source Applications</h3>
@@ -40,7 +40,7 @@ distributed system.</p>
 </blockquote>
 <p><a href="https://publish.illinois.edu/allvm-project/">https://publish.illinois.edu/allvm-project/</a></p>
 <h3 id="k-llvm-paper">K-LLVM <span class="tag" tag-name="paper"><span class="smallcaps">paper</span></span></h3>
-<p>A semantics of LLVM in <a href="k.md">K</a>.</p>
+<p>A semantics of LLVM in <a href="/notes/k">K</a>.</p>
 <blockquote>
 <p>LLVM is designed for the compile-time, link-time and run-time
 optimization of programs written in various programming languages. The
@@ -211,7 +211,7 @@ Information&quot;</a></li>
 <h3 id="building">Building</h3>
 <pre data-lang="bash" style="background-color:#2b303b;color:#6c7079;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#eb6772;">nix-shell -A</span><span style="color:#abb2bf;"> llvm </span><span style="color:#9acc76;">&quot;&lt;unstable&gt;&quot;</span><span style="color:#eb6772;"> --run</span><span style="color:#abb2bf;"> zsh
 </span></code></pre>
-<p>Some good options for <a href="cmake.md">CMake</a>:</p>
+<p>Some good options for <a href="/notes/cmake">CMake</a>:</p>
 <pre data-lang="bash" style="background-color:#2b303b;color:#6c7079;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#eb6772;">cmake -S</span><span style="color:#abb2bf;"> llvm</span><span style="color:#eb6772;"> -B</span><span style="color:#abb2bf;"> build</span><span style="color:#eb6772;"> -G </span><span style="color:#9acc76;">&quot;Unix Makefiles&quot; </span><span style="color:#abb2bf;">\
 </span><span style="color:#eb6772;">  -DCMAKE_INSTALL_PREFIX</span><span style="color:#adb7c9;">=</span><span style="color:#abb2bf;">$</span><span style="color:#eb6772;">PWD</span><span style="color:#abb2bf;">/out \
 </span><span style="color:#eb6772;">  -DCMAKE_BUILD_TYPE</span><span style="color:#adb7c9;">=</span><span style="color:#abb2bf;">Debug \
@@ -222,7 +222,7 @@ Information&quot;</a></li>
 </span><span style="color:#eb6772;">  -DLLVM_PARALLEL_LINK_JOBS</span><span style="color:#adb7c9;">=</span><span style="color:#abb2bf;">4
 </span></code></pre>
 <h3 id="requesting-review-with-phabricator">Requesting Review With Phabricator</h3>
-<p>See <a href="phabricator.md">Phabricator</a>.</p>
+<p>See <a href="/notes/phabricator">Phabricator</a>.</p>
 <h3 id="documentation">Documentation</h3>
 <ul>
 <li><a href="https://llvm.org/docs/Contributing.html">Contributing to LLVM — LLVM 12 documentation</a></li>
@@ -281,8 +281,8 @@ a surprisingly large amount of what gets included from libraries
 </span></code></pre>
 </li>
 </ol>
-<h3 id="gllvm"><a href="gllvm.md">gllvm</a></h3>
-<h3 id="llvm-reduce"><a href="llvm-reduce.md">llvm-reduce</a></h3>
+<h3 id="gllvm"><a href="/notes/gllvm">gllvm</a></h3>
+<h3 id="llvm-reduce"><a href="/notes/llvm-reduce">llvm-reduce</a></h3>
 <h3 id="llvm-link">llvm-link</h3>
 <h3 id="llvm-dataflow-info">llvm-dataflow-info</h3>
 <blockquote>
@@ -448,7 +448,7 @@ ThinLTO: Scalable and Incremental LTO</li>
 </span></code></pre>
 <h2 id="types">Types</h2>
 <h3 id="records">Records</h3>
-<h2 id="mlir"><a href="mlir.md">MLIR</a></h2>
+<h2 id="mlir"><a href="/notes/mlir">MLIR</a></h2>
 <h2 id="analysis-of-llvm-ir">Analysis of LLVM IR</h2>
 <h3 id="tools-1">Tools</h3>
 <ul>

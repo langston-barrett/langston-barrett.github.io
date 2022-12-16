@@ -19,11 +19,11 @@
     
 <!-- NOTE! This page is PUBLIC! -->
 <h1 id="gllvm">GLLVM</h1>
-<p>A tool for compiling <a href="c.md">C</a>/<a href="c++.md">C++</a> to <a href="llvm.md">LLVM bitcode</a>.</p>
+<p>A tool for compiling <a href="/notes/c">C</a>/<a href="/notes/c++">C++</a> to <a href="/notes/llvm">LLVM bitcode</a>.</p>
 <h2 id="bca-files">.bca Files</h2>
 <p>Just pass the <code>-b</code> flag to <code>get-bc</code>.</p>
 <h2 id="compiling-linux">Compiling Linux</h2>
-<p>GLLVM can compile the <a href="linux.md">Linux kernel</a>.</p>
+<p>GLLVM can compile the <a href="/notes/linux">Linux kernel</a>.</p>
 <pre data-lang="docker" style="background-color:#2b303b;color:#6c7079;" class="language-docker "><code class="language-docker" data-lang="docker"><span style="color:#abb2bf;"># docker build -t gllvm-linux . 
 </span><span style="color:#abb2bf;"># docker run --rm --workdir=/work --mount type=bind,src=$PWD,target=/work -it gllvm-linux
 </span><span style="color:#abb2bf;">FROM ubuntu:20.04
