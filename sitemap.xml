@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://langston-barrett.github.io/</loc>
+    </url>
+    <url>
+        <loc>https://langston-barrett.github.io/blog/</loc>
+    </url>
+    <url>
+        <loc>https://langston-barrett.github.io/blog/mypy-reify/</loc>
+        <lastmod>2022-12-10</lastmod>
+    </url>
+    <url>
+        <loc>https://langston-barrett.github.io/blog/setoids/</loc>
+        <lastmod>2022-12-05</lastmod>
+    </url>
+    <url>
+        <loc>https://langston-barrett.github.io/blog/static-reasoning-haskell/</loc>
+        <lastmod>2022-12-15</lastmod>
+    </url>
+    <url>
+        <loc>https://langston-barrett.github.io/notes/</loc>
+    </url>
+</urlset>

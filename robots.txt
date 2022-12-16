@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://langston-barrett.github.io/sitemap.xml
