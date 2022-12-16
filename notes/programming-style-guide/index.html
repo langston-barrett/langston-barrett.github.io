@@ -27,13 +27,13 @@ more!</p>
 <p>This guide is focused only on recommendations that apply to the majority
 of programming languages I use (such as Haskell or Python). I have more
 specific guides for language- or paradigm-specific recommendations (see
-e.g. <a href="./python.org">my Python style guide</a>).</p>
+e.g. <a href="python-style-guide.md">my Python style guide</a>).</p>
 <p>Its intended audience is intermediate or advanced programmers who
 endeavor especially to write reliable, correct code. But to be honest, I
 mostly publish this so I have somewhere with thorough explanations that
 I can point people to when I make comments during code reviews.</p>
-<p>This document aspires to confirm to <a href="./meta.org">my Meta Style Guide</a>.</p>
-<p>Do you have ideas for this guide? <a href="../about.org">Contact me</a>!</p>
+<p>This document aspires to confirm to <a href="meta-style-guide.md">my Meta Style Guide</a>.</p>
+<p>Do you have ideas for this guide? <a href="/">Contact me</a>!</p>
 <h2 id="formatting">Formatting</h2>
 <p>I often use an automatic code formatter like Black or YAPF for Python.
 When that's not an option, I tend to follow these recommendations on
@@ -45,8 +45,8 @@ codebases subjectively more readable, and reduces the number of
 decisions you have to make when writing code.</li>
 <li>Speed of reading, writing, and editing code.</li>
 <li>Minimizing diffs: This is helpful for focused code review, and when
-reviewing git history to understand a regression. See e.g. [<em>Use
-Trailing Commas</em>]{.spurious-link target=&quot;*Use Trailing Commas&quot;}.</li>
+reviewing git history to understand a regression. See e.g. <a href="https://langston-barrett.github.io/notes/programming-style-guide/#use-trailing-commas"><em>Use
+Trailing Commas</em></a>.</li>
 </ul>
 <p>These goals are not usual crucial, so the following recommendations are
 quite &quot;soft&quot;/low priority.</p>
@@ -54,9 +54,7 @@ quite &quot;soft&quot;/low priority.</p>
 <p>You may consider formatting expressions such that the syntax that begins
 the expression appears in the upper left-hand corner of the smallest box
 containing the expression.</p>
-<ol>
-<li>
-<p>Examples</p>
+<h4 id="examples">Examples</h4>
 <p>In Haskell, it's common to write expressions using <code>do</code>-notation
 like this:</p>
 <pre data-lang="haskell" style="background-color:#2b303b;color:#6c7079;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span style="color:#abb2bf;">foo </span><span style="color:#adb7c9;">= </span><span style="color:#cd74e8;">do
@@ -69,20 +67,14 @@ above like so:</p>
 </span><span style="color:#abb2bf;">  </span><span style="color:#cd74e8;">do</span><span style="color:#abb2bf;"> bar
 </span><span style="color:#abb2bf;">     baz
 </span></code></pre>
-</li>
-<li>
-<p>Justification</p>
+<h4 id="justification">Justification</h4>
 <p>This is just for consistency and uniformity: it gives a general
 guideline if you're unsure of how you might decide to format a
 given expression.</p>
-</li>
-</ol>
 <h3 id="indentation-shouldn-t-depend-on-identifiers">Indentation Shouldn't Depend on Identifiers</h3>
 <p>The indentation of a line shouldn't depend on the length of any
 identifier in your program.</p>
-<ol>
-<li>
-<p>Examples</p>
+<h4 id="examples-1">Examples</h4>
 <p>In Haskell, it's possible to write expressions using <code>do</code>-notation
 like this:</p>
 <pre data-lang="haskell" style="background-color:#2b303b;color:#6c7079;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span style="color:#abb2bf;">foo </span><span style="color:#adb7c9;">= </span><span style="color:#cd74e8;">do</span><span style="color:#abb2bf;"> bar
@@ -109,19 +101,13 @@ write the above like so:</p>
 </span><span style="color:#abb2bf;">    , baz </span><span style="color:#adb7c9;">:: </span><span style="color:#db9d63;">Bool
 </span><span style="color:#abb2bf;">    }
 </span></code></pre>
-</li>
-<li>
-<p>Justification</p>
-<p>This is for speed and minimizing diffs: You shouldn't have to
-re-indent a bunch of lines that don't contain a given identifier
-when that identifier changes.</p>
-</li>
-</ol>
+<h4 id="justification-1">Justification</h4>
+<p>This is for speed and minimizing diffs: You shouldn't have to re-indent a
+bunch of lines that don't contain a given identifier when that identifier
+changes.</p>
 <h3 id="use-trailing-commas">Use Trailing Commas</h3>
 <p>Use trailing commas on multi-line datastructures.</p>
-<ol>
-<li>
-<p>Example</p>
+<h4 id="example">Example</h4>
 <p>Instead of:</p>
 <pre data-lang="python" style="background-color:#2b303b;color:#6c7079;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#abb2bf;">numbers </span><span style="color:#adb7c9;">= </span><span style="color:#abb2bf;">[
 </span><span style="color:#abb2bf;">  </span><span style="color:#db9d63;">8</span><span style="color:#abb2bf;">,
@@ -136,13 +122,9 @@ when that identifier changes.</p>
 </span><span style="color:#abb2bf;">  </span><span style="color:#db9d63;">13</span><span style="color:#abb2bf;">,
 </span><span style="color:#abb2bf;">]
 </span></code></pre>
-</li>
-<li>
-<p>Justification</p>
-<p>This minimizes diffs. If you add something after the last element,
-the only line that appears in the diff is the one you added.</p>
-</li>
-</ol>
+<h4 id="justification-2">Justification</h4>
+<p>This minimizes diffs. If you add something after the last element, the only
+line that appears in the diff is the one you added.</p>
 
 
   </div>
