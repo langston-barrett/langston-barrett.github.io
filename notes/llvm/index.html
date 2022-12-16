@@ -19,190 +19,34 @@
     
 <!-- NOTE! This page is PUBLIC! -->
 <h1 id="llvm">LLVM</h1>
-<p>See also <a href="/notes/learning-llvm">Learning LLVM</a>.</p>
+<p>See also:</p>
+<ul>
+<li><a href="/notes/allvm">ALLVM</a></li>
+<li><a href="/notes/gllvm">GLLVM</a></li>
+<li><a href="/notes/k-llvm">K-LLVM</a></li>
+<li><a href="/notes/learning-llvm">Learning LLVM</a></li>
+<li><a href="/notes/llvm-ir">LLVM IR</a></li>
+<li><a href="/notes/mlir">MLIR</a></li>
+<li><a href="/notes/the-architecture-of-open-source-applications">The Architecture of Open Source Applications</a></li>
+<li><a href="/notes/wllvm">WLLVM</a></li>
+</ul>
 <h2 id="links">Links</h2>
-<h3 id="language-reference">Language Reference</h3>
-<h3 id="description-in-the-architecture-of-open-source-applications">Description in The Architecture of Open Source Applications</h3>
-<p>See <a href="the-architecture-of-open-source-applications.org">The Architecture of Open Source
-Applications</a>.</p>
-<h3 id="allvm">ALLVM</h3>
-<blockquote>
-<p>An ‘ALLVM system’ is one in which all software components — except a
-small set needed for bootstrapping — are represented in a virtual
-instruction set instead of native machine code. The goal of the
-approach is to enable sophisticated compiler analyses and
-transformations to be applied across arbitrary software boundaries —
-not just caller-callee boundaries analyzed using traditional
-interprocedural techniques, but also several others: between
-applications and third-party libraries; applications and the
-underlying operating system; and between communicating processes in a
-distributed system.</p>
-</blockquote>
-<p><a href="https://publish.illinois.edu/allvm-project/">https://publish.illinois.edu/allvm-project/</a></p>
-<h3 id="k-llvm-paper">K-LLVM <span class="tag" tag-name="paper"><span class="smallcaps">paper</span></span></h3>
-<p>A semantics of LLVM in <a href="/notes/k">K</a>.</p>
-<blockquote>
-<p>LLVM is designed for the compile-time, link-time and run-time
-optimization of programs written in various programming languages. The
-language supported by LLVM targeted by modern compilers is LLVM IR. In
-this paper we define K-LLVM, a reference semantics for LLVM IR. To the
-best of our knowledge, K-LLVM is the most complete formal LLVM IR
-semantics to date, including all LLVM IR instructions, intrinsic
-functions in the LLVM documentation and Standard-C library functions
-that are necessary to execute many LLVM IR programs. Additionally,
-K-LLVM formulates an abstract machine that executes all LLVM IR
-instructions. The machine allows to describe our formal semantics in
-terms of simulating a conceptual virtual machine that runs LLVM IR
-programs, including non-deterministic programs. Even though the K-LLVM
-memory model in this paper is assumed to be a sequentially consistent
-memory model and does not include all LLVM concurrency memory
-behaviors, the design of K-LLVM’s data layout allows the K-LLVM
-abstract machine to execute some LLVM IR programs that previous
-semantics did not cover, such as the full range of LLVM IR behaviors
-for the interaction among LLVM IR casting, pointer arithmetic, memory
-operations and some memory flags (e.g. readonly) of function headers.
-Additionally, the memory model is modularized in a manner that
-supports investigating other memory models. To validate K-LLVM, we
-have implemented it in K [41], which generated an interpreter for
-LLVM IR. Using this, we ran tests including 1,385 unit test programs
-and 2,156 concrete LLVM IR programs, and K-LLVM passed all of them.</p>
-</blockquote>
-<h3 id="a-tourist-s-guide-to-the-llvm-source-code"><a href="https://blog.regehr.org/archives/1453">A Tourist’s Guide to the LLVM Source Code</a></h3>
-<h3 id="a-deeper-look-into-the-llvm-code-generator-part-1"><a href="https://eli.thegreenplace.net/2013/02/25/a-deeper-look-into-the-llvm-code-generator-part-1">A deeper look into the LLVM code generator, Part 1</a></h3>
-<h3 id="life-of-an-instruction-in-llvm"><a href="https://eli.thegreenplace.net/2012/11/24/life-of-an-instruction-in-llvm">Life of an instruction in LLVM</a></h3>
-<h2 id="ir">IR</h2>
-<h3 id="getelementptr"><code>getelementptr</code></h3>
-<p><code>getElementPtr</code> is for indexing into a struct or array. It looks like
-this:</p>
-<pre data-lang="llvm" style="background-color:#2b303b;color:#6c7079;" class="language-llvm "><code class="language-llvm" data-lang="llvm"><span style="color:#abb2bf;">%tmp = getelementptr %struct.munger_struct, %struct.munger_struct* %P, i32 1, i32 0
-</span></code></pre>
-<p>The first two arguments are types, the second argument is the index into
-the exterior structure (in this case, an array of <code>P</code>), and the second
-argument is an index into the interior structure (this one accesses the
-0th field of a <code>P</code>).</p>
-<p>However! It is variadic: It can have many more pairs of arguments, which
-mirror the structure of the first: <code>(exterior, interior)</code>.</p>
-<ol>
-<li>LLVM's getelementptr, by example</li>
-</ol>
-<h3 id="target-triples">Target Triples</h3>
-<p>These are used frequently as an example:
-<a href="https://clang.llvm.org/docs/CrossCompilation.html#target-triple">https://clang.llvm.org/docs/CrossCompilation.html#target-triple</a></p>
-<h3 id="undef-and-poison"><code>undef</code> and <code>poison</code></h3>
-<p>See this blog post: <a href="https://www.ralfj.de/blog/2020/12/14/provenance.html">Pointers Are Complicated II, or: We need better
-language specs</a></p>
-<p><a href="https://pldi17.sigplan.org/details/pldi-2017-papers/16/Taming-Undefined-Behavior-in-LLVM">Taming Undefined Behavior in LLVM (PLDI 2017 - PLDI Research Papers) -
-PLDI
-2017</a></p>
-<h3 id="bitcode-format">Bitcode Format</h3>
-<h4 id="links-1">Links</h4>
 <ul>
-<li><a href="https://blog.yossarian.net/2021/07/19/LLVM-internals-part-1-bitcode-format">LLVM internals, part 1: the bitcode format</a></li>
+<li><a href="https://blog.regehr.org/archives/1453">A Tourist’s Guide to the LLVM Source Code</a></li>
+<li><a href="https://eli.thegreenplace.net/2013/02/25/a-deeper-look-into-the-llvm-code-generator-part-1">A deeper look into the LLVM code generator, Part 1</a></li>
+<li><a href="https://eli.thegreenplace.net/2012/11/24/life-of-an-instruction-in-llvm">Life of an instruction in LLVM</a></li>
+<li><a href="https://github.com/regehr/llvm-dataflow-info">https://github.com/regehr/llvm-dataflow-info</a></li>
 </ul>
-<h4 id="abreviations-and-records">Abreviations and Records</h4>
-<p>Records may have one of five types of values
-(<a href="https://llvm.org/docs/BitCodeFormat.html#define-abbrev-encoding">doc</a>):</p>
-<ol>
-<li>Fixed-width integers</li>
-<li>Variable-width integers</li>
-<li>Arrays</li>
-<li>Characters (specified in
-<a href="BROKEN-id:f16dbb85-819b-48d1-bc73-20289e9f9c90">Glossary</a> format)</li>
-<li>Binary blobs</li>
-</ol>
-<p>The types of arrays are specified weirdly.</p>
-<h3 id="operators">Operators</h3>
-<p>For reasons unknown to mortals, in addition to the <code>bitcast</code> and
-<a href="BROKEN-id:de59d230-adb4-4611-a713-c526e61a7a91"><code>getelementptr</code></a>
-<em>instructions</em>, there are also inline <em>operators</em>, so that the operand
-to, say, <code>load</code> might not be an instruction but rather one of these
-operators. These are completely undocumented AFAIK.</p>
-<h3 id="exceptions">Exceptions</h3>
-<p>See also <a href="BROKEN-c++.org::*Exceptions">C++#Exceptions</a>.</p>
-<ol>
-<li>
-<p>Instructions</p>
-<ol>
-<li>
-<p>landingpad</p>
-<ol>
-<li>
-<p>Syntax</p>
-<p>As of the LLVM 11 language reference,</p>
-<pre data-lang="fundamental" style="background-color:#2b303b;color:#6c7079;" class="language-fundamental "><code class="language-fundamental" data-lang="fundamental"><span style="color:#abb2bf;">&lt;resultval&gt; = landingpad &lt;resultty&gt; &lt;clause&gt;+
-</span><span style="color:#abb2bf;">&lt;resultval&gt; = landingpad &lt;resultty&gt; cleanup &lt;clause&gt;*
-</span><span style="color:#abb2bf;">
-</span><span style="color:#abb2bf;">&lt;clause&gt; := catch &lt;type&gt; &lt;value&gt;
-</span><span style="color:#abb2bf;">&lt;clause&gt; := filter &lt;array constant type&gt; &lt;array constant&gt;
-</span></code></pre>
-</li>
-<li>
-<p>Overview</p>
-<p>As of the LLVM 11 language reference,</p>
-<blockquote>
-<p>The ‘landingpad’ instruction is used by LLVM’s exception
-handling system to specify that a basic block is a landing
-pad — one where the exception lands, and corresponds to
-the code found in the catch portion of a try/catch
-sequence. It defines values supplied by the personality
-function upon re-entry to the function. The <code>resultval</code>
-has the type <code>resultty</code>.</p>
-</blockquote>
-</li>
-<li>
-<p>Semantics</p>
-<p>As of the LLVM 11 language reference,</p>
-<blockquote>
-<p>The ‘landingpad’ instruction defines the values which are
-set by the personality function upon re-entry to the
-function, and therefore the “result type” of the
-landingpad instruction. As with calling conventions, how
-the personality function results are represented in LLVM
-IR is target specific.</p>
-<p>The clauses are applied in order from top to bottom. If
-two landingpad instructions are merged together through
-inlining, the clauses from the calling function are
-appended to the list of clauses. When the call stack is
-being unwound due to an exception being thrown, the
-exception is compared against each clause in turn. If it
-doesn’t match any of the clauses, and the cleanup flag is
-not set, then unwinding continues further up the call
-stack.</p>
-<p>The landingpad instruction has several restrictions:</p>
-<ul>
-<li>A landing pad block is a basic block which is the
-unwind destination of an ‘invoke’ instruction.</li>
-<li>A landing pad block must have a ‘landingpad’
-instruction as its first non-PHI instruction.</li>
-<li>There can be only one ‘landingpad’ instruction within
-the landing pad block.</li>
-<li>A basic block that is not a landing pad block may not
-include a ‘landingpad’ instruction.</li>
-</ul>
-</blockquote>
-</li>
-</ol>
-</li>
-</ol>
-</li>
-</ol>
-<h3 id="varargs-variable-arity-functions">Varargs/Variable Arity Functions</h3>
-<p><a href="https://releases.llvm.org/12.0.0/docs/LangRef.html#variable-argument-handling-intrinsics">Language
-Reference</a>.</p>
-<p>I've seen LLVM access a <code>va_list</code> without using <code>va_arg</code> (i.e., just
-using <code>load</code>), which is ABI-specific: <a href="https://godbolt.org/z/Wq4Gb7bKa">https://godbolt.org/z/Wq4Gb7bKa</a></p>
-<p>See also [x86#ABI#Variable-Arity Functions
-(Varargs)](x86.org::*Variable-Arity Functions (Varargs)) .</p>
 <h2 id="glossary">Glossary</h2>
 <ul>
 <li>An <em>abbreviation</em> specifies a record type</li>
 <li><em><a href="https://llvm.org/docs/BitCodeFormat.html#char6-encoded-value">char6</a></em>
 is an ASCII-like encoding for alphanumeric characters</li>
-<li><em>RAUW</em>: <a href="https://github.com/llvm-mirror/llvm/blob/release_40/docs/MergeFunctions.rst#merging-process-mergetwofunctions">🌎 &quot;Replace all uses
+<li><em>RAUW</em>: <a href="https://github.com/llvm-mirror/llvm/blob/release_40/docs/MergeFunctions.rst#merging-process-mergetwofunctions">&quot;Replace all uses
 with&quot;</a></li>
-<li><em>ODR</em>: <a href="https://llvm.org/docs/LangRef.html#linkage-types">🌎 &quot;One definition
+<li><em>ODR</em>: <a href="https://llvm.org/docs/LangRef.html#linkage-types">&quot;One definition
 rule&quot;</a></li>
-<li><em>RTTI</em>: <a href="https://en.wikipedia.org/wiki/Run-time_type_information">🌎 &quot;RunTime Type
+<li><em>RTTI</em>: <a href="https://en.wikipedia.org/wiki/Run-time_type_information">&quot;Run-Time Type
 Information&quot;</a></li>
 </ul>
 <h2 id="hacking-on-llvm">Hacking on LLVM</h2>
@@ -240,69 +84,10 @@ Information&quot;</a></li>
 </li>
 </ol>
 <h2 id="tools">Tools</h2>
-<h3 id="wllvm">wllvm</h3>
-<pre data-lang="sh" style="background-color:#2b303b;color:#6c7079;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#eb6772;">nix-shell --pure -p</span><span style="color:#abb2bf;"> clang_6</span><span style="color:#eb6772;"> -p</span><span style="color:#abb2bf;"> wllvm</span><span style="color:#eb6772;"> --run </span><span style="color:#9acc76;">&quot;wllvm -c test.cpp &amp;&amp; extract-bc test.o&quot;
-</span></code></pre>
-<pre data-lang="sh" style="background-color:#2b303b;color:#6c7079;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#eb6772;">nix-shell</span><span style="color:#abb2bf;"> test.nix</span><span style="color:#eb6772;"> --pure --run </span><span style="color:#9acc76;">&quot;wllvm++ -o test -static -g -O1 test.cpp&quot;
-</span><span style="color:#eb6772;">nix-shell</span><span style="color:#abb2bf;"> test.nix</span><span style="color:#eb6772;"> --pure --run </span><span style="color:#9acc76;">&quot;extract-bc test&quot;
-</span><span style="color:#eb6772;">nix-shell</span><span style="color:#abb2bf;"> test.nix</span><span style="color:#eb6772;"> --pure --run </span><span style="color:#9acc76;">&quot;llvm-dis test.bc &gt; test.ll&quot;
-</span></code></pre>
-<p>where</p>
-<pre data-lang="nix" style="background-color:#2b303b;color:#6c7079;" class="language-nix "><code class="language-nix" data-lang="nix"><span style="color:#cd74e8;">with </span><span style="color:#5ebfcc;">import </span><span style="color:#9acc76;">&lt;nixpkgs&gt; </span><span style="color:#abb2bf;">{ };
-</span><span style="color:#abb2bf;">
-</span><span style="color:#eb6772;">llvmPackages</span><span style="color:#adb7c9;">.</span><span style="color:#eb6772;">stdenv</span><span style="color:#adb7c9;">.</span><span style="color:#eb6772;">mkDerivation </span><span style="color:#abb2bf;">{
-</span><span style="color:#abb2bf;">  </span><span style="color:#db9d63;">name </span><span style="color:#adb7c9;">= </span><span style="color:#9acc76;">&quot;test&quot;</span><span style="color:#abb2bf;">;
-</span><span style="color:#abb2bf;">  </span><span style="color:#db9d63;">buildInputs </span><span style="color:#adb7c9;">= </span><span style="color:#abb2bf;">[
-</span><span style="color:#abb2bf;">    </span><span style="color:#eb6772;">file
-</span><span style="color:#abb2bf;">    </span><span style="color:#eb6772;">wllvm
-</span><span style="color:#abb2bf;">    </span><span style="color:#eb6772;">clang_6
-</span><span style="color:#abb2bf;">    </span><span style="color:#eb6772;">llvm_6
-</span><span style="color:#abb2bf;">    </span><span style="color:#eb6772;">llvmPackages_6</span><span style="color:#adb7c9;">.</span><span style="color:#eb6772;">compiler-rt
-</span><span style="color:#abb2bf;">    </span><span style="color:#eb6772;">glibc</span><span style="color:#adb7c9;">.</span><span style="color:#eb6772;">static
-</span><span style="color:#abb2bf;">  ];
-</span><span style="color:#abb2bf;">  </span><span style="color:#db9d63;">src </span><span style="color:#adb7c9;">= </span><span style="color:#eb6772;">lib</span><span style="color:#adb7c9;">.</span><span style="color:#eb6772;">sourceFilesBySuffices </span><span style="color:#9acc76;">./. </span><span style="color:#abb2bf;">[ </span><span style="color:#9acc76;">&quot;.cpp&quot; </span><span style="color:#abb2bf;">];
-</span><span style="color:#abb2bf;">  </span><span style="color:#db9d63;">LLVM_COMPILER </span><span style="color:#adb7c9;">= </span><span style="color:#9acc76;">&quot;clang&quot;</span><span style="color:#abb2bf;">;
-</span><span style="color:#abb2bf;">}
-</span></code></pre>
-<ol>
-<li>
-<p>wllvm and Linking</p>
-<p><code>wllvm</code> will bring in the definitions <u>from your project</u>.
-However, if you're including stuff from other libraries, that will
-have to be linked manually. Confusingly, <code>wllvm</code> <u>will</u> bring
-in anything in the header files, and with C++ templates, this can be
-a surprisingly large amount of what gets included from libraries
-(especially <code>libstdc++</code>).</p>
-</li>
-<li>
-<p>Error Messages</p>
-<p><code>wllvm</code> requires the <code>file</code> utility</p>
-<pre data-lang="example" style="background-color:#2b303b;color:#6c7079;" class="language-example "><code class="language-example" data-lang="example"><span style="color:#abb2bf;">WARNING:wllvm: exception case: [Errno 2] No such file or directory: &#39;file&#39;: &#39;file&#39;
-</span></code></pre>
-</li>
-</ol>
-<h3 id="gllvm"><a href="/notes/gllvm">gllvm</a></h3>
-<h3 id="llvm-reduce"><a href="/notes/llvm-reduce">llvm-reduce</a></h3>
-<h3 id="llvm-link">llvm-link</h3>
-<h3 id="llvm-dataflow-info">llvm-dataflow-info</h3>
-<blockquote>
-<p>Tell us what some of LLVM's dataflow analyses think about the code
-being compiled.</p>
-</blockquote>
-<p><a href="https://github.com/regehr/llvm-dataflow-info">https://github.com/regehr/llvm-dataflow-info</a></p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#6c7079;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#eb6772;">nix-shell -A</span><span style="color:#abb2bf;"> llvm </span><span style="color:#9acc76;">&quot;&lt;unstable&gt;&quot;</span><span style="color:#eb6772;"> --run</span><span style="color:#abb2bf;"> zsh
-</span><span style="color:#eb6772;">nix-shell -p</span><span style="color:#abb2bf;"> llvm_9</span><span style="color:#eb6772;"> --run</span><span style="color:#abb2bf;"> zsh
-</span><span style="color:#eb6772;">mkdir</span><span style="color:#abb2bf;"> build
-</span><span style="color:#5ebfcc;">cd</span><span style="color:#abb2bf;"> build
-</span><span style="color:#eb6772;">cmake</span><span style="color:#abb2bf;"> ..</span><span style="color:#eb6772;"> -G</span><span style="color:#abb2bf;"> Ninja
-</span><span style="color:#eb6772;">ninja
-</span></code></pre>
-<p>Couldn't get this working…</p>
-<blockquote>
-<p>opt-10: CommandLine Error: Option 'disable-symbolication' registered
-more than once! LLVM ERROR: inconsistency in registered CommandLine
-options</p>
-</blockquote>
+<ul>
+<li><a href="/notes/llvm-reduce">llvm-reduce</a></li>
+<li>llvm-link</li>
+</ul>
 <h2 id="the-pass-managers">The Pass Managers</h2>
 <p>All LLVM documentation and virtually all tutorials use what's called the
 &quot;legacy pass manager&quot;.</p>
@@ -350,185 +135,157 @@ Base Class of Evil&quot;) by Sean Parent:</p>
 </span><span style="color:#abb2bf;">}
 </span></code></pre>
 <h2 id="lto">LTO</h2>
-<h3 id="links-2">Links</h3>
-<ul>
-<li><a href="http://blog.llvm.org/2016/06/thinlto-scalable-and-incremental-lto.html">The LLVM Project
-Blog</a> -
-ThinLTO: Scalable and Incremental LTO</li>
-</ul>
+<p>See <a href="/notes/link-time-optimization">Link-Time Optimization</a>.</p>
 <h2 id="mangling">Mangling</h2>
-<p>See also <a href="BROKEN-c++.org::*Mangling">Mangling</a>.</p>
+<p>See also <a href="c++.md#Mangling">Mangling</a>.</p>
 <ul>
 <li><a href="https://llvm.org/doxygen/structAbstractManglingParser.html">https://llvm.org/doxygen/structAbstractManglingParser.html</a></li>
 <li><a href="https://llvm.org/doxygen/classNode.html">https://llvm.org/doxygen/classNode.html</a></li>
 </ul>
-<h3 id="example-non-working">Example (Non-Working)</h3>
-<pre style="background-color:#2b303b;color:#6c7079;"><code><span style="color:#abb2bf;">#include &lt;iostream&gt;
-</span><span style="color:#abb2bf;">#include &lt;cstring&gt;
-</span><span style="color:#abb2bf;">#include &quot;llvm/Demangle/ItaniumDemangle.h&quot;
-</span><span style="color:#abb2bf;">#include &quot;llvm/Demangle/Demangle.h&quot;
-</span><span style="color:#abb2bf;">#include &quot;llvm/Support/Allocator.h&quot;
-</span><span style="color:#abb2bf;">
-</span><span style="color:#abb2bf;">// This is how they do it in the test suite...
-</span><span style="color:#abb2bf;">namespace {
-</span><span style="color:#abb2bf;">class TestAllocator {
-</span><span style="color:#abb2bf;">  llvm::BumpPtrAllocator Alloc;
-</span><span style="color:#abb2bf;">
-</span><span style="color:#abb2bf;">public:
-</span><span style="color:#abb2bf;">  void reset() { Alloc.Reset(); }
-</span><span style="color:#abb2bf;">
-</span><span style="color:#abb2bf;">  template &lt;typename T, typename... Args&gt; T *makeNode(Args &amp;&amp;... args) {
-</span><span style="color:#abb2bf;">    return new (Alloc.Allocate(sizeof(T), alignof(T)))
-</span><span style="color:#abb2bf;">        T(std::forward&lt;Args&gt;(args)...);
-</span><span style="color:#abb2bf;">  }
-</span><span style="color:#abb2bf;">
-</span><span style="color:#abb2bf;">  void *allocateNodeArray(size_t sz) {
-</span><span style="color:#abb2bf;">    return Alloc.Allocate(sizeof(llvm::itanium_demangle::Node *) * sz, alignof(llvm::itanium_demangle::Node *));
-</span><span style="color:#abb2bf;">  }
-</span><span style="color:#abb2bf;">};
-</span><span style="color:#abb2bf;">} // namespace
-</span><span style="color:#abb2bf;">
-</span><span style="color:#abb2bf;">
-</span><span style="color:#abb2bf;">int main(void) {
-</span><span style="color:#abb2bf;">  const char *name = &quot;_ZTVN7testing8internal30ValuesInIteratorRangeGeneratorIN4fizz4test10HashParamsEEE&quot;;
-</span><span style="color:#abb2bf;">  llvm::itanium_demangle::ManglingParser&lt;TestAllocator&gt; parser(name, name + std::strlen(name));
-</span><span style="color:#abb2bf;">  llvm::itanium_demangle::Node *ast = parser.parse();
-</span><span style="color:#abb2bf;">  // ast.print(llvm::outs());
-</span><span style="color:#abb2bf;">  return 0;
-</span><span style="color:#abb2bf;">}
-</span></code></pre>
-<pre data-lang="fundamental" style="background-color:#2b303b;color:#6c7079;" class="language-fundamental "><code class="language-fundamental" data-lang="fundamental"><span style="color:#abb2bf;">project(blah LANGUAGES C CXX)
-</span><span style="color:#abb2bf;">cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
-</span><span style="color:#abb2bf;">
-</span><span style="color:#abb2bf;">find_package(LLVM 10.0.0 REQUIRED CONFIG)
-</span><span style="color:#abb2bf;">message(STATUS &quot;Found LLVM ${LLVM_PACKAGE_VERSION}&quot;)
-</span><span style="color:#abb2bf;">message(STATUS &quot;Using LLVMConfig.cmake in: ${LLVM_DIR}&quot;)
-</span><span style="color:#abb2bf;">
-</span><span style="color:#abb2bf;">add_definitions(${LLVM_DEFINITIONS})
-</span><span style="color:#abb2bf;">include_directories(SYSTEM ${LLVM_INCLUDE_DIRS})
-</span><span style="color:#abb2bf;">link_directories(${LLVM_LIBRARY_DIRS})
-</span><span style="color:#abb2bf;">list(APPEND CMAKE_MODULE_PATH &quot;${LLVM_CMAKE_DIR}&quot;)
-</span><span style="color:#abb2bf;">
-</span><span style="color:#abb2bf;">include(LLVMConfig)
-</span><span style="color:#abb2bf;">include(AddLLVM)
-</span><span style="color:#abb2bf;">
-</span><span style="color:#abb2bf;">add_executable(exe demangle.cpp)
-</span><span style="color:#abb2bf;">llvm_map_components_to_libnames(llvm_libs support core)
-</span><span style="color:#abb2bf;">target_link_libraries(exe PRIVATE ${llvm_libs})
-</span></code></pre>
-<pre data-lang="nix" style="background-color:#2b303b;color:#6c7079;" class="language-nix "><code class="language-nix" data-lang="nix"><span style="color:#cd74e8;">with </span><span style="color:#5ebfcc;">import </span><span style="color:#9acc76;">&lt;nixpkgs&gt; </span><span style="color:#abb2bf;">{ };
-</span><span style="color:#cd74e8;">let </span><span style="color:#db9d63;">llvmPackages </span><span style="color:#adb7c9;">= </span><span style="color:#eb6772;">llvmPackages_10</span><span style="color:#abb2bf;">;
-</span><span style="color:#abb2bf;">    </span><span style="color:#db9d63;">llvm </span><span style="color:#adb7c9;">= </span><span style="color:#eb6772;">llvmPackages</span><span style="color:#adb7c9;">.</span><span style="color:#eb6772;">llvm</span><span style="color:#abb2bf;">;
-</span><span style="color:#abb2bf;">    </span><span style="color:#db9d63;">clang </span><span style="color:#adb7c9;">= </span><span style="color:#eb6772;">llvmPackages</span><span style="color:#adb7c9;">.</span><span style="color:#eb6772;">clang</span><span style="color:#abb2bf;">;
-</span><span style="color:#cd74e8;">in </span><span style="color:#eb6772;">clang</span><span style="color:#adb7c9;">.</span><span style="color:#eb6772;">stdenv</span><span style="color:#adb7c9;">.</span><span style="color:#eb6772;">mkDerivation </span><span style="color:#abb2bf;">{
-</span><span style="color:#abb2bf;">  </span><span style="color:#db9d63;">name </span><span style="color:#adb7c9;">= </span><span style="color:#9acc76;">&quot;demangle&quot;</span><span style="color:#abb2bf;">;
-</span><span style="color:#abb2bf;">  </span><span style="color:#db9d63;">src </span><span style="color:#adb7c9;">= </span><span style="color:#9acc76;">./.</span><span style="color:#abb2bf;">;
-</span><span style="color:#abb2bf;">  </span><span style="color:#db9d63;">buildInputs </span><span style="color:#adb7c9;">= </span><span style="color:#abb2bf;">[ </span><span style="color:#eb6772;">llvm glibc</span><span style="color:#adb7c9;">.</span><span style="color:#eb6772;">static cmake zlib</span><span style="color:#adb7c9;">.</span><span style="color:#eb6772;">static </span><span style="color:#abb2bf;">];
-</span><span style="color:#abb2bf;">  </span><span style="color:#db9d63;">cmakeFlags </span><span style="color:#adb7c9;">= </span><span style="color:#abb2bf;">[
-</span><span style="color:#abb2bf;">    </span><span style="color:#9acc76;">&quot;-DCMAKE_C_COMPILER=</span><span style="color:#c94e42;">${</span><span style="color:#eb6772;">clang</span><span style="color:#c94e42;">}</span><span style="color:#9acc76;">/bin/clang&quot;
-</span><span style="color:#abb2bf;">    </span><span style="color:#9acc76;">&quot;-DCMAKE_CXX_COMPILER=</span><span style="color:#c94e42;">${</span><span style="color:#eb6772;">clang</span><span style="color:#c94e42;">}</span><span style="color:#9acc76;">/bin/clang++&quot;
-</span><span style="color:#abb2bf;">  ];
-</span><span style="color:#abb2bf;">
-</span><span style="color:#abb2bf;">  </span><span style="font-style:italic;color:#5f697a;"># buildPhase = &#39;&#39;
-</span><span style="color:#abb2bf;">  </span><span style="font-style:italic;color:#5f697a;">#   echo &quot;clang++ -isystem ${llvm}/include -L ${llvm}/lib -lLLVMDemangle -static -o demangle.elf -O1 demangle.cpp&quot;
-</span><span style="color:#abb2bf;">  </span><span style="font-style:italic;color:#5f697a;">#   clang++ -isystem ${llvm}/include -L ${llvm}/lib -lLLVMDemangle -static -o demangle.elf -O1 demangle.cpp
-</span><span style="color:#abb2bf;">  </span><span style="font-style:italic;color:#5f697a;"># &#39;&#39;;
-</span><span style="color:#abb2bf;">  </span><span style="font-style:italic;color:#5f697a;"># installPhase = &#39;&#39;
-</span><span style="color:#abb2bf;">  </span><span style="font-style:italic;color:#5f697a;">#   mkdir -p $out
-</span><span style="color:#abb2bf;">  </span><span style="font-style:italic;color:#5f697a;">#   cp demangle.elf $out
-</span><span style="color:#abb2bf;">  </span><span style="font-style:italic;color:#5f697a;"># &#39;&#39;;
-</span><span style="color:#abb2bf;">}
-</span></code></pre>
-<pre data-lang="bash" style="background-color:#2b303b;color:#6c7079;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#eb6772;">nix-build</span><span style="color:#abb2bf;"> tangled/demangle.nix
-</span><span style="color:#eb6772;">file</span><span style="color:#abb2bf;"> ./result/demangle.elf
-</span><span style="color:#eb6772;">./result/demangle.elf
-</span></code></pre>
+<!--
+
+### Example (Non-Working)
+
+    #include <iostream>
+    #include <cstring>
+    #include "llvm/Demangle/ItaniumDemangle.h"
+    #include "llvm/Demangle/Demangle.h"
+    #include "llvm/Support/Allocator.h"
+
+    // This is how they do it in the test suite...
+    namespace {
+    class TestAllocator {
+      llvm::BumpPtrAllocator Alloc;
+
+    public:
+      void reset() { Alloc.Reset(); }
+
+      template <typename T, typename... Args> T *makeNode(Args &&... args) {
+        return new (Alloc.Allocate(sizeof(T), alignof(T)))
+            T(std::forward<Args>(args)...);
+      }
+
+      void *allocateNodeArray(size_t sz) {
+        return Alloc.Allocate(sizeof(llvm::itanium_demangle::Node *) * sz, alignof(llvm::itanium_demangle::Node *));
+      }
+    };
+    } // namespace
+
+
+    int main(void) {
+      const char *name = "_ZTVN7testing8internal30ValuesInIteratorRangeGeneratorIN4fizz4test10HashParamsEEE";
+      llvm::itanium_demangle::ManglingParser<TestAllocator> parser(name, name + std::strlen(name));
+      llvm::itanium_demangle::Node *ast = parser.parse();
+      // ast.print(llvm::outs());
+      return 0;
+    }
+
+``` fundamental
+project(blah LANGUAGES C CXX)
+cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
+
+find_package(LLVM 10.0.0 REQUIRED CONFIG)
+message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
+message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
+
+add_definitions(${LLVM_DEFINITIONS})
+include_directories(SYSTEM ${LLVM_INCLUDE_DIRS})
+link_directories(${LLVM_LIBRARY_DIRS})
+list(APPEND CMAKE_MODULE_PATH "${LLVM_CMAKE_DIR}")
+
+include(LLVMConfig)
+include(AddLLVM)
+
+add_executable(exe demangle.cpp)
+llvm_map_components_to_libnames(llvm_libs support core)
+target_link_libraries(exe PRIVATE ${llvm_libs})
+```
+
+``` nix
+with import <nixpkgs> { };
+let llvmPackages = llvmPackages_10;
+    llvm = llvmPackages.llvm;
+    clang = llvmPackages.clang;
+in clang.stdenv.mkDerivation {
+  name = "demangle";
+  src = ./.;
+  buildInputs = [ llvm glibc.static cmake zlib.static ];
+  cmakeFlags = [
+    "-DCMAKE_C_COMPILER=${clang}/bin/clang"
+    "-DCMAKE_CXX_COMPILER=${clang}/bin/clang++"
+  ];
+
+  # buildPhase = ''
+  #   echo "clang++ -isystem ${llvm}/include -L ${llvm}/lib -lLLVMDemangle -static -o demangle.elf -O1 demangle.cpp"
+  #   clang++ -isystem ${llvm}/include -L ${llvm}/lib -lLLVMDemangle -static -o demangle.elf -O1 demangle.cpp
+  # '';
+  # installPhase = ''
+  #   mkdir -p $out
+  #   cp demangle.elf $out
+  # '';
+}
+```
+
+``` bash
+nix-build tangled/demangle.nix
+file ./result/demangle.elf
+./result/demangle.elf
+```
+
+-->
 <h2 id="tablegen">TableGen</h2>
 <pre data-lang="bash" style="background-color:#2b303b;color:#6c7079;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#eb6772;">nix-shell -p</span><span style="color:#abb2bf;"> llvm_9</span><span style="color:#eb6772;"> --run </span><span style="color:#9acc76;">&quot;llvm-tblgen -dump-json include/llvm/IR/Intrinsics.td -I include&quot;
 </span></code></pre>
 <h2 id="types">Types</h2>
 <h3 id="records">Records</h3>
-<h2 id="mlir"><a href="/notes/mlir">MLIR</a></h2>
 <h2 id="analysis-of-llvm-ir">Analysis of LLVM IR</h2>
 <h3 id="tools-1">Tools</h3>
 <ul>
-<li>CClyzer</li>
+<li><a href="https://github.com/GaloisInc/cclyzerpp">cclyzer++</a></li>
 <li><a href="BROKEN-abstract-interpretation.org::*PAGAI">PAGAI</a></li>
 <li><a href="BROKEN-abstract-interpretation.org::*CRAB-LLVM">CRAB-LLVM</a></li>
 <li><a href="BROKEN-model-checking.org::*LLBMC">LLBMC</a></li>
 </ul>
 <h3 id="literature">Literature</h3>
 <ul>
-<li>[Signedness-Agnostic Program Analysis:Precise Integer Bounds for
-Low-Level
-Code](abstract-interpretation.org::*Signedness-Agnostic Program Analysis:Precise Integer Bounds for Low-Level Code)</li>
-<li>[Souper: A Synthesizing
-Superoptimizer](superoptimizers.org::*Souper: A Synthesizing Superoptimizer)</li>
+<li>Signedness-Agnostic Program Analysis:Precise Integer Bounds for Low-Level Code</li>
+<li>Souper: A Synthesizing Superoptimizer</li>
 </ul>
 <h2 id="cards">Cards</h2>
 <h3 id="extractvalue">extractvalue</h3>
-<ol>
-<li>
-<p>Text</p>
+<h4 id="text">Text</h4>
 <p>In LLVM, the {{c1::extractvalue}} instruction is used to
 {{c2::extract the value of a member field from an aggregate value}}.</p>
-</li>
-</ol>
-<h3 id="getelementptr-1">getelementptr</h3>
-<ol>
-<li>
-<p>Text</p>
+<h3 id="getelementptr">getelementptr</h3>
+<h4 id="text-1">Text</h4>
 <p>In LLVM, the {{c1::getelementptr}} instruction is used to {{c2::get
 the address of a subelement of an aggregate data structure}}.</p>
-</li>
-</ol>
 <h3 id="landingpad">landingpad</h3>
-<ol>
-<li>
-<p>Text</p>
+<h3 id="text-2">Text</h3>
 <p>In LLVM, the {{c1::landingpad}} instruction is used to {{c2::mark a
 basic block as a landing pad - one where the exception lands, and
 corresponds to the code found in the catch portion of a try/catch
 sequence}}.</p>
-</li>
-</ol>
 <h3 id="resume">resume</h3>
-<ol>
-<li>
-<p>Text</p>
+<h4 id="text-3">Text</h4>
 <p>In LLVM, the {{c1::resume}} instruction is used to {{c2::resume
 propagation of an existing (in-flight) exception whose unwinding was
 interrupted with a landingpad instruction}}.</p>
-</li>
-</ol>
 <h3 id="landing-pad">landing pad</h3>
-<ol>
-<li>
-<p>Text</p>
+<h4 id="text-4">Text</h4>
 <p>In the LLVM IR, a {{c1::landing pad}} is {{c2::where execution
 continues after an exception that occurs in an invoke}}.</p>
-</li>
-</ol>
 <h3 id="cleanup-landing-pad">cleanup landing pad</h3>
-<ol>
-<li>
-<p>Text</p>
+<h4 id="text-5">Text</h4>
 <p>In the LLVM IR, a landing pad instruction with a {{c1::cleanup
 clause}} will {{c2::always}} be entered when an exception is thrown.</p>
-</li>
-</ol>
 <h3 id="cleanup-destructor">cleanup destructor</h3>
-<ol>
-<li>
-<p>Front</p>
+<!-- marki[card]: 6d36f4e2-2014-4b74-8da5-0667b26d5ccf -->
+<h4 id="front">Front</h4>
 <p>In the context of the LLVM language, what is the typical example of
 a cleanup in compiled C++ code?</p>
-</li>
-<li>
-<p>Back</p>
+<h4 id="back">Back</h4>
 <p>Object destructors</p>
-</li>
-</ol>
 
 
   </div>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <link rel="stylesheet" href="/mine.css">
+  <title>langston-barrett.github.io</title>
+</head>
+<body>
+  <div id="content">
+    <h1 class="title">
+      <div class="logo"><strong>langston-barrrett.github.io</strong></div>
+    </h1>
+    <nav>
+      <a href="/">Home</a>&nbsp;&nbsp;
+      <a href="/blog">Blog</a>&nbsp;&nbsp;
+      <a href="/notes">Notes</a>
+    </nav>
+    
+<!-- NOTE! This page is PUBLIC! -->
+<h1 id="cargo">Cargo</h1>
+<p>The <a href="/notes/rust">Rust</a> build tool.</p>
+<h2 id="link-time-optimization">Link-Time Optimization</h2>
+<p>See also <a href="/notes/link-time-optimization">Link-Time Optimization</a> and 
+<a href="/notes/the-rust-performance-book">the Rust Performance Book</a>.</p>
+<pre data-lang="toml" style="background-color:#2b303b;color:#6c7079;" class="language-toml "><code class="language-toml" data-lang="toml"><span style="color:#abb2bf;">[profile.release]
+</span><span style="color:#eb6772;">lto </span><span style="color:#abb2bf;">= </span><span style="color:#db9d63;">true  </span><span style="font-style:italic;color:#5f697a;"># &quot;thin&quot; also works
+</span></code></pre>
+<h2 id="error-messages">Error Messages</h2>
+<p>Fix problems with <a href="/notes/git">git</a>:</p>
+<pre data-lang="sh" style="background-color:#2b303b;color:#6c7079;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#cd74e8;">export </span><span style="color:#eb6772;">CARGO_NET_GIT_FETCH_WITH_CLI</span><span style="color:#adb7c9;">=</span><span style="color:#9acc76;">true  
+</span></code></pre>
+<h2 id="static-linking">Static Linking</h2>
+<pre data-lang="sh" style="background-color:#2b303b;color:#6c7079;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#eb6772;">rustup</span><span style="color:#abb2bf;"> target add x86_64-unknown-linux-musl
+</span><span style="color:#eb6772;">cargo</span><span style="color:#abb2bf;"> build</span><span style="color:#eb6772;"> --target</span><span style="color:#adb7c9;">=</span><span style="color:#abb2bf;">x86_64-unknown-linux-musl
+</span></code></pre>
+<h2 id="ci">CI</h2>
+<p>Consider passing <code>--locked</code> to Cargo in CI.</p>
+<p>Here's an example of building and publishing statically linked binaries in
+<a href="/notes/github-actions">Github Actions</a>:</p>
+<p><a href="https://raw.githubusercontent.com/langston-barrett/souffle-lint/main/.github/workflows/release.yml">https://raw.githubusercontent.com/langston-barrett/souffle-lint/main/.github/workflows/release.yml</a></p>
+
+
+  </div>
+</body> 
+</html>
