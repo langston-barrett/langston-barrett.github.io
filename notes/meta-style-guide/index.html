@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <link rel="stylesheet" href="/mine.css">
+  <title>langston-barrett.github.io</title>
+</head>
+<body>
+  <div id="content">
+    <h1 class="title">
+      <div class="logo"><strong>langston-barrrett.github.io</strong></div>
+    </h1>
+    <nav>
+      <a href="/">Home</a>&nbsp;&nbsp;
+      <a href="/blog">Blog</a>&nbsp;&nbsp;
+      <a href="/notes">Notes</a>
+    </nav>
+    
+<h1 id="meta-style-guide-1">Meta Style Guide</h1>
+<p>This guide is targeted at authors of style guides that are scoped beyond
+an individual project, context, or circumstance.</p>
+<p>The recommendations in this guide are split into three levels, based on
+the author's perception of their relative importance and applicability:</p>
+<ul>
+<li>[<em>Strongly Recommended</em>]{.spurious-link
+target=&quot;*Strongly Recommended&quot;}: These recommendations are broadly
+applicable and have a high value-to-weight ratio.</li>
+<li>[<em>Recommended</em>]{.spurious-link target=&quot;*Recommended&quot;}: These
+recommendations may apply less universally, or be less than
+essential to a strong style guide.</li>
+<li>[<em>Nice to Have</em>]{.spurious-link target=&quot;*Nice to Have&quot;}: These
+recommendations aren't essential to writing a decent style guide;
+they're more like the marks of a really high-quality style guide.</li>
+</ul>
+<p>Furthermore, the recommendations within each of the above categories are
+sorted in rough order of descending importance.</p>
+<p>Do you have ideas for this guide? <a href="../about.org">Contact me</a>!</p>
+<h2 id="strongly-recommended">Strongly Recommended</h2>
+<h3 id="acknowledgment-of-limitations">Acknowledgment of Limitations</h3>
+<p>A style guide should acknowledge that:</p>
+<ul>
+<li>its prescriptions are not absolute,</li>
+<li>the guide is non-exhaustive,</li>
+<li>the authors are fallible, and</li>
+<li>each recommendation has a set of trade-offs (pros and cons) that
+need to be weighed in each context in which a recommendation is
+considered.</li>
+</ul>
+<ol>
+<li>
+<p>Examples</p>
+<p><a href="./python.org">My Python style guide</a> states:</p>
+<blockquote>
+<p>This is my personal style guide for writing Python code. As with
+all style guides, this guide is incomplete, fallible, and its
+recommendations aren't appropriate for every circumstance.</p>
+</blockquote>
+<p>The Google C++ style guide
+<a href="https://google.github.io/styleguide/cppguide.html#Goals">states</a>:</p>
+<blockquote>
+<p>If you understand what goals each rule is serving, it should be
+clearer to everyone when a rule may be waived (some can be)</p>
+</blockquote>
+<p>and:</p>
+<blockquote>
+<p>As always, common sense and good taste should prevail.</p>
+</blockquote>
+</li>
+<li>
+<p>Justification</p>
+<p>Such an acknowledgment establishes credibility: If the style guide
+is perceived to be pedantic, or the work of authors who are
+incapable of recognizing nuance and acknowledging subjectivity, its
+content and message will be proportionately less compelling.</p>
+</li>
+</ol>
+<h3 id="justification-1">Justification</h3>
+<p>Each item in a style guide should include a discussion of <em>why</em> the
+particular recommendation is made. Where appropriate, such
+justifications should:</p>
+<ul>
+<li>explicitly name the goals or concerns that the recommendation
+addresses,</li>
+<li>discuss the trade-offs (pros and cons) of the recommendation
+(especially relative to the explicitly-named goals), and</li>
+<li>refer to alternative solutions or styles and discuss their
+trade-offs.</li>
+</ul>
+<ol>
+<li>
+<p>Examples</p>
+<p>In the Google C++ style guide, the <a href="https://google.github.io/styleguide/cppguide.html#Goals">list of
+goals</a>
+appears before all the recommendations and provides context for
+evaluating them.</p>
+</li>
+<li>
+<p>Justification</p>
+<p>Given the inherent [<em>limited scope and
+applicability</em>]{.spurious-link
+target=&quot;*Acknowledgment of Limitations&quot;} of style guides, a thorough
+discussion of trade-offs for each recommendation aids users in
+considering them &quot;à la carte&quot;.</p>
+<p>Justifications also educate readers. Recommendations in style guides
+are sometimes the product of hard-won experience, and sharing the
+experience alongside the recommendation may help others internalize
+it.</p>
+</li>
+</ol>
+<h3 id="list-of-recommendations">List of Recommendations</h3>
+<p>A style guide should consist of a list of recommendations.</p>
+<ol>
+<li>
+<p>Justification</p>
+<p>Formatting style guides as a list of recommendations allows readers
+to consider them &quot;à la carte&quot; for their specific circumstance,
+which is crucial given that style guides are inherently [<em>limited in
+scope and applicability</em>]{.spurious-link
+target=&quot;*Acknowledgment of Limitations&quot;}.</p>
+<p>It also makes it easy to refer to a specific recommendation when
+describing it to others.</p>
+</li>
+</ol>
+<h3 id="recommendations-should-pull-their-weight">Recommendations Should Pull Their Weight</h3>
+<p>As described <a href="https://google.github.io/styleguide/cppguide.html#Goals">in the Google C++ style
+guide</a>:</p>
+<blockquote>
+<p>The benefit of a style rule must be large enough to justify asking all
+of our engineers to remember it.</p>
+</blockquote>
+<ol>
+<li>
+<p>Examples</p>
+<p>This style guide doesn't explicitly call out that style guides
+should be written in a language that is widely understood among the
+target audience, because this is assumed to be in the &quot;background
+of obviousness&quot; - the shared set of assumptions and understandings
+between the author and the majority of the audience.</p>
+<p>Also from the Google C++ style guide:</p>
+<blockquote>
+<p>for example, <code>goto</code> contravenes many of the following principles,
+but is already vanishingly rare, so the Style Guide doesn't
+discuss it.</p>
+</blockquote>
+</li>
+<li>
+<p>Justification</p>
+<p>Narrowing the scope helps keep the guide relatively concise and
+focused on higher-leverage recommendations. This increases the
+overall value of the reading and applying the style guide, relative
+to other approaches to increasing project quality.</p>
+</li>
+</ol>
+<h2 id="recommended">Recommended</h2>
+<h3 id="naming-an-audience">Naming an Audience</h3>
+<p>Style guides should explicitly name an audience.</p>
+<ol>
+<li>
+<p>Examples</p>
+<blockquote>
+<p>This is a JavaScript style guide aimed at first-time programmers
+who are learning JavaScript and are looking for guidance on
+writing readable, maintainable code.</p>
+</blockquote>
+<blockquote>
+<p>This is an in-house Haskell style guide for Company X. It's aimed
+at intermediate Haskell programmers working at Company X who want
+to write code that is in-line with the pre-existing style that's
+widely used across our codebases.</p>
+</blockquote>
+</li>
+<li>
+<p>Justification</p>
+<p>Naming an audience helps readers quickly evaluate whether or not the
+majority of the recommendations will apply to their circumstance.</p>
+<p>Moreover, it establishes a context in which to evaluate the addition
+or omission of recommendations (see [<em>Recommendations Should Pull
+Their Weight</em>]{.spurious-link
+target=&quot;*Recommendations Should Pull Their Weight&quot;}).</p>
+</li>
+</ol>
+<h3 id="naming-a-scope">Naming a Scope</h3>
+<p>In addition to naming an audience and prioritizing the recommendations,
+style guides may also name a scope that delimits which recommendations
+are considered for inclusion.</p>
+<ol>
+<li>
+<p>Examples</p>
+<p><a href="https://google.github.io/styleguide/javaguide.html">The Google Java Style
+Guide</a> says:</p>
+<blockquote>
+<p>this document focuses primarily on the hard-and-fast rules that we
+follow universally, and avoids giving advice that isn't clearly
+enforceable (whether by human or tool).</p>
+</blockquote>
+</li>
+<li>
+<p>Justification</p>
+<p>This shares most of the benefits of [<em>Naming an
+Audience</em>]{.spurious-link target=&quot;*Naming an Audience&quot;}.</p>
+</li>
+</ol>
+<h3 id="prioritization">Prioritization</h3>
+<p>Recommandations should have an associated <em>level</em> or <em>degree</em> of
+importance or applicability.</p>
+<ol>
+<li>
+<p>Examples</p>
+<p>This guide is split into three sections: &quot;Strongly Recommended&quot;,
+&quot;Recommended&quot;, and &quot;Nice to Have&quot;.</p>
+<p>The <a href="https://google.github.io/styleguide/tsguide.html">Google TypeScript style
+guide</a> uses the
+terminology of <a href="https://datatracker.ietf.org/doc/html/rfc2119">RFC
+2119</a> (e.g.,
+&quot;SHOULD&quot;, &quot;MAY&quot;, &quot;MUST&quot;, etc.).</p>
+</li>
+<li>
+<p>Justification</p>
+<p>All style guide recommendations are circumstantial, and so such
+prioritization is equally circumstantial. However, if the reader
+finds many of the recommendations in a given guide to be useful,
+they are likely to also agree with the degree of importance that the
+authors assign to their recommendations. The reader can then focus
+on applying the recommendations that provide them with highest value
+first or most stringently, increasing the overall utility of the
+guide.</p>
+</li>
+</ol>
+<h3 id="examples-6">Examples</h3>
+<p>Each recommendation should be accompanied by at least one example. Both
+positive and negative examples are helpful.</p>
+<ol>
+<li>
+<p>Examples</p>
+<p>This example is an example of including an example.</p>
+</li>
+<li>
+<p>Justification</p>
+<p>Including examples is a concise way to confirm (or develop) a
+reader's understanding of what situations are being referred to by
+the recommendation.</p>
+</li>
+</ol>
+<h2 id="nice-to-have">Nice to Have</h2>
+<h3 id="identifiers-and-permalinks">Identifiers and Permalinks</h3>
+<p>Each recommendation should have some specific way of being referred to.</p>
+<ol>
+<li>
+<p>Examples</p>
+<ul>
+<li>Each recommendation could have an immutable identifier that
+doesn't change between versions</li>
+<li>Each recommendation could have a number in a list that may
+change between versions, but old versions could be made
+permanently available</li>
+</ul>
+</li>
+<li>
+<p>Justification</p>
+<ol>
+<li>
+<p>Pros</p>
+<p>This makes it easy to refer to specific recommendations with
+little effort, and with the confidence that the reasoning behind
+your decisions will be faithfully preserved online.</p>
+</li>
+<li>
+<p>Cons</p>
+<p>May entail more work for the style guide author.</p>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="automation">Automation</h3>
+<p>Where the enforcement of a given recommendation can be automated, a
+style guide should include a reference or description of how to do so.</p>
+<ol>
+<li>
+<p>Examples</p>
+<p><a href="https://google.github.io/styleguide/pyguide.html#21-lint">The Google Python Style
+Guide</a>
+recommends use of Pylint with a specific configuration file.</p>
+<p>Style guides might also just list a particular rule identifier for a
+given tool, or have an inline snippet of a
+<a href="https://semgrep.dev/">semgrep</a> rule. (However, inline linter rules
+or scripts for automation should be very short or hidden by default
+for the sake of brevity).</p>
+</li>
+<li>
+<p>Justification</p>
+<p>Automation reduces the cognitive and time burdens of enforcement: a
+team can decide to adopt a recommendation and then never need to
+discuss it or bring it up in code reviews again, because they use
+tooling that enforces it.</p>
+<p>Moreover, the authors of style guides are often the sort of people
+who know more about tooling for enforcing stylistic/best practice
+recommendations, and so are in a good position to write or recommend
+such tooling.</p>
+</li>
+</ol>
+
+
+  </div>
+</body> 
+</html>
