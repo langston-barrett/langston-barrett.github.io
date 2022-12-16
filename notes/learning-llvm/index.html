@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <link rel="stylesheet" href="/mine.css">
+  <title>langston-barrett.github.io</title>
+</head>
+<body>
+  <div id="content">
+    <h1 class="title">
+      <div class="logo"><strong>langston-barrrett.github.io</strong></div>
+    </h1>
+    <nav>
+      <a href="/">Home</a>&nbsp;&nbsp;
+      <a href="/blog">Blog</a>&nbsp;&nbsp;
+      <a href="/notes">Notes</a>
+    </nav>
+    
+<!-- NOTE! This page is PUBLIC! -->
+<h1 id="learning-llvm">Learning LLVM</h1>
+<p>This is something I wrote to someone about starting out with LLVM.</p>
+<p>Here are a scattered collection of thoughts and resources that might be helpful to you as you start learning about LLVM:</p>
+<ul>
+<li>
+<p>The official <a href="https://releases.llvm.org/12.0.0/docs/LangRef.html">Language Reference</a> is the most authoritative discussion of the semantics of LLVM IR, though it's pretty informal.</p>
+</li>
+<li>
+<p><a href="https://godbolt.org/">Compiler Explorer</a> is a tool you can use to view the output of many versions of many compilers. The <code>-emit-llvm</code> flag for Clang shows you LLVM bitcode.</p>
+</li>
+<li>
+<p><a href="https://github.com/SRI-CSL/gllvm">GLLVM</a> is a tool to compile multi-file programs to a single LLVM bitcode module.</p>
+</li>
+<li>
+<p><code>getelementptr</code> is hard to understand. Here are some resources:</p>
+<ul>
+<li><a href="https://llvm.org/docs/GetElementPtr.html">https://llvm.org/docs/GetElementPtr.html</a></li>
+<li><a href="https://blog.yossarian.net/2020/09/19/LLVMs-getelementptr-by-example">https://blog.yossarian.net/2020/09/19/LLVMs-getelementptr-by-example</a></li>
+</ul>
+</li>
+<li>
+<p>When compiling to bitcode that you intend to read, the <code>-fno-discard-value-names</code> flag to Clang causes it to not rename everything to something like <code>%5</code>, but rather keep the names present in the program. For C++ code, <code>-fno-rtti</code> can also simplify things.</p>
+</li>
+<li>
+<p>I don't know if this will be relevant for you, but if you ever find yourself writing an LLVM pass, there are two &quot;pass managers&quot; and the documentation for the new one is... nonexistant? Here's the only resource I've found that explains it at all, and it has some nice example passes: https://github.com/banach-space/llvm-tutor</p>
+</li>
+<li>
+<p>For a very general overview of what LLVM is and how it works, see this chapter of AOSA: http://aosabook.org/en/llvm.html</p>
+</li>
+<li>
+<p>Helpful blogs and posts:</p>
+<ul>
+<li><a href="https://blog.yossarian.net/tags#llvm">https://blog.yossarian.net/tags#llvm</a>
+<ul>
+<li>For general info on SSA: <a href="https://blog.yossarian.net/2020/10/23/Understanding-static-single-assignment-forms">https://blog.yossarian.net/2020/10/23/Understanding-static-single-assignment-forms</a>.</li>
+</ul>
+</li>
+<li><a href="https://eli.thegreenplace.net/tag/llvm-clang">https://eli.thegreenplace.net/tag/llvm-clang</a></li>
+</ul>
+</li>
+<li>
+<p>Gotchas:</p>
+<ul>
+<li>Structs that are passed by-value at the C level can be &quot;unpacked&quot; at the LLVM level:</li>
+</ul>
+<pre data-lang="c" style="background-color:#2b303b;color:#6c7079;" class="language-c "><code class="language-c" data-lang="c"><span style="color:#cd74e8;">struct </span><span style="color:#abb2bf;">s {
+</span><span style="color:#abb2bf;">  </span><span style="color:#cd74e8;">int</span><span style="color:#abb2bf;"> x;
+</span><span style="color:#abb2bf;">  </span><span style="color:#cd74e8;">double</span><span style="color:#abb2bf;"> y;
+</span><span style="color:#abb2bf;">};
+</span><span style="color:#abb2bf;">
+</span><span style="color:#cd74e8;">void </span><span style="color:#5cb3fa;">f</span><span style="color:#abb2bf;">(</span><span style="color:#cd74e8;">struct</span><span style="color:#abb2bf;"> s </span><span style="color:#eb6772;">ss</span><span style="color:#abb2bf;">) {}
+</span></code></pre>
+<pre data-lang="llvm" style="background-color:#2b303b;color:#6c7079;" class="language-llvm "><code class="language-llvm" data-lang="llvm"><span style="color:#abb2bf;">define dso_local void @f(i32 %0, double %1) local_unnamed_addr #0 {
+</span><span style="color:#abb2bf;">  ret void
+</span><span style="color:#abb2bf;">}
+</span></code></pre>
+<ul>
+<li></li>
+</ul>
+<pre data-lang="c" style="background-color:#2b303b;color:#6c7079;" class="language-c "><code class="language-c" data-lang="c"><span style="color:#cd74e8;">struct </span><span style="color:#abb2bf;">s {
+</span><span style="color:#abb2bf;">  </span><span style="color:#cd74e8;">int</span><span style="color:#abb2bf;"> x;
+</span><span style="color:#abb2bf;">  </span><span style="color:#cd74e8;">int</span><span style="color:#abb2bf;"> y;
+</span><span style="color:#abb2bf;">};
+</span><span style="color:#abb2bf;">
+</span><span style="color:#cd74e8;">struct</span><span style="color:#abb2bf;"> s </span><span style="color:#5cb3fa;">f</span><span style="color:#abb2bf;">(</span><span style="color:#cd74e8;">struct</span><span style="color:#abb2bf;"> s </span><span style="color:#eb6772;">s</span><span style="color:#abb2bf;">) {
+</span><span style="color:#abb2bf;">  </span><span style="color:#adb7c9;">++</span><span style="color:#abb2bf;">s.</span><span style="color:#eb6772;">y</span><span style="color:#abb2bf;">;
+</span><span style="color:#abb2bf;">  </span><span style="color:#cd74e8;">return</span><span style="color:#abb2bf;"> s;
+</span><span style="color:#abb2bf;">}
+</span></code></pre>
+<pre data-lang="llvm" style="background-color:#2b303b;color:#6c7079;" class="language-llvm "><code class="language-llvm" data-lang="llvm"><span style="color:#abb2bf;">define dso_local i64 @f(i64 %0) local_unnamed_addr #0 {
+</span><span style="color:#abb2bf;">  %2 = add i64 %0, 4294967296
+</span><span style="color:#abb2bf;">  ret i64 %2
+</span><span style="color:#abb2bf;">}
+</span></code></pre>
+</li>
+</ul>
+
+
+  </div>
+</body> 
+</html>

@@ -19,82 +19,7 @@
     
 <!-- NOTE! This page is PUBLIC! -->
 <h1 id="llvm">LLVM</h1>
-<h2 id="starting-out-with-llvm">Starting Out With LLVM</h2>
-<p>This is something I wrote to someone about starting out with LLVM.</p>
-<p>Here are a scattered collection of thoughts and resources that might be helpful to you as you start learning about LLVM:</p>
-<ul>
-<li>
-<p>The official <a href="https://releases.llvm.org/12.0.0/docs/LangRef.html">Language Reference</a> is the most authoritative discussion of the semantics of LLVM IR, though it's pretty informal.</p>
-</li>
-<li>
-<p><a href="https://godbolt.org/">Compiler Explorer</a> is a tool you can use to view the output of many versions of many compilers. The <code>-emit-llvm</code> flag for Clang shows you LLVM bitcode.</p>
-</li>
-<li>
-<p><a href="https://github.com/SRI-CSL/gllvm">GLLVM</a> is a tool to compile multi-file programs to a single LLVM bitcode module.</p>
-</li>
-<li>
-<p><code>getelementptr</code> is hard to understand. Here are some resources:</p>
-<ul>
-<li><a href="https://llvm.org/docs/GetElementPtr.html">https://llvm.org/docs/GetElementPtr.html</a></li>
-<li><a href="https://blog.yossarian.net/2020/09/19/LLVMs-getelementptr-by-example">https://blog.yossarian.net/2020/09/19/LLVMs-getelementptr-by-example</a></li>
-</ul>
-</li>
-<li>
-<p>When compiling to bitcode that you intend to read, the <code>-fno-discard-value-names</code> flag to Clang causes it to not rename everything to something like <code>%5</code>, but rather keep the names present in the program. For C++ code, <code>-fno-rtti</code> can also simplify things.</p>
-</li>
-<li>
-<p>I don't know if this will be relevant for you, but if you ever find yourself writing an LLVM pass, there are two &quot;pass managers&quot; and the documentation for the new one is... nonexistant? Here's the only resource I've found that explains it at all, and it has some nice example passes: https://github.com/banach-space/llvm-tutor</p>
-</li>
-<li>
-<p>For a very general overview of what LLVM is and how it works, see this chapter of AOSA: http://aosabook.org/en/llvm.html</p>
-</li>
-<li>
-<p>Helpful blogs and posts:</p>
-<ul>
-<li>https://blog.yossarian.net/tags#llvm
-<ul>
-<li>For general info on SSA: https://blog.yossarian.net/2020/10/23/Understanding-static-single-assignment-forms.</li>
-</ul>
-</li>
-<li>https://eli.thegreenplace.net/tag/llvm-clang</li>
-</ul>
-</li>
-<li>
-<p>Gotchas:</p>
-<ul>
-<li>Structs that are passed by-value at the C level can be &quot;unpacked&quot; at the LLVM level:</li>
-</ul>
-<pre data-lang="c" style="background-color:#2b303b;color:#6c7079;" class="language-c "><code class="language-c" data-lang="c"><span style="color:#cd74e8;">struct </span><span style="color:#abb2bf;">s {
-</span><span style="color:#abb2bf;">  </span><span style="color:#cd74e8;">int</span><span style="color:#abb2bf;"> x;
-</span><span style="color:#abb2bf;">  </span><span style="color:#cd74e8;">double</span><span style="color:#abb2bf;"> y;
-</span><span style="color:#abb2bf;">};
-</span><span style="color:#abb2bf;">
-</span><span style="color:#cd74e8;">void </span><span style="color:#5cb3fa;">f</span><span style="color:#abb2bf;">(</span><span style="color:#cd74e8;">struct</span><span style="color:#abb2bf;"> s </span><span style="color:#eb6772;">ss</span><span style="color:#abb2bf;">) {}
-</span></code></pre>
-<pre data-lang="llvm" style="background-color:#2b303b;color:#6c7079;" class="language-llvm "><code class="language-llvm" data-lang="llvm"><span style="color:#abb2bf;">define dso_local void @f(i32 %0, double %1) local_unnamed_addr #0 {
-</span><span style="color:#abb2bf;">  ret void
-</span><span style="color:#abb2bf;">}
-</span></code></pre>
-<ul>
-<li></li>
-</ul>
-<pre data-lang="c" style="background-color:#2b303b;color:#6c7079;" class="language-c "><code class="language-c" data-lang="c"><span style="color:#cd74e8;">struct </span><span style="color:#abb2bf;">s {
-</span><span style="color:#abb2bf;">  </span><span style="color:#cd74e8;">int</span><span style="color:#abb2bf;"> x;
-</span><span style="color:#abb2bf;">  </span><span style="color:#cd74e8;">int</span><span style="color:#abb2bf;"> y;
-</span><span style="color:#abb2bf;">};
-</span><span style="color:#abb2bf;">
-</span><span style="color:#cd74e8;">struct</span><span style="color:#abb2bf;"> s </span><span style="color:#5cb3fa;">f</span><span style="color:#abb2bf;">(</span><span style="color:#cd74e8;">struct</span><span style="color:#abb2bf;"> s </span><span style="color:#eb6772;">s</span><span style="color:#abb2bf;">) {
-</span><span style="color:#abb2bf;">  </span><span style="color:#adb7c9;">++</span><span style="color:#abb2bf;">s.</span><span style="color:#eb6772;">y</span><span style="color:#abb2bf;">;
-</span><span style="color:#abb2bf;">  </span><span style="color:#cd74e8;">return</span><span style="color:#abb2bf;"> s;
-</span><span style="color:#abb2bf;">}
-</span></code></pre>
-<pre data-lang="llvm" style="background-color:#2b303b;color:#6c7079;" class="language-llvm "><code class="language-llvm" data-lang="llvm"><span style="color:#abb2bf;">define dso_local i64 @f(i64 %0) local_unnamed_addr #0 {
-</span><span style="color:#abb2bf;">  %2 = add i64 %0, 4294967296
-</span><span style="color:#abb2bf;">  ret i64 %2
-</span><span style="color:#abb2bf;">}
-</span></code></pre>
-</li>
-</ul>
+<p>See also <a href="learning-llvm.md">Learning LLVM</a>.</p>
 <h2 id="links">Links</h2>
 <h3 id="language-reference">Language Reference</h3>
 <h3 id="description-in-the-architecture-of-open-source-applications">Description in The Architecture of Open Source Applications</h3>
@@ -300,10 +225,8 @@ Information&quot;</a></li>
 <p>See <a href="phabricator.md">Phabricator</a>.</p>
 <h3 id="documentation">Documentation</h3>
 <ul>
-<li><a href="https://llvm.org/docs/Contributing.html">Contributing to LLVM — LLVM 12
-documentation</a></li>
-<li><a href="https://llvm.org/docs/TestingGuide.html">LLVM Testing Infrastructure Guide — LLVM 12
-documentation</a></li>
+<li><a href="https://llvm.org/docs/Contributing.html">Contributing to LLVM — LLVM 12 documentation</a></li>
+<li><a href="https://llvm.org/docs/TestingGuide.html">LLVM Testing Infrastructure Guide — LLVM 12 documentation</a></li>
 </ul>
 <h3 id="formatting">Formatting</h3>
 <pre data-lang="bash" style="background-color:#2b303b;color:#6c7079;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#eb6772;">git</span><span style="color:#abb2bf;"> diff</span><span style="color:#eb6772;"> -U0 --no-color --relative</span><span style="color:#abb2bf;"> HEAD^ </span><span style="color:#adb7c9;">| </span><span style="color:#eb6772;">python3</span><span style="color:#abb2bf;"> clang/tools/clang-format/clang-format-diff.py</span><span style="color:#eb6772;"> -p1 -i
@@ -358,43 +281,8 @@ a surprisingly large amount of what gets included from libraries
 </span></code></pre>
 </li>
 </ol>
-<h3 id="gllvm">gllvm</h3>
-<p>For compiling the <a href="linux.md">Linux</a> kernel, See
-<a href="file:./files/linux-kernel-bitcode">file:./files/linux-kernel-bitcode</a>.</p>
-<p>See also [LLVM Bitcode
-Modules](program-analysis.org::*LLVM Bitcode Modules).</p>
-<h3 id="llvm-reduce">llvm-reduce</h3>
-<p><a href="https://blog.regehr.org/archives/2109">https://blog.regehr.org/archives/2109</a></p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#6c7079;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#eb6772;">llvm-reduce-10 --test</span><span style="color:#adb7c9;">=</span><span style="color:#abb2bf;">ovington-reduce.sh ovington-min-red.bc
-</span></code></pre>
-<pre data-lang="bash" style="background-color:#2b303b;color:#6c7079;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="font-style:italic;color:#5f697a;">#!/usr/bin/env bash
-</span><span style="color:#abb2bf;">
-</span><span style="color:#eb6772;">llvm-as-10 </span><span style="color:#9acc76;">&quot;${</span><span style="color:#eb6772;">1</span><span style="color:#9acc76;">}&quot;
-</span><span style="color:#eb6772;">bc</span><span style="color:#adb7c9;">=</span><span style="color:#9acc76;">&quot;${</span><span style="color:#eb6772;">1</span><span style="color:#adb7c9;">%</span><span style="color:#9acc76;">.ll}.bc&quot;
-</span><span style="color:#abb2bf;">
-</span><span style="color:#eb6772;">my_command </span><span style="color:#9acc76;">&quot;${</span><span style="color:#eb6772;">bc</span><span style="color:#9acc76;">}&quot; </span><span style="color:#adb7c9;">&amp;&gt;</span><span style="color:#abb2bf;"> /dev/null
-</span><span style="color:#cd74e8;">if </span><span style="color:#5ebfcc;">[[ </span><span style="color:#abb2bf;">${</span><span style="color:#eb6772;">MY_ASSERTION_FAILED</span><span style="color:#abb2bf;">} </span><span style="color:#5ebfcc;">]]</span><span style="color:#adb7c9;">; </span><span style="color:#cd74e8;">then
-</span><span style="color:#abb2bf;">  </span><span style="color:#5ebfcc;">printf </span><span style="color:#9acc76;">&quot;\nInput is still &#39;interesting&#39;\n&quot;
-</span><span style="color:#abb2bf;">  </span><span style="color:#5ebfcc;">exit</span><span style="color:#abb2bf;"> 0
-</span><span style="color:#cd74e8;">else
-</span><span style="color:#abb2bf;">  </span><span style="color:#5ebfcc;">printf </span><span style="color:#9acc76;">&quot;\nInput is no longer &#39;interesting&#39;\n&quot;
-</span><span style="color:#abb2bf;">  </span><span style="color:#5ebfcc;">exit</span><span style="color:#abb2bf;"> 1
-</span><span style="color:#cd74e8;">fi
-</span></code></pre>
-<ol>
-<li>
-<p>Saving as You Go</p>
-<p>There doesn't appear to be an option to save as you go (useful if
-you've got a long running test), but you can just copy files from
-&quot;/tmp&quot; or have your test script copy <code>$1</code> somewhere.</p>
-</li>
-<li>
-<p>Options</p>
-<p>It appears that <code>--help</code> prints the whole help of <code>opt</code>… You can
-always read <a href="https://github.com/llvm/llvm-project/blob/main/llvm/tools/llvm-reduce/llvm-reduce.cpp">the
-source</a>!</p>
-</li>
-</ol>
+<h3 id="gllvm"><a href="gllvm.md">gllvm</a></h3>
+<h3 id="llvm-reduce"><a href="llvm-reduce.md">llvm-reduce</a></h3>
 <h3 id="llvm-link">llvm-link</h3>
 <h3 id="llvm-dataflow-info">llvm-dataflow-info</h3>
 <blockquote>
