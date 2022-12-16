@@ -25,7 +25,13 @@
         <loc>https://langston-barrett.github.io/notes/haskell-style-guide/</loc>
     </url>
     <url>
+        <loc>https://langston-barrett.github.io/notes/llvm/</loc>
+    </url>
+    <url>
         <loc>https://langston-barrett.github.io/notes/meta-style-guide/</loc>
+    </url>
+    <url>
+        <loc>https://langston-barrett.github.io/notes/mlir/</loc>
     </url>
     <url>
         <loc>https://langston-barrett.github.io/notes/programming-style-guide/</loc>
