@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <link rel="stylesheet" href="/mine.css">
+  <title>langston-barrett.github.io</title>
+</head>
+<body>
+  <div id="content">
+    <h1 class="title">
+      <div class="logo"><strong>langston-barrrett.github.io</strong></div>
+    </h1>
+    <nav>
+      <a href="/">Home</a>&nbsp;&nbsp;
+      <a href="/blog">Blog</a>&nbsp;&nbsp;
+      <a href="/notes">Notes</a>
+    </nav>
+    
+<!-- NOTE! This page is PUBLIC! -->
+<!-- TODO: Deduplicate with mlir.2.md -->
+<h1 id="mlir">MLIR</h1>
+<h2 id="overview">Overview</h2>
+<p>The Multi-Language Intermediate Representation, an <a href="/notes/llvm">LLVM</a>
+project. The goal is to support <em>dialects</em> of IRs like LLVM, Rust's MIR,
+Swift's SIR, etc. that share some common infrastructure, e.g. datatypes,
+parsing, location tracking, pass management, etc. The key idea is that
+these many different dialects can live at different levels of
+abstraction: near source code, as high-level IRs, or as hardware
+descriptions languages.</p>
+<h3 id="ops-blocks-and-regions">Ops, Blocks, and Regions</h3>
+<h3 id="dialects">Dialects</h3>
+<p>Dialects can have custom syntax, with custom printers and parsers.</p>
+<ol>
+<li>
+<p>LLVM</p>
+<p>The LLVM dialect embeds LLVM into MLIR, with a few notable changes:</p>
+<ul>
+<li>Constants become Ops</li>
+<li>Phi instructions become block arguments</li>
+</ul>
+<p>As of June 2021, there are no analysis passes for LLVM that live in
+MLIR.</p>
+</li>
+<li>
+<p>SCF: Structured Control Flow</p>
+<p>The SCF dialect contains Ops for structured control flow like for-
+and while-loops, and if-statements.</p>
+</li>
+</ol>
+<h3 id="foreign-apis">Foreign APIs</h3>
+<p>There are C and Python bindings. As of June 2021, the C bindings have no
+specific stability guarantee.</p>
+<h2 id="literature">Literature</h2>
+<h3 id="mlir-a-compiler-infrastructure-for-the-end-of-moore-s-law">MLIR: A Compiler Infrastructure for the End of Moore's Law</h3>
+<ol>
+<li>
+<p>Abstract</p>
+<blockquote>
+<p>This work presents MLIR, a novel approach to building reusable and
+extensible compiler infrastructure. MLIR aims to address software
+fragmentation, improve compilation for heterogeneous hardware,
+significantly reduce the cost of building domain specific
+compilers, and aid in connecting existing compilers together. MLIR
+facilitates the design and implementation of code generators,
+translators and optimizers at different levels of abstraction and
+also across application domains, hardware targets and execution
+environments. The contribution of this work includes (1)
+discussion of MLIR as a research artifact, built for extension and
+evolution, and identifying the challenges and opportunities posed
+by this novel design point in design, semantics, optimization
+specification, system, and engineering. (2) evaluation of MLIR as
+a generalized infrastructure that reduces the cost of building
+compilers-describing diverse use-cases to show research and
+educational opportunities for future programming languages,
+compilers, execution environments, and computer architecture. The
+paper also presents the rationale for MLIR, its original design
+principles, structures and semantics.</p>
+</blockquote>
+</li>
+<li>
+<p>Design Principles</p>
+<ul>
+<li>Little builtin, everything customizable
+<ul>
+<li>The three core concept are Op, block, and region</li>
+<li>There are a handful of other types like types and attributes</li>
+</ul>
+</li>
+<li>SSA with nested regions</li>
+<li>Progressive lowering</li>
+<li>Maintaining high-level semantic information</li>
+<li>IR validation should be workable</li>
+<li>Declarative rewriting</li>
+<li>Source location tracking and traceability</li>
+</ul>
+</li>
+<li>
+<p>Design Details</p>
+<ol>
+<li>
+<p>Operations</p>
+<p>An operation (Op) is the unit of semantic information. Ops might
+represent opcodes in some ISA, or functions, modules, or
+variables.</p>
+</li>
+<li>
+<p>Attributes</p>
+<p>Attributes are compile-time constant key-value maps.</p>
+</li>
+<li>
+<p>Location information</p>
+</li>
+<li>
+<p>Regions and blocks</p>
+<p>Regions contain blocks, which contain ops, which contain
+regions. Blocks have terminators and successors. Blocks have
+arguments, which replace phi nodes.</p>
+</li>
+<li>
+<p>Symbol tables</p>
+<p>Symbol tables provide a mechanism for non-lexical reference.</p>
+</li>
+<li>
+<p>Dialects</p>
+<p>Dialects group related ops, attributes, and types. Dialects may
+have custom syntax.</p>
+</li>
+<li>
+<p>Types</p>
+<p>Types represent compile-time information/static semantics.</p>
+</li>
+</ol>
+</li>
+<li>
+<p>IR Infrastructure</p>
+<ol>
+<li>
+<p>TableGen</p>
+<p>MLIR uses LLVM's TableGen to declaratively describe ops.</p>
+</li>
+<li>
+<p>Declarative rewrites</p>
+<p>Pass authors may specify pattern-based declarative rewrites in a
+TableGen-hosted DSL called DRR.</p>
+</li>
+<li>
+<p>Pass manager</p>
+<p>There is a (parallelizable) pass manager that works on the op
+granularity.</p>
+</li>
+<li>
+<p>Textual format</p>
+<p>All dialects have a textual IR that is isomorphic to their
+in-memory representation.</p>
+</li>
+</ol>
+</li>
+<li>
+<p>Evaluation: Applications</p>
+<ol>
+<li>
+<p>TensorFlow</p>
+</li>
+<li>
+<p>Polyhedral optimization</p>
+</li>
+<li>
+<p>Fortran IR</p>
+</li>
+<li>
+<p>Domain-specific compilers</p>
+</li>
+</ol>
+</li>
+<li>
+<p>Related work</p>
+<p>Calls out:</p>
+<ul>
+<li>IRs: LLVM, ONNX</li>
+<li>Languages for heterogeneous computing: OpenMP, StarSs, OpenACC,
+C++ AMP, HCC, SyCL, Lightweight Modular Staging/Delite</li>
+<li>Machine learning compilers: XLA, Glow, TVM, PolyMage</li>
+</ul>
+</li>
+</ol>
+<h3 id="polygeist-affine-c-in-mlir">Polygeist: Affine C in MLIR</h3>
+<ol>
+<li>
+<p>Abstract</p>
+<blockquote>
+<p>We present Polygeist, a new tool that reroutes polyhedral
+compilation flows to use the representation available in the
+recent MLIR compilation infrastructure. It consists of two parts:
+a C and C++ frontend capable of converting a wide variety of
+existing codes into MLIR suitable for polyhedral transformation,
+and a bi-directional conversion between MLIR's polyhedral
+representation and existing polyhedral exchange formats. We
+demonstrate the flow by converting the entire Polybench/C
+benchmark suite into MLIR, and by performing an IR-to-IR
+optimization leveraging an existing polyhedral compiler (Pluto).
+Our flow produces results comparable to the state-of-the-art
+compiler, enabling direct comparison of source-to-source and
+IR-to-binary compilers. We believe Polygeist can improve the
+interoperation between MLIR and the existing polyhedral tooling
+ultimately benefiting both the research and the production
+compiler communities.</p>
+</blockquote>
+</li>
+<li>
+<p>Notes</p>
+<ul>
+<li>The tool comes with an experimental/partial translation from C
+into MLIR, specifically the affine dialect with embedded LLVM.</li>
+</ul>
+</li>
+</ol>
+<h3 id="progressive-raising-in-multi-level-ir">Progressive Raising in Multi-level IR</h3>
+<ol>
+<li>
+<p>Abstract</p>
+<blockquote>
+<p>Multi-level intermediate representations (IR) show great promise
+for lowering the design costs for domain-specific compilers by
+providing a reusable, extensible, and non-opinionated framework
+for expressing domain-specific and high-level abstractions
+directly in the IR. But, while such frameworks support the
+progressive lowering of high-level representations to low-level
+IR, they do not raise in the opposite direction. Thus, the entry
+point into the compilation pipeline defines the highest level of
+abstraction for all subsequent transformations, limiting the set
+of applicable optimizations, in particular for general-purpose
+languages that are not semantically rich enough to model the
+required abstractions. We propose Progressive Raising, a
+complementary approach to the progressive lowering in multi-level
+IRs that raises from lower to higher-level abstractions to
+leverage domain-specific transformations for low-level
+representations. We further introduce Multilevel Tactics, our
+declarative approach for progressive raising, implemented on top
+of the MLIR framework, and demonstrate the progressive raising
+from affine loop nests specified in a general-purpose language to
+high-level linear algebra operations. Our raising paths leverage
+subsequent high-level domain-specific transformations with
+significant performance improvements.</p>
+</blockquote>
+</li>
+<li>
+<p>Notes</p>
+<ul>
+<li>This paper is not the most clearly written - lots of typos, etc.
+(at least in the PDF I found).</li>
+<li>While the idea in the abstract is fairly general, the majority
+of this paper focuses on the application to loop nests.</li>
+<li>The transformation starts at the bottom with the <span
+class="spurious-link"
+target="*SCF: Structured Control Flow"><em>SCF</em></span> dialect.</li>
+</ul>
+</li>
+</ol>
+<h3 id="scalehls-achieving-scalable-high-level-synthesis-through-mlir">ScaleHLS: Achieving Scalable High-Level Synthesis through MLIR</h3>
+
+
+  </div>
+</body> 
+</html>

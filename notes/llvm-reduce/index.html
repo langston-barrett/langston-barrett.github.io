@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <link rel="stylesheet" href="/mine.css">
+  <title>langston-barrett.github.io</title>
+</head>
+<body>
+  <div id="content">
+    <h1 class="title">
+      <div class="logo"><strong>langston-barrrett.github.io</strong></div>
+    </h1>
+    <nav>
+      <a href="/">Home</a>&nbsp;&nbsp;
+      <a href="/blog">Blog</a>&nbsp;&nbsp;
+      <a href="/notes">Notes</a>
+    </nav>
+    
+<!-- NOTE! This page is PUBLIC! -->
+<h1 id="llvm-reduce">LLVM-Reduce</h1>
+<p>Tool for <a href="/notes/test-case-reduction">Test-Case Reduction</a> of <a href="/notes/llvm-ir">LLVM IR</a>.</p>
+<p><a href="https://blog.regehr.org/archives/2109">https://blog.regehr.org/archives/2109</a></p>
+<h2 id="example">Example</h2>
+<pre data-lang="bash" style="background-color:#2b303b;color:#6c7079;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#eb6772;">llvm-reduce-10 --test</span><span style="color:#adb7c9;">=</span><span style="color:#abb2bf;">test.sh prog.bc
+</span></code></pre>
+<pre data-lang="bash" style="background-color:#2b303b;color:#6c7079;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="font-style:italic;color:#5f697a;">#!/usr/bin/env bash
+</span><span style="color:#abb2bf;">
+</span><span style="color:#eb6772;">llvm-as-10 </span><span style="color:#9acc76;">&quot;${</span><span style="color:#eb6772;">1</span><span style="color:#9acc76;">}&quot;
+</span><span style="color:#eb6772;">bc</span><span style="color:#adb7c9;">=</span><span style="color:#9acc76;">&quot;${</span><span style="color:#eb6772;">1</span><span style="color:#adb7c9;">%</span><span style="color:#9acc76;">.ll}.bc&quot;
+</span><span style="color:#abb2bf;">
+</span><span style="color:#eb6772;">my_command </span><span style="color:#9acc76;">&quot;${</span><span style="color:#eb6772;">bc</span><span style="color:#9acc76;">}&quot; </span><span style="color:#adb7c9;">&amp;&gt;</span><span style="color:#abb2bf;"> /dev/null
+</span><span style="color:#cd74e8;">if </span><span style="color:#5ebfcc;">[[ </span><span style="color:#abb2bf;">${</span><span style="color:#eb6772;">MY_ASSERTION_FAILED</span><span style="color:#abb2bf;">} </span><span style="color:#5ebfcc;">]]</span><span style="color:#adb7c9;">; </span><span style="color:#cd74e8;">then
+</span><span style="color:#abb2bf;">  </span><span style="color:#5ebfcc;">printf </span><span style="color:#9acc76;">&quot;\nInput is still &#39;interesting&#39;\n&quot;
+</span><span style="color:#abb2bf;">  </span><span style="color:#5ebfcc;">exit</span><span style="color:#abb2bf;"> 0
+</span><span style="color:#cd74e8;">else
+</span><span style="color:#abb2bf;">  </span><span style="color:#5ebfcc;">printf </span><span style="color:#9acc76;">&quot;\nInput is no longer &#39;interesting&#39;\n&quot;
+</span><span style="color:#abb2bf;">  </span><span style="color:#5ebfcc;">exit</span><span style="color:#abb2bf;"> 1
+</span><span style="color:#cd74e8;">fi
+</span></code></pre>
+<h2 id="saving-as-you-go">Saving as You Go</h2>
+<p>There doesn't appear to be an option to save as you go (useful if
+you've got a long running test), but you can just copy files from
+&quot;/tmp&quot; or have your test script copy <code>$1</code> somewhere.</p>
+<h2 id="options">Options</h2>
+<p>It appears that <code>--help</code> prints the whole help of <code>opt</code>… You can
+always read <a href="https://github.com/llvm/llvm-project/blob/main/llvm/tools/llvm-reduce/llvm-reduce.cpp">the
+source</a>!</p>
+
+
+  </div>
+</body> 
+</html>

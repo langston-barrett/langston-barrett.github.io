@@ -1,3 +1,4 @@
 User-agent: *
+Disallow:
 Allow: /
 Sitemap: https://langston-barrett.github.io/sitemap.xml

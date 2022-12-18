@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <link rel="stylesheet" href="/mine.css">
+  <title>langston-barrett.github.io</title>
+</head>
+<body>
+  <div id="content">
+    <h1 class="title">
+      <div class="logo"><strong>langston-barrrett.github.io</strong></div>
+    </h1>
+    <nav>
+      <a href="/">Home</a>&nbsp;&nbsp;
+      <a href="/blog">Blog</a>&nbsp;&nbsp;
+      <a href="/notes">Notes</a>
+    </nav>
+    
+<h1 id="haskell-style-guide-1">Haskell Style Guide</h1>
+<p>This is my personal style guide for writing Haskell code. As with all
+style guides, this guide is incomplete, fallible, and its
+recommendations aren't appropriate for every circumstance.</p>
+<p>I've only recently started writing this, so it's obviously
+particularly incomplete. Hopefully, it will grow as I learn and think
+more!</p>
+<p>This guide is focused only on recommendations that <em>aren't</em> universal across
+programming languages, for such recommendations see my <a href="/notes/programming-style-guide">Programming Style
+Guide</a>. Additionally, I don't currently publish
+any recommendations that concern third-party libraries.</p>
+<p>Its intended audience is intermediate or advanced Haskell programmers
+who endeavor especially to write reliable, correct code. In particular,
+I'm often willing to err on the side of reliability over &quot;simple&quot;
+code, e.g., by using GADTs. But to be honest, I mostly publish this so I
+have somewhere with thorough explanations that I can point people to
+when I make comments during code reviews.</p>
+<p>The recommendations in this guide are split into three levels, based on
+the author's perception of their relative importance and applicability:</p>
+<ul>
+<li><em>Strongly Recommended</em>: These recommendations are broadly applicable and have
+a high value-to-weight ratio.</li>
+<li><em>Recommended</em>: These recommendations may apply less universally, or be less
+than essential to a strong style guide.</li>
+<li><em>Nice to Have</em>: These recommendations are nice but not essential.</li>
+</ul>
+<p>This document aspires to confirm to <a href="/notes/meta-style-guide">my Meta Style Guide</a>.</p>
+<p>Do you have ideas for this guide? <a href="/">Contact me</a>!</p>
+<h2 id="strongly-recommended">Strongly Recommended</h2>
+<h2 id="recommended">Recommended</h2>
+<h3 id="create-abstract-newtypes">Create Abstract Newtypes</h3>
+<p>Create many newtypes and hide their constructors. Where applicable, use
+the &quot;smart constructor pattern&quot;.</p>
+<ol>
+<li>
+<p>Example</p>
+<p>Instead of</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#6c7079;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span style="color:#cd74e8;">module </span><span style="color:#abb2bf;">Main </span><span style="color:#cd74e8;">where
+</span><span style="color:#abb2bf;">
+</span><span style="color:#5cb3fa;">createUser </span><span style="color:#cd74e8;">::
+</span><span style="color:#abb2bf;">  </span><span style="font-style:italic;color:#5f697a;">-- | First name of user. Must not contain whitespace.
+</span><span style="color:#abb2bf;">  </span><span style="color:#cd74e8;">Text -&gt;
+</span><span style="color:#abb2bf;">  </span><span style="color:#cd74e8;">Maybe User
+</span><span style="color:#abb2bf;">createUser nm </span><span style="color:#adb7c9;">=
+</span><span style="color:#abb2bf;">  </span><span style="color:#cd74e8;">if</span><span style="color:#abb2bf;"> textHasWhitespace nm
+</span><span style="color:#abb2bf;">  </span><span style="color:#cd74e8;">then </span><span style="color:#db9d63;">Nothing
+</span><span style="color:#abb2bf;">  </span><span style="color:#cd74e8;">else </span><span style="color:#db9d63;">Just</span><span style="color:#abb2bf;"> (</span><span style="color:#db9d63;">User</span><span style="color:#abb2bf;"> nm)
+</span></code></pre>
+<p>write</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#6c7079;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span style="color:#cd74e8;">module </span><span style="color:#abb2bf;">FirstName (</span><span style="color:#cd74e8;">FirstName</span><span style="color:#abb2bf;">, </span><span style="color:#5cb3fa;">makeFirstName</span><span style="color:#abb2bf;">, </span><span style="color:#5cb3fa;">getFirstName</span><span style="color:#abb2bf;">) </span><span style="color:#cd74e8;">where
+</span><span style="color:#abb2bf;">
+</span><span style="font-style:italic;color:#5f697a;">-- | First name, e.g., of a user.
+</span><span style="font-style:italic;color:#5f697a;">--
+</span><span style="font-style:italic;color:#5f697a;">-- Invariant: Does not contain whitespace. Constructor not exported to preserve
+</span><span style="font-style:italic;color:#5f697a;">-- invariant.
+</span><span style="color:#cd74e8;">newtype </span><span style="color:#db9d63;">FirstName </span><span style="color:#adb7c9;">= </span><span style="color:#db9d63;">FirstName</span><span style="color:#abb2bf;"> { _getFirstName </span><span style="color:#adb7c9;">:: </span><span style="color:#db9d63;">Text</span><span style="color:#abb2bf;"> }
+</span><span style="color:#abb2bf;">  </span><span style="color:#cd74e8;">deriving</span><span style="color:#abb2bf;"> (</span><span style="color:#9acc76;">Eq</span><span style="color:#abb2bf;">, </span><span style="color:#9acc76;">Ord</span><span style="color:#abb2bf;">)
+</span><span style="color:#abb2bf;">
+</span><span style="color:#5cb3fa;">makeFirstName </span><span style="color:#cd74e8;">:: Text -&gt; Maybe FirstName
+</span><span style="color:#abb2bf;">makeFirstName nm </span><span style="color:#adb7c9;">=
+</span><span style="color:#abb2bf;">  </span><span style="color:#cd74e8;">if</span><span style="color:#abb2bf;"> textHasWhitespace nm
+</span><span style="color:#abb2bf;">  </span><span style="color:#cd74e8;">then </span><span style="color:#db9d63;">Nothing
+</span><span style="color:#abb2bf;">  </span><span style="color:#cd74e8;">else </span><span style="color:#db9d63;">Just</span><span style="color:#abb2bf;"> (</span><span style="color:#db9d63;">FirstName</span><span style="color:#abb2bf;"> nm)
+</span><span style="color:#abb2bf;">
+</span><span style="font-style:italic;color:#5f697a;">-- Note: don&#39;t export _getFirstName directly, as record selectors can break the
+</span><span style="font-style:italic;color:#5f697a;">-- abstraction barrier we&#39;re establishing by not exporting the constructor.
+</span><span style="color:#5cb3fa;">getFirstName </span><span style="color:#cd74e8;">:: FirstName -&gt; Text
+</span><span style="color:#abb2bf;">getFirstName nm </span><span style="color:#adb7c9;">=</span><span style="color:#abb2bf;"> _getFirstName
+</span></code></pre>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#6c7079;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span style="color:#cd74e8;">module </span><span style="color:#abb2bf;">Main </span><span style="color:#cd74e8;">where
+</span><span style="color:#abb2bf;">
+</span><span style="color:#cd74e8;">import </span><span style="color:#abb2bf;">FirstName (</span><span style="color:#cd74e8;">FirstName</span><span style="color:#abb2bf;">)
+</span><span style="color:#abb2bf;">
+</span><span style="color:#5cb3fa;">createUser </span><span style="color:#cd74e8;">::
+</span><span style="color:#abb2bf;">  </span><span style="font-style:italic;color:#5f697a;">-- | First name of user.
+</span><span style="color:#abb2bf;">  </span><span style="color:#cd74e8;">FirstName -&gt;
+</span><span style="color:#abb2bf;">  </span><span style="color:#cd74e8;">User
+</span><span style="color:#abb2bf;">createUser nm </span><span style="color:#adb7c9;">= </span><span style="color:#db9d63;">User</span><span style="color:#abb2bf;"> nm  </span><span style="font-style:italic;color:#5f697a;">-- no need to check for whitespace!
+</span></code></pre>
+</li>
+<li>
+<p>Justification</p>
+<p>A <code>newtype</code> provides semantic clarity---the name often
+hints at what the programmer intended to represent, rather than how
+they intended to represent it. In the example above, the
+<code>FirstName</code> newtype essentially obviates the comment on
+the parameter of <code>createUser</code>---it's already clear from
+the type what the parameter represents.</p>
+<p>A <code>newtype</code> with a hidden constructor and an exported
+&quot;smart&quot; constructor can maintain data structure invariants.
+Because these invariants are local to the module in which the
+newtype is defined, they're relatively easy to check. In the
+example above, it's easy to see that it's impossible to construct
+a <code>FirstName</code> containing whitespace outside of the module
+in which <code>FirstName</code> is defined. These invariants can
+also help avoid unnecessary partiality in other parts of the
+codebase, like how <code>createUser</code> no longer needs to check
+for whitespace, and so no longer needs to return a
+<code>Maybe</code>.</p>
+<p>The downside to this technique is the need to create additional
+modules and documentation. This amount of effort may not be
+appropriate in all circumstances.</p>
+</li>
+<li>
+<p>See Also</p>
+<p><a href="https://haskell-at-work.com/episodes/2018-02-26-validation-with-smart-constructors.html">https://haskell-at-work.com/episodes/2018-02-26-validation-with-smart-constructors.html</a></p>
+</li>
+</ol>
+<h3 id="write-explicit-export-lists">Write Explicit Export Lists</h3>
+<p>Every module should have an explicit export list.</p>
+<ol>
+<li>
+<p>Example</p>
+<p>Instead of</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#6c7079;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span style="color:#cd74e8;">module </span><span style="color:#abb2bf;">Foo </span><span style="color:#cd74e8;">where
+</span></code></pre>
+<p>write</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#6c7079;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span style="color:#cd74e8;">module </span><span style="color:#abb2bf;">Foo
+</span><span style="color:#abb2bf;">  ( </span><span style="color:#cd74e8;">Type1</span><span style="color:#abb2bf;">(field1)
+</span><span style="color:#abb2bf;">  , </span><span style="color:#5cb3fa;">function1
+</span><span style="color:#abb2bf;">  ) </span><span style="color:#cd74e8;">where
+</span></code></pre>
+</li>
+<li>
+<p>Justification</p>
+<p>Using an explicit export list, a module may choose to not export
+certain functions. This leaves the module free to change their
+implementations or remove them entirely, with no concern that other
+modules (possibly even in other packages) might depend on them.
+Similarly, if a type's constructor is not exported, the
+representation of that type may be freely changed.</p>
+<p>A module with an explicit export list also has a clear API: it
+consists of the functions and types that have been exported. This
+makes it easier to reuse the functionality in the module.</p>
+</li>
+</ol>
+<h3 id="use-tointeger">Use <code>toInteger</code></h3>
+<p>Use <code>toInteger</code> instead of <code>fromIntegral</code> and
+<code>toEnum</code> when possible.</p>
+<ol>
+<li>
+<p>Example</p>
+<p>Instead of</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#6c7079;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span style="color:#abb2bf;">fromIntegral (</span><span style="color:#db9d63;">0 </span><span style="color:#adb7c9;">:: </span><span style="color:#db9d63;">Int</span><span style="color:#abb2bf;">) </span><span style="color:#adb7c9;">:: </span><span style="color:#db9d63;">Integer
+</span></code></pre>
+<p>or</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#6c7079;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span style="color:#abb2bf;">toEnum (</span><span style="color:#db9d63;">0 </span><span style="color:#adb7c9;">:: </span><span style="color:#db9d63;">Int</span><span style="color:#abb2bf;">) </span><span style="color:#adb7c9;">:: </span><span style="color:#db9d63;">Integer
+</span></code></pre>
+<p>write</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#6c7079;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span style="color:#abb2bf;">toInteger (</span><span style="color:#db9d63;">0 </span><span style="color:#adb7c9;">:: </span><span style="color:#db9d63;">Int</span><span style="color:#abb2bf;">)
+</span></code></pre>
+</li>
+<li>
+<p>Justification</p>
+<p><code>fromIntegral</code> and <code>toEnum</code> can throw
+exceptions:</p>
+<pre style="background-color:#2b303b;color:#6c7079;"><code><span style="color:#abb2bf;">ghci&gt; (fromIntegral :: Integer -&gt; Natural) (-1)
+</span><span style="color:#abb2bf;">Exception: arithmetic underflow
+</span><span style="color:#abb2bf;">
+</span><span style="color:#abb2bf;">ghci&gt; toEnum ((-1) :: Int) :: Natural
+</span><span style="color:#abb2bf;">Exception: toEnum: unexpected negative Int
+</span><span style="color:#abb2bf;">
+</span><span style="color:#abb2bf;">ghci&gt; (toEnum :: Int -&gt; Word) (-1)
+</span><span style="color:#abb2bf;">Exception: Enum.toEnum{Word}: tag (-1) is outside of bounds (0,18446744073709551615)
+</span></code></pre>
+<p><code>fromIntegral</code> can also cause surprising over- and
+under-flow:</p>
+<pre style="background-color:#2b303b;color:#6c7079;"><code><span style="color:#abb2bf;">ghci&gt; (fromIntegral :: Integer -&gt; Word) (-1)
+</span><span style="color:#abb2bf;">18446744073709551615
+</span></code></pre>
+<p>Finally, it is generally more clear to use less-polymorphic
+functions.</p>
+</li>
+</ol>
+<h2 id="nice-to-have">Nice to Have</h2>
+<h3 id="format-to-minimize-diffs">Format to Minimize Diffs</h3>
+<p>Try to format code in a way that minimizes diffs. While this
+recommendation applies beyond Haskell, the Examples below include
+Haskell-specific tips.</p>
+<ol>
+<li>
+<p>Example</p>
+<p>Instead of</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#6c7079;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span style="color:#cd74e8;">import </span><span style="color:#abb2bf;">LongModuleName (</span><span style="color:#5cb3fa;">foo</span><span style="color:#abb2bf;">)
+</span><span style="color:#cd74e8;">import </span><span style="color:#abb2bf;">ShortName      (</span><span style="color:#5cb3fa;">quux</span><span style="color:#abb2bf;">)
+</span></code></pre>
+<p>write</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#6c7079;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span style="color:#cd74e8;">import </span><span style="color:#abb2bf;">LongModuleName (</span><span style="color:#5cb3fa;">foo</span><span style="color:#abb2bf;">)
+</span><span style="color:#cd74e8;">import </span><span style="color:#abb2bf;">ShortName (</span><span style="color:#5cb3fa;">quux</span><span style="color:#abb2bf;">)
+</span></code></pre>
+<p>because if you import <code>ReallyLongModuleName</code> in a later
+comment, with the first formatting you have to fix the whitespace
+trailing <code>LongModuleName</code> and
+<code>ShortModuleName</code>.</p>
+<p>Use <code>{}</code> in patterns when you know you don't care about
+<em>any</em> fields of a constructor. Instead of</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#6c7079;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span style="color:#cd74e8;">case</span><span style="color:#abb2bf;"> foo </span><span style="color:#cd74e8;">of
+</span><span style="color:#abb2bf;">  </span><span style="color:#db9d63;">Bar</span><span style="color:#abb2bf;"> _ _ </span><span style="color:#adb7c9;">-&gt; </span><span style="color:#9acc76;">&quot;bar&quot;
+</span><span style="color:#abb2bf;">  </span><span style="color:#db9d63;">Quux</span><span style="color:#abb2bf;"> _ </span><span style="color:#adb7c9;">-&gt; </span><span style="color:#9acc76;">&quot;quux&quot;
+</span></code></pre>
+<p>write</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#6c7079;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span style="color:#cd74e8;">case</span><span style="color:#abb2bf;"> foo </span><span style="color:#cd74e8;">of
+</span><span style="color:#abb2bf;">  </span><span style="color:#db9d63;">Bar</span><span style="color:#abb2bf;"> {} </span><span style="color:#adb7c9;">-&gt; </span><span style="color:#9acc76;">&quot;bar&quot;
+</span><span style="color:#abb2bf;">  </span><span style="color:#db9d63;">Quux</span><span style="color:#abb2bf;"> {} </span><span style="color:#adb7c9;">-&gt; </span><span style="color:#9acc76;">&quot;quux&quot;
+</span></code></pre>
+<p>because you don't need to change these patterns if you add a field
+to <code>Bar</code> or <code>Quux</code>.</p>
+</li>
+<li>
+<p>Justification</p>
+<p>Minimizing diffs is helpful for focused code review, and when
+reviewing git history to understand a regression, see <a href="/notes/programming-style-guide">Programming
+Style Guide</a>.</p>
+</li>
+</ol>
+<h3 id="minimal-polymorphism">Minimal Polymorphism</h3>
+<p>Use less-polymorphic variants of functions where possible.</p>
+<ol>
+<li>
+<p>Example</p>
+<p>Instead of</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#6c7079;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span style="color:#abb2bf;">fmap (</span><span style="color:#adb7c9;">+</span><span style="color:#db9d63;">1</span><span style="color:#abb2bf;">) [</span><span style="color:#db9d63;">1</span><span style="color:#abb2bf;">, </span><span style="color:#db9d63;">2</span><span style="color:#abb2bf;">, </span><span style="color:#db9d63;">3</span><span style="color:#abb2bf;">]
+</span></code></pre>
+<p>write</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#6c7079;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span style="color:#abb2bf;">map (</span><span style="color:#adb7c9;">+</span><span style="color:#db9d63;">1</span><span style="color:#abb2bf;">) [</span><span style="color:#db9d63;">1</span><span style="color:#abb2bf;">, </span><span style="color:#db9d63;">2</span><span style="color:#abb2bf;">, </span><span style="color:#db9d63;">3</span><span style="color:#abb2bf;">]
+</span></code></pre>
+</li>
+<li>
+<p>Justification</p>
+<p>The use of a polymorphic function sends a signal to the reader that
+the polymorphism was necessary. This is confusing when the
+polymorphism was, in fact, unnecessary. Furthermore, a less
+polymorphic function provides more information to the reader about
+the types of its arguments: in the expression <code>fmap f x</code>,
+the type of <code>x</code> could be any <code>Functor</code>,
+whereas in <code>Data.Set.map f x</code>, <code>x</code> must have
+type <code>Set a</code> for some <code>a</code>.</p>
+</li>
+</ol>
+
+
+  </div>
+</body> 
+</html>

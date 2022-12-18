@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <link rel="stylesheet" href="/mine.css">
+  <title>langston-barrett.github.io</title>
+</head>
+<body>
+  <div id="content">
+    <h1 class="title">
+      <div class="logo"><strong>langston-barrrett.github.io</strong></div>
+    </h1>
+    <nav>
+      <a href="/">Home</a>&nbsp;&nbsp;
+      <a href="/blog">Blog</a>&nbsp;&nbsp;
+      <a href="/notes">Notes</a>
+    </nav>
+    
+<!-- NOTE! This page is PUBLIC! -->
+<h1 id="llvm">LLVM</h1>
+<p>See also:</p>
+<ul>
+<li><a href="/notes/allvm">ALLVM</a></li>
+<li><a href="/notes/gllvm">GLLVM</a></li>
+<li><a href="/notes/k-llvm">K-LLVM</a></li>
+<li><a href="/notes/learning-llvm">Learning LLVM</a></li>
+<li><a href="/notes/llvm-ir">LLVM IR</a></li>
+<li><a href="/notes/mlir">MLIR</a></li>
+<li><a href="/notes/the-architecture-of-open-source-applications">The Architecture of Open Source Applications</a></li>
+<li><a href="/notes/wllvm">WLLVM</a></li>
+</ul>
+<h2 id="links">Links</h2>
+<ul>
+<li><a href="https://blog.regehr.org/archives/1453">A Tourist’s Guide to the LLVM Source Code</a></li>
+<li><a href="https://eli.thegreenplace.net/2013/02/25/a-deeper-look-into-the-llvm-code-generator-part-1">A deeper look into the LLVM code generator, Part 1</a></li>
+<li><a href="https://eli.thegreenplace.net/2012/11/24/life-of-an-instruction-in-llvm">Life of an instruction in LLVM</a></li>
+<li><a href="https://github.com/regehr/llvm-dataflow-info">https://github.com/regehr/llvm-dataflow-info</a></li>
+</ul>
+<h2 id="glossary">Glossary</h2>
+<ul>
+<li>An <em>abbreviation</em> specifies a record type</li>
+<li><em><a href="https://llvm.org/docs/BitCodeFormat.html#char6-encoded-value">char6</a></em>
+is an ASCII-like encoding for alphanumeric characters</li>
+<li><em>RAUW</em>: <a href="https://github.com/llvm-mirror/llvm/blob/release_40/docs/MergeFunctions.rst#merging-process-mergetwofunctions">&quot;Replace all uses
+with&quot;</a></li>
+<li><em>ODR</em>: <a href="https://llvm.org/docs/LangRef.html#linkage-types">&quot;One definition
+rule&quot;</a></li>
+<li><em>RTTI</em>: <a href="https://en.wikipedia.org/wiki/Run-time_type_information">&quot;Run-Time Type
+Information&quot;</a></li>
+</ul>
+<h2 id="hacking-on-llvm">Hacking on LLVM</h2>
+<h3 id="reading-the-code">Reading the Code</h3>
+<p>Try <a href="BROKEN-c.org::*woboq">woboq</a>: <a href="https://code.woboq.org/llvm/">https://code.woboq.org/llvm/</a></p>
+<h3 id="building">Building</h3>
+<pre data-lang="bash" style="background-color:#2b303b;color:#6c7079;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#eb6772;">nix-shell -A</span><span style="color:#abb2bf;"> llvm </span><span style="color:#9acc76;">&quot;&lt;unstable&gt;&quot;</span><span style="color:#eb6772;"> --run</span><span style="color:#abb2bf;"> zsh
+</span></code></pre>
+<p>Some good options for <a href="/notes/cmake">CMake</a>:</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#6c7079;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#eb6772;">cmake -S</span><span style="color:#abb2bf;"> llvm</span><span style="color:#eb6772;"> -B</span><span style="color:#abb2bf;"> build</span><span style="color:#eb6772;"> -G </span><span style="color:#9acc76;">&quot;Unix Makefiles&quot; </span><span style="color:#abb2bf;">\
+</span><span style="color:#eb6772;">  -DCMAKE_INSTALL_PREFIX</span><span style="color:#adb7c9;">=</span><span style="color:#abb2bf;">$</span><span style="color:#eb6772;">PWD</span><span style="color:#abb2bf;">/out \
+</span><span style="color:#eb6772;">  -DCMAKE_BUILD_TYPE</span><span style="color:#adb7c9;">=</span><span style="color:#abb2bf;">Debug \
+</span><span style="color:#eb6772;">  -DLLVM_TARGETS_TO_BUILD</span><span style="color:#adb7c9;">=</span><span style="color:#abb2bf;">X86 \
+</span><span style="color:#eb6772;">  -DLLVM_ENABLE_ZLIB</span><span style="color:#adb7c9;">=</span><span style="color:#abb2bf;">OFF \
+</span><span style="color:#eb6772;">  -DLLVM_ENABLE_TERMINFO</span><span style="color:#adb7c9;">=</span><span style="color:#abb2bf;">OFF \
+</span><span style="color:#eb6772;">  -DLLVM_ENABLE_LIBPFM</span><span style="color:#adb7c9;">=</span><span style="color:#abb2bf;">OFF \
+</span><span style="color:#eb6772;">  -DLLVM_PARALLEL_LINK_JOBS</span><span style="color:#adb7c9;">=</span><span style="color:#abb2bf;">4
+</span></code></pre>
+<h3 id="requesting-review-with-phabricator">Requesting Review With Phabricator</h3>
+<p>See <a href="/notes/phabricator">Phabricator</a>.</p>
+<h3 id="documentation">Documentation</h3>
+<ul>
+<li><a href="https://llvm.org/docs/Contributing.html">Contributing to LLVM — LLVM 12 documentation</a></li>
+<li><a href="https://llvm.org/docs/TestingGuide.html">LLVM Testing Infrastructure Guide — LLVM 12 documentation</a></li>
+</ul>
+<h3 id="formatting">Formatting</h3>
+<pre data-lang="bash" style="background-color:#2b303b;color:#6c7079;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#eb6772;">git</span><span style="color:#abb2bf;"> diff</span><span style="color:#eb6772;"> -U0 --no-color --relative</span><span style="color:#abb2bf;"> HEAD^ </span><span style="color:#adb7c9;">| </span><span style="color:#eb6772;">python3</span><span style="color:#abb2bf;"> clang/tools/clang-format/clang-format-diff.py</span><span style="color:#eb6772;"> -p1 -i
+</span></code></pre>
+<h3 id="components">Components</h3>
+<ol>
+<li>
+<p>LLVM-Reduce</p>
+<p>Tests here:
+<a href="https://github.com/llvm/llvm-project/tree/main/llvm/test/tools/llvm-reduce">https://github.com/llvm/llvm-project/tree/main/llvm/test/tools/llvm-reduce</a></p>
+</li>
+</ol>
+<h2 id="tools">Tools</h2>
+<ul>
+<li><a href="/notes/llvm-reduce">llvm-reduce</a></li>
+<li>llvm-link</li>
+</ul>
+<h2 id="the-pass-managers">The Pass Managers</h2>
+<p>All LLVM documentation and virtually all tutorials use what's called the
+&quot;legacy pass manager&quot;.</p>
+<p>This link is the only good resource I've found on this:
+<a href="https://github.com/banach-space/llvm-tutor">https://github.com/banach-space/llvm-tutor</a></p>
+<h3 id="legacy">Legacy</h3>
+<h3 id="non-legacy">Non-Legacy</h3>
+<p>From the docs:</p>
+<blockquote>
+<p>Note that the implementations of the pass managers use concept-based
+polymorphism as outlined in the &quot;Value Semantics and Concept-based
+Polymorphism&quot; talk (or its abbreviated sibling &quot;Inheritance Is The
+Base Class of Evil&quot;) by Sean Parent:</p>
+</blockquote>
+<p>Here's an example pass using the non-legacy pass manager:</p>
+<pre data-lang="c++" style="background-color:#2b303b;color:#6c7079;" class="language-c++ "><code class="language-c++" data-lang="c++"><span style="color:#cd74e8;">class </span><span style="color:#f0c678;">ASTGraphWriter </span><span style="color:#adb7c9;">: </span><span style="color:#cd74e8;">public </span><span style="color:#9acc76;">llvm::PassInfoMixin</span><span style="color:#adb7c9;">&lt;ASTGraphWriter&gt; {
+</span><span style="color:#adb7c9;"> </span><span style="color:#cd74e8;">public</span><span style="color:#adb7c9;">:
+</span><span style="color:#adb7c9;">  llvm::PreservedAnalyses </span><span style="color:#5cb3fa;">run</span><span style="color:#adb7c9;">(
+</span><span style="color:#adb7c9;">      llvm::Module &amp;</span><span style="color:#eb6772;">module</span><span style="color:#adb7c9;">,
+</span><span style="color:#adb7c9;">      llvm::ModuleAnalysisManager &amp;</span><span style="color:#eb6772;">module_analysis_manager</span><span style="color:#adb7c9;">) {
+</span><span style="color:#adb7c9;">    llvm::</span><span style="color:#eb6772;">outs</span><span style="color:#adb7c9;">() &lt;&lt; module;
+</span><span style="color:#adb7c9;">    </span><span style="color:#cd74e8;">auto</span><span style="color:#adb7c9;"> aa_results = llvm::</span><span style="color:#eb6772;">GlobalsAA</span><span style="color:#adb7c9;">().</span><span style="color:#eb6772;">run</span><span style="color:#adb7c9;">(module, module_analysis_manager);
+</span><span style="color:#adb7c9;">    </span><span style="color:#cd74e8;">return </span><span style="color:#adb7c9;">llvm::PreservedAnalyses::</span><span style="color:#eb6772;">all</span><span style="color:#adb7c9;">();
+</span><span style="color:#adb7c9;">  }
+</span><span style="color:#adb7c9;">}</span><span style="color:#abb2bf;">;
+</span><span style="background-color:#e05252;color:#ffffff;">}</span><span style="color:#abb2bf;">  </span><span style="font-style:italic;color:#5f697a;">// namespace mate
+</span><span style="color:#abb2bf;">
+</span><span style="color:#cd74e8;">extern </span><span style="color:#9acc76;">&quot;C&quot; </span><span style="color:#abb2bf;">::llvm::PassPluginLibraryInfo LLVM_ATTRIBUTE_WEAK
+</span><span style="color:#5cb3fa;">llvmGetPassPluginInfo</span><span style="color:#abb2bf;">() {
+</span><span style="color:#abb2bf;">  </span><span style="color:#cd74e8;">return </span><span style="color:#abb2bf;">{LLVM_PLUGIN_API_VERSION,
+</span><span style="color:#abb2bf;">          </span><span style="color:#9acc76;">&quot;ast-graph-writer&quot;</span><span style="color:#abb2bf;">,
+</span><span style="color:#abb2bf;">          </span><span style="color:#9acc76;">&quot;v0.1&quot;</span><span style="color:#abb2bf;">,
+</span><span style="color:#abb2bf;">          [](llvm::PassBuilder </span><span style="color:#adb7c9;">&amp;</span><span style="color:#abb2bf;">pb) {
+</span><span style="color:#abb2bf;">            pb.</span><span style="color:#eb6772;">registerPipelineParsingCallback</span><span style="color:#abb2bf;">(
+</span><span style="color:#abb2bf;">                [](llvm::StringRef name,
+</span><span style="color:#abb2bf;">                   llvm::ModulePassManager </span><span style="color:#adb7c9;">&amp;</span><span style="color:#abb2bf;">module_pass_manager,
+</span><span style="color:#abb2bf;">                   llvm::ArrayRef&lt;llvm::PassBuilder::PipelineElement&gt;) {
+</span><span style="color:#abb2bf;">                  </span><span style="color:#cd74e8;">if </span><span style="color:#abb2bf;">(name </span><span style="color:#adb7c9;">== </span><span style="color:#9acc76;">&quot;ast-graph-writer&quot;</span><span style="color:#abb2bf;">) {
+</span><span style="color:#abb2bf;">                    module_pass_manager.</span><span style="color:#eb6772;">addPass</span><span style="color:#abb2bf;">(mate::</span><span style="color:#eb6772;">ASTGraphWriter</span><span style="color:#abb2bf;">());
+</span><span style="color:#abb2bf;">                    </span><span style="color:#cd74e8;">return </span><span style="color:#db9d63;">true</span><span style="color:#abb2bf;">;
+</span><span style="color:#abb2bf;">                  }
+</span><span style="color:#abb2bf;">                  </span><span style="color:#cd74e8;">return </span><span style="color:#db9d63;">false</span><span style="color:#abb2bf;">;
+</span><span style="color:#abb2bf;">                });
+</span><span style="color:#abb2bf;">          }};
+</span><span style="color:#abb2bf;">}
+</span></code></pre>
+<h2 id="lto">LTO</h2>
+<p>See <a href="/notes/link-time-optimization">Link-Time Optimization</a>.</p>
+<h2 id="mangling">Mangling</h2>
+<p>See also <a href="c++.md#Mangling">Mangling</a>.</p>
+<ul>
+<li><a href="https://llvm.org/doxygen/structAbstractManglingParser.html">https://llvm.org/doxygen/structAbstractManglingParser.html</a></li>
+<li><a href="https://llvm.org/doxygen/classNode.html">https://llvm.org/doxygen/classNode.html</a></li>
+</ul>
+<!--
+
+### Example (Non-Working)
+
+    #include <iostream>
+    #include <cstring>
+    #include "llvm/Demangle/ItaniumDemangle.h"
+    #include "llvm/Demangle/Demangle.h"
+    #include "llvm/Support/Allocator.h"
+
+    // This is how they do it in the test suite...
+    namespace {
+    class TestAllocator {
+      llvm::BumpPtrAllocator Alloc;
+
+    public:
+      void reset() { Alloc.Reset(); }
+
+      template <typename T, typename... Args> T *makeNode(Args &&... args) {
+        return new (Alloc.Allocate(sizeof(T), alignof(T)))
+            T(std::forward<Args>(args)...);
+      }
+
+      void *allocateNodeArray(size_t sz) {
+        return Alloc.Allocate(sizeof(llvm::itanium_demangle::Node *) * sz, alignof(llvm::itanium_demangle::Node *));
+      }
+    };
+    } // namespace
+
+
+    int main(void) {
+      const char *name = "_ZTVN7testing8internal30ValuesInIteratorRangeGeneratorIN4fizz4test10HashParamsEEE";
+      llvm::itanium_demangle::ManglingParser<TestAllocator> parser(name, name + std::strlen(name));
+      llvm::itanium_demangle::Node *ast = parser.parse();
+      // ast.print(llvm::outs());
+      return 0;
+    }
+
+``` fundamental
+project(blah LANGUAGES C CXX)
+cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
+
+find_package(LLVM 10.0.0 REQUIRED CONFIG)
+message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
+message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
+
+add_definitions(${LLVM_DEFINITIONS})
+include_directories(SYSTEM ${LLVM_INCLUDE_DIRS})
+link_directories(${LLVM_LIBRARY_DIRS})
+list(APPEND CMAKE_MODULE_PATH "${LLVM_CMAKE_DIR}")
+
+include(LLVMConfig)
+include(AddLLVM)
+
+add_executable(exe demangle.cpp)
+llvm_map_components_to_libnames(llvm_libs support core)
+target_link_libraries(exe PRIVATE ${llvm_libs})
+```
+
+``` nix
+with import <nixpkgs> { };
+let llvmPackages = llvmPackages_10;
+    llvm = llvmPackages.llvm;
+    clang = llvmPackages.clang;
+in clang.stdenv.mkDerivation {
+  name = "demangle";
+  src = ./.;
+  buildInputs = [ llvm glibc.static cmake zlib.static ];
+  cmakeFlags = [
+    "-DCMAKE_C_COMPILER=${clang}/bin/clang"
+    "-DCMAKE_CXX_COMPILER=${clang}/bin/clang++"
+  ];
+
+  # buildPhase = ''
+  #   echo "clang++ -isystem ${llvm}/include -L ${llvm}/lib -lLLVMDemangle -static -o demangle.elf -O1 demangle.cpp"
+  #   clang++ -isystem ${llvm}/include -L ${llvm}/lib -lLLVMDemangle -static -o demangle.elf -O1 demangle.cpp
+  # '';
+  # installPhase = ''
+  #   mkdir -p $out
+  #   cp demangle.elf $out
+  # '';
+}
+```
+
+``` bash
+nix-build tangled/demangle.nix
+file ./result/demangle.elf
+./result/demangle.elf
+```
+
+-->
+<h2 id="tablegen">TableGen</h2>
+<pre data-lang="bash" style="background-color:#2b303b;color:#6c7079;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#eb6772;">nix-shell -p</span><span style="color:#abb2bf;"> llvm_9</span><span style="color:#eb6772;"> --run </span><span style="color:#9acc76;">&quot;llvm-tblgen -dump-json include/llvm/IR/Intrinsics.td -I include&quot;
+</span></code></pre>
+<h2 id="types">Types</h2>
+<h3 id="records">Records</h3>
+<h2 id="analysis-of-llvm-ir">Analysis of LLVM IR</h2>
+<h3 id="tools-1">Tools</h3>
+<ul>
+<li><a href="https://github.com/GaloisInc/cclyzerpp">cclyzer++</a></li>
+<li><a href="BROKEN-abstract-interpretation.org::*PAGAI">PAGAI</a></li>
+<li><a href="BROKEN-abstract-interpretation.org::*CRAB-LLVM">CRAB-LLVM</a></li>
+<li><a href="BROKEN-model-checking.org::*LLBMC">LLBMC</a></li>
+</ul>
+<h3 id="literature">Literature</h3>
+<ul>
+<li>Signedness-Agnostic Program Analysis:Precise Integer Bounds for Low-Level Code</li>
+<li>Souper: A Synthesizing Superoptimizer</li>
+</ul>
+<h2 id="cards">Cards</h2>
+<h3 id="extractvalue">extractvalue</h3>
+<h4 id="text">Text</h4>
+<p>In LLVM, the {{c1::extractvalue}} instruction is used to
+{{c2::extract the value of a member field from an aggregate value}}.</p>
+<h3 id="getelementptr">getelementptr</h3>
+<h4 id="text-1">Text</h4>
+<p>In LLVM, the {{c1::getelementptr}} instruction is used to {{c2::get
+the address of a subelement of an aggregate data structure}}.</p>
+<h3 id="landingpad">landingpad</h3>
+<h3 id="text-2">Text</h3>
+<p>In LLVM, the {{c1::landingpad}} instruction is used to {{c2::mark a
+basic block as a landing pad - one where the exception lands, and
+corresponds to the code found in the catch portion of a try/catch
+sequence}}.</p>
+<h3 id="resume">resume</h3>
+<h4 id="text-3">Text</h4>
+<p>In LLVM, the {{c1::resume}} instruction is used to {{c2::resume
+propagation of an existing (in-flight) exception whose unwinding was
+interrupted with a landingpad instruction}}.</p>
+<h3 id="landing-pad">landing pad</h3>
+<h4 id="text-4">Text</h4>
+<p>In the LLVM IR, a {{c1::landing pad}} is {{c2::where execution
+continues after an exception that occurs in an invoke}}.</p>
+<h3 id="cleanup-landing-pad">cleanup landing pad</h3>
+<h4 id="text-5">Text</h4>
+<p>In the LLVM IR, a landing pad instruction with a {{c1::cleanup
+clause}} will {{c2::always}} be entered when an exception is thrown.</p>
+<h3 id="cleanup-destructor">cleanup destructor</h3>
+<!-- marki[card]: 6d36f4e2-2014-4b74-8da5-0667b26d5ccf -->
+<h4 id="front">Front</h4>
+<p>In the context of the LLVM language, what is the typical example of
+a cleanup in compiled C++ code?</p>
+<h4 id="back">Back</h4>
+<p>Object destructors</p>
+
+
+  </div>
+</body> 
+</html>
