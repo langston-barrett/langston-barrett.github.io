@@ -26,19 +26,49 @@
 <pre data-lang="toml" style="background-color:#2b303b;color:#6c7079;" class="language-toml "><code class="language-toml" data-lang="toml"><span style="color:#abb2bf;">[profile.release]
 </span><span style="color:#eb6772;">lto </span><span style="color:#abb2bf;">= </span><span style="color:#db9d63;">true  </span><span style="font-style:italic;color:#5f697a;"># &quot;thin&quot; also works
 </span></code></pre>
-<h2 id="error-messages">Error Messages</h2>
+<h2 id="error-messages">Error messages</h2>
 <p>Fix problems with <a href="/notes/git">git</a>:</p>
 <pre data-lang="sh" style="background-color:#2b303b;color:#6c7079;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#cd74e8;">export </span><span style="color:#eb6772;">CARGO_NET_GIT_FETCH_WITH_CLI</span><span style="color:#adb7c9;">=</span><span style="color:#9acc76;">true  
 </span></code></pre>
-<h2 id="static-linking">Static Linking</h2>
+<h2 id="static-linking">Static linking</h2>
 <pre data-lang="sh" style="background-color:#2b303b;color:#6c7079;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#eb6772;">rustup</span><span style="color:#abb2bf;"> target add x86_64-unknown-linux-musl
 </span><span style="color:#eb6772;">cargo</span><span style="color:#abb2bf;"> build</span><span style="color:#eb6772;"> --target</span><span style="color:#adb7c9;">=</span><span style="color:#abb2bf;">x86_64-unknown-linux-musl
 </span></code></pre>
 <h2 id="ci">CI</h2>
-<p>Consider passing <code>--locked</code> to Cargo in CI.</p>
+<h3 id="use-cargo-lock">Use <code>Cargo.lock</code></h3>
+<p>Consider passing <code>--locked</code> to Cargo in CI. Example:</p>
+<pre data-lang="yaml" style="background-color:#2b303b;color:#6c7079;" class="language-yaml "><code class="language-yaml" data-lang="yaml"><span style="color:#abb2bf;">   </span><span style="color:#eb6772;">test</span><span style="color:#abb2bf;">:
+</span><span style="color:#abb2bf;">    </span><span style="color:#eb6772;">runs-on</span><span style="color:#abb2bf;">: </span><span style="color:#9acc76;">ubuntu-latest
+</span><span style="color:#abb2bf;">    </span><span style="color:#eb6772;">steps</span><span style="color:#abb2bf;">:
+</span><span style="color:#abb2bf;">    - </span><span style="color:#eb6772;">uses</span><span style="color:#abb2bf;">: </span><span style="color:#9acc76;">actions/checkout@v3
+</span><span style="color:#abb2bf;">    - </span><span style="color:#eb6772;">run</span><span style="color:#abb2bf;">: </span><span style="color:#9acc76;">cargo build --locked
+</span><span style="color:#abb2bf;">    - </span><span style="color:#eb6772;">run</span><span style="color:#abb2bf;">: </span><span style="color:#9acc76;">cargo test --locked 
+</span></code></pre>
+<h3 id="worked-example">Worked example</h3>
+<p><a href="https://github.com/langston-barrett/mdlynx/tree/main/.github/workflows">https://github.com/langston-barrett/mdlynx/tree/main/.github/workflows</a></p>
+<h3 id="statically-linked-binaries">Statically linked binaries</h3>
 <p>Here's an example of building and publishing statically linked binaries in
 <a href="/notes/github-actions">Github Actions</a>:</p>
-<p><a href="https://raw.githubusercontent.com/langston-barrett/souffle-lint/main/.github/workflows/release.yml">https://raw.githubusercontent.com/langston-barrett/souffle-lint/main/.github/workflows/release.yml</a></p>
+<pre data-lang="yaml" style="background-color:#2b303b;color:#6c7079;" class="language-yaml "><code class="language-yaml" data-lang="yaml"><span style="color:#eb6772;">env</span><span style="color:#abb2bf;">:
+</span><span style="color:#abb2bf;">  </span><span style="font-style:italic;color:#5f697a;"># The NAME makes it easier to copy/paste snippets from other CI configs
+</span><span style="color:#abb2bf;">  </span><span style="color:#eb6772;">NAME</span><span style="color:#abb2bf;">: </span><span style="color:#9acc76;">TODO
+</span><span style="color:#abb2bf;">
+</span><span style="color:#eb6772;">jobs</span><span style="color:#abb2bf;">:
+</span><span style="color:#abb2bf;">  </span><span style="color:#eb6772;">release</span><span style="color:#abb2bf;">:
+</span><span style="color:#abb2bf;">    </span><span style="color:#eb6772;">runs-on</span><span style="color:#abb2bf;">: </span><span style="color:#9acc76;">ubuntu-latest
+</span><span style="color:#abb2bf;">    </span><span style="color:#eb6772;">steps</span><span style="color:#abb2bf;">:
+</span><span style="color:#abb2bf;">    - </span><span style="color:#eb6772;">uses</span><span style="color:#abb2bf;">: </span><span style="color:#9acc76;">actions/checkout@v3
+</span><span style="color:#abb2bf;">
+</span><span style="color:#abb2bf;">    - </span><span style="color:#eb6772;">name</span><span style="color:#abb2bf;">: </span><span style="color:#9acc76;">Deps
+</span><span style="color:#abb2bf;">      </span><span style="color:#eb6772;">run</span><span style="color:#abb2bf;">: </span><span style="color:#cd74e8;">|
+</span><span style="color:#9acc76;">        sudo apt-get install -y musl-tools
+</span><span style="color:#9acc76;">        rustup target add x86_64-unknown-linux-musl
+</span><span style="color:#9acc76;">
+</span><span style="color:#abb2bf;">    - </span><span style="color:#eb6772;">name</span><span style="color:#abb2bf;">: </span><span style="color:#9acc76;">Build static executable
+</span><span style="color:#abb2bf;">      </span><span style="color:#eb6772;">run</span><span style="color:#abb2bf;">: </span><span style="color:#cd74e8;">|
+</span><span style="color:#9acc76;">        cargo build  --release --target=x86_64-unknown-linux-musl
+</span><span style="color:#9acc76;">        cp target/x86_64-unknown-linux-musl/release/${NAME} . 
+</span></code></pre>
 
 
   </div>

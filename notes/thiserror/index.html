@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <link rel="stylesheet" href="/mine.css">
+  <title>langston-barrett.github.io</title>
+</head>
+<body>
+  <div id="content">
+    <h1 class="title">
+      <div class="logo"><strong>langston-barrrett.github.io</strong></div>
+    </h1>
+    <nav>
+      <a href="/">Home</a>&nbsp;&nbsp;
+      <a href="/blog">Blog</a>&nbsp;&nbsp;
+      <a href="/notes">Notes</a>
+    </nav>
+    
+<!-- NOTE! This page is PUBLIC! -->
+<h1 id="thiserror">thiserror</h1>
+<p>A <a href="/notes/rust">Rust</a> library for error handling.</p>
+<p>For applications, see <a href="/notes/anyhow">anyhow</a>.</p>
+<h2 id="example">Example</h2>
+<p>Example taken from the docs, covers common use-cases.</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#6c7079;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#cd74e8;">use </span><span style="color:#abb2bf;">thiserror::Error;
+</span><span style="color:#abb2bf;">
+</span><span style="color:#abb2bf;">#[</span><span style="color:#eb6772;">derive</span><span style="color:#abb2bf;">(Error, Debug)]
+</span><span style="color:#cd74e8;">pub enum </span><span style="color:#abb2bf;">DataStoreError {
+</span><span style="color:#abb2bf;">    #[</span><span style="color:#eb6772;">error</span><span style="color:#abb2bf;">(</span><span style="color:#9acc76;">&quot;data store disconnected&quot;</span><span style="color:#abb2bf;">)]
+</span><span style="color:#abb2bf;">    Disconnect(#[</span><span style="color:#eb6772;">from</span><span style="color:#abb2bf;">] io::Error),
+</span><span style="color:#abb2bf;">    #[</span><span style="color:#eb6772;">error</span><span style="color:#abb2bf;">(</span><span style="color:#9acc76;">&quot;the data for key `{0}` is not available&quot;</span><span style="color:#abb2bf;">)]
+</span><span style="color:#abb2bf;">    Redaction(String),
+</span><span style="color:#abb2bf;">    #[</span><span style="color:#eb6772;">error</span><span style="color:#abb2bf;">(</span><span style="color:#9acc76;">&quot;invalid header (expected {expected:?}, found {found:?})&quot;</span><span style="color:#abb2bf;">)]
+</span><span style="color:#abb2bf;">    InvalidHeader {
+</span><span style="color:#abb2bf;">        expected: String,
+</span><span style="color:#abb2bf;">        found: String,
+</span><span style="color:#abb2bf;">    },
+</span><span style="color:#abb2bf;">    #[</span><span style="color:#eb6772;">error</span><span style="color:#abb2bf;">(</span><span style="color:#9acc76;">&quot;unknown data store error&quot;</span><span style="color:#abb2bf;">)]
+</span><span style="color:#abb2bf;">    Unknown,
+</span><span style="color:#abb2bf;">}  
+</span></code></pre>
+
+
+  </div>
+</body> 
+</html>

@@ -30,26 +30,19 @@
 this:</p>
 <pre data-lang="llvm" style="background-color:#2b303b;color:#6c7079;" class="language-llvm "><code class="language-llvm" data-lang="llvm"><span style="color:#abb2bf;">%tmp = getelementptr %struct.munger_struct, %struct.munger_struct* %P, i32 1, i32 0
 </span></code></pre>
-<p>The first two arguments are types, the second argument is the index into
-the exterior structure (in this case, an array of <code>P</code>), and the second
-argument is an index into the interior structure (this one accesses the
-0th field of a <code>P</code>).</p>
-<p>However! It is variadic: It can have many more pairs of arguments, which
-mirror the structure of the first: <code>(exterior, interior)</code>.</p>
-<ol>
-<li>LLVM's getelementptr, by example</li>
-</ol>
+<ul>
+<li><a href="https://llvm.org/docs/GetElementPtr.html">https://llvm.org/docs/GetElementPtr.html</a></li>
+<li><a href="https://blog.yossarian.net/2020/09/19/LLVMs-getelementptr-by-example">https://blog.yossarian.net/2020/09/19/LLVMs-getelementptr-by-example</a></li>
+</ul>
 <h2 id="target-triples">Target Triples</h2>
 <p>These are used frequently as an example:
 <a href="https://clang.llvm.org/docs/CrossCompilation.html#target-triple">https://clang.llvm.org/docs/CrossCompilation.html#target-triple</a></p>
 <h2 id="undef-and-poison"><code>undef</code> and <code>poison</code></h2>
-<p>See this blog post: <a href="https://www.ralfj.de/blog/2020/12/14/provenance.html">Pointers Are Complicated II, or: We need better
-language specs</a></p>
-<p><a href="https://pldi17.sigplan.org/details/pldi-2017-papers/16/Taming-Undefined-Behavior-in-LLVM">Taming Undefined Behavior in LLVM (PLDI 2017 - PLDI Research Papers) -
-PLDI
-2017</a></p>
+<ul>
+<li><a href="https://www.ralfj.de/blog/2020/12/14/provenance.html">Pointers Are Complicated II, or: We need better language specs</a></li>
+<li><a href="https://pldi17.sigplan.org/details/pldi-2017-papers/16/Taming-Undefined-Behavior-in-LLVM">Taming Undefined Behavior in LLVM (PLDI 2017 - PLDI Research Papers) - PLDI 2017</a></li>
+</ul>
 <h2 id="bitcode-format">Bitcode Format</h2>
-<h3 id="links">Links</h3>
 <ul>
 <li><a href="https://blog.yossarian.net/2021/07/19/LLVM-internals-part-1-bitcode-format">LLVM internals, part 1: the bitcode format</a></li>
 </ul>
@@ -60,25 +53,20 @@ PLDI
 <li>Fixed-width integers</li>
 <li>Variable-width integers</li>
 <li>Arrays</li>
-<li>Characters (specified in
-<a href="BROKEN-id:f16dbb85-819b-48d1-bc73-20289e9f9c90">Glossary</a> format)</li>
+<li>Characters (specified in char6 format)</li>
 <li>Binary blobs</li>
 </ol>
 <p>The types of arrays are specified weirdly.</p>
-<h2 id="operators">Operators</h2>
-<p>For reasons unknown to mortals, in addition to the <code>bitcast</code> and
-<a href="BROKEN-id:de59d230-adb4-4611-a713-c526e61a7a91"><code>getelementptr</code></a>
-<em>instructions</em>, there are also inline <em>operators</em>, so that the operand
-to, say, <code>load</code> might not be an instruction but rather one of these
-operators. These are completely undocumented AFAIK.</p>
 <h2 id="exceptions">Exceptions</h2>
 <p>See also <a href="c++.md#exceptions">C++#Exceptions</a>.</p>
 <h2 id="varargs-variable-arity-functions">Varargs/Variable Arity Functions</h2>
-<p><a href="https://releases.llvm.org/12.0.0/docs/LangRef.html#variable-argument-handling-intrinsics">Language
-Reference</a>.</p>
-<p>I've seen LLVM access a <code>va_list</code> without using <code>va_arg</code> (i.e., just
-using <code>load</code>), which is ABI-specific: <a href="https://godbolt.org/z/Wq4Gb7bKa">https://godbolt.org/z/Wq4Gb7bKa</a></p>
-<p>See also <a href="/notes/x86">x86</a>.</p>
+<p>The <a href="https://releases.llvm.org/12.0.0/docs/LangRef.html#variable-argument-handling-intrinsics">Language Reference</a>
+states:</p>
+<blockquote>
+<p>The ‘va_arg’ instruction is used to access arguments passed through the “variable argument” area of a function call. It is used to implement the va_arg macro in C.</p>
+</blockquote>
+<p>In practice, LLVM emits target/ABI-specific code rather than <code>va_arg</code>, at least
+for <a href="/notes/x86">x86</a>: <a href="https://godbolt.org/z/Wq4Gb7bKa">https://godbolt.org/z/Wq4Gb7bKa</a>.</p>
 
 
   </div>

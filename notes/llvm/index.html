@@ -51,7 +51,7 @@ Information&quot;</a></li>
 </ul>
 <h2 id="hacking-on-llvm">Hacking on LLVM</h2>
 <h3 id="reading-the-code">Reading the Code</h3>
-<p>Try <a href="BROKEN-c.org::*woboq">woboq</a>: <a href="https://code.woboq.org/llvm/">https://code.woboq.org/llvm/</a></p>
+<p>Try woboq: <a href="https://code.woboq.org/llvm/">https://code.woboq.org/llvm/</a></p>
 <h3 id="building">Building</h3>
 <pre data-lang="bash" style="background-color:#2b303b;color:#6c7079;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#eb6772;">nix-shell -A</span><span style="color:#abb2bf;"> llvm </span><span style="color:#9acc76;">&quot;&lt;unstable&gt;&quot;</span><span style="color:#eb6772;"> --run</span><span style="color:#abb2bf;"> zsh
 </span></code></pre>
@@ -76,13 +76,9 @@ Information&quot;</a></li>
 <pre data-lang="bash" style="background-color:#2b303b;color:#6c7079;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#eb6772;">git</span><span style="color:#abb2bf;"> diff</span><span style="color:#eb6772;"> -U0 --no-color --relative</span><span style="color:#abb2bf;"> HEAD^ </span><span style="color:#adb7c9;">| </span><span style="color:#eb6772;">python3</span><span style="color:#abb2bf;"> clang/tools/clang-format/clang-format-diff.py</span><span style="color:#eb6772;"> -p1 -i
 </span></code></pre>
 <h3 id="components">Components</h3>
-<ol>
-<li>
-<p>LLVM-Reduce</p>
+<h4 id="llvm-reduce">LLVM-Reduce</h4>
 <p>Tests here:
 <a href="https://github.com/llvm/llvm-project/tree/main/llvm/test/tools/llvm-reduce">https://github.com/llvm/llvm-project/tree/main/llvm/test/tools/llvm-reduce</a></p>
-</li>
-</ol>
 <h2 id="tools">Tools</h2>
 <ul>
 <li><a href="/notes/llvm-reduce">llvm-reduce</a></li>
@@ -280,7 +276,6 @@ continues after an exception that occurs in an invoke}}.</p>
 <p>In the LLVM IR, a landing pad instruction with a {{c1::cleanup
 clause}} will {{c2::always}} be entered when an exception is thrown.</p>
 <h3 id="cleanup-destructor">cleanup destructor</h3>
-<!-- marki[card]: 6d36f4e2-2014-4b74-8da5-0667b26d5ccf -->
 <h4 id="front">Front</h4>
 <p>In the context of the LLVM language, what is the typical example of
 a cleanup in compiled C++ code?</p>

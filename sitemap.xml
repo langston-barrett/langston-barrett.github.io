@@ -22,7 +22,16 @@
         <loc>https://langston-barrett.github.io/notes/</loc>
     </url>
     <url>
+        <loc>https://langston-barrett.github.io/notes/actions-rs/</loc>
+    </url>
+    <url>
         <loc>https://langston-barrett.github.io/notes/allvm/</loc>
+    </url>
+    <url>
+        <loc>https://langston-barrett.github.io/notes/anyhow/</loc>
+    </url>
+    <url>
+        <loc>https://langston-barrett.github.io/notes/atomics-in-rust/</loc>
     </url>
     <url>
         <loc>https://langston-barrett.github.io/notes/cargo/</loc>
@@ -71,6 +80,9 @@
     </url>
     <url>
         <loc>https://langston-barrett.github.io/notes/rustfmt/</loc>
+    </url>
+    <url>
+        <loc>https://langston-barrett.github.io/notes/thiserror/</loc>
     </url>
     <url>
         <loc>https://langston-barrett.github.io/notes/wllvm/</loc>
