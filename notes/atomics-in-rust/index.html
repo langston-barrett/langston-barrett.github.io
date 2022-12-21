@@ -19,7 +19,9 @@
     
 <!-- NOTE! This page is PUBLIC! -->
 <h1 id="atomics-in-rust">Atomics in Rust</h1>
-<p>More generally, see <a href="/notes/atomics">Atomics</a></p>
+<p>More generally, see <a href="/notes/atomics">Atomics</a>.</p>
+<p>Atomics act as if they have <a href="/notes/interior-mutability">interior mutability</a>,
+namely they can be mutated through const-references.</p>
 <h2 id="types">Types</h2>
 <p>Rust has atomics for all the standard sizes of signed and unsigned integer,
 plus:</p>

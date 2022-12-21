@@ -21,28 +21,47 @@
 <h1 id="cargo">Cargo</h1>
 <p>The <a href="/notes/rust">Rust</a> build tool.</p>
 <h2 id="link-time-optimization">Link-Time Optimization</h2>
-<p>See also <a href="/notes/link-time-optimization">Link-Time Optimization</a> and 
+<p>See also <a href="/notes/link-time-optimization">Link-Time Optimization</a> and
 <a href="/notes/the-rust-performance-book">the Rust Performance Book</a>.</p>
 <pre data-lang="toml" style="background-color:#2b303b;color:#6c7079;" class="language-toml "><code class="language-toml" data-lang="toml"><span style="color:#abb2bf;">[profile.release]
 </span><span style="color:#eb6772;">lto </span><span style="color:#abb2bf;">= </span><span style="color:#db9d63;">true  </span><span style="font-style:italic;color:#5f697a;"># &quot;thin&quot; also works
 </span></code></pre>
 <h2 id="error-messages">Error messages</h2>
+<h3 id="git">Git</h3>
 <p>Fix problems with <a href="/notes/git">git</a>:</p>
-<pre data-lang="sh" style="background-color:#2b303b;color:#6c7079;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#cd74e8;">export </span><span style="color:#eb6772;">CARGO_NET_GIT_FETCH_WITH_CLI</span><span style="color:#adb7c9;">=</span><span style="color:#9acc76;">true  
+<pre data-lang="sh" style="background-color:#2b303b;color:#6c7079;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#cd74e8;">export </span><span style="color:#eb6772;">CARGO_NET_GIT_FETCH_WITH_CLI</span><span style="color:#adb7c9;">=</span><span style="color:#9acc76;">true
 </span></code></pre>
+<h3 id="openssl">OpenSSL</h3>
+<p><a href="https://nixos.wiki/wiki/Rust#Building_Rust_crates_that_require_external_system_libraries">https://nixos.wiki/wiki/Rust#Building_Rust_crates_that_require_external_system_libraries</a></p>
 <h2 id="static-linking">Static linking</h2>
 <pre data-lang="sh" style="background-color:#2b303b;color:#6c7079;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#eb6772;">rustup</span><span style="color:#abb2bf;"> target add x86_64-unknown-linux-musl
 </span><span style="color:#eb6772;">cargo</span><span style="color:#abb2bf;"> build</span><span style="color:#eb6772;"> --target</span><span style="color:#adb7c9;">=</span><span style="color:#abb2bf;">x86_64-unknown-linux-musl
 </span></code></pre>
 <h2 id="ci">CI</h2>
 <h3 id="use-cargo-lock">Use <code>Cargo.lock</code></h3>
-<p>Consider passing <code>--locked</code> to Cargo in CI. Example:</p>
+<p>Consider passing <code>--locked</code> to Cargo in CI. </p>
+<p>From <a href="https://doc.rust-lang.org/cargo/commands/cargo-install.html">https://doc.rust-lang.org/cargo/commands/cargo-install.html</a>:</p>
+<blockquote>
+<p>By default, the <code>Cargo.lock</code> file that is included with the package will be
+ignored. This means that Cargo will recompute which versions of dependencies
+to use, possibly using newer versions that have been released since the
+package was published. The <code>--locked</code> flag can be used to force Cargo to use the
+packaged <code>Cargo.lock</code> file if it is available. This may be useful for ensuring
+reproducible builds, to use the exact same set of dependencies that were
+available when the package was published. It may also be useful if a newer
+version of a dependency is published that no longer builds on your system,
+or has other problems. The downside to using <code>--locked</code> is that you will not
+receive any fixes or updates to any dependency.</p>
+</blockquote>
+<p>This is appropriate for use in CI, which should default to reproducible builds
+to prevent failures unrelated to the changes in the codebase.</p>
+<p>Example:</p>
 <pre data-lang="yaml" style="background-color:#2b303b;color:#6c7079;" class="language-yaml "><code class="language-yaml" data-lang="yaml"><span style="color:#abb2bf;">   </span><span style="color:#eb6772;">test</span><span style="color:#abb2bf;">:
 </span><span style="color:#abb2bf;">    </span><span style="color:#eb6772;">runs-on</span><span style="color:#abb2bf;">: </span><span style="color:#9acc76;">ubuntu-latest
 </span><span style="color:#abb2bf;">    </span><span style="color:#eb6772;">steps</span><span style="color:#abb2bf;">:
 </span><span style="color:#abb2bf;">    - </span><span style="color:#eb6772;">uses</span><span style="color:#abb2bf;">: </span><span style="color:#9acc76;">actions/checkout@v3
 </span><span style="color:#abb2bf;">    - </span><span style="color:#eb6772;">run</span><span style="color:#abb2bf;">: </span><span style="color:#9acc76;">cargo build --locked
-</span><span style="color:#abb2bf;">    - </span><span style="color:#eb6772;">run</span><span style="color:#abb2bf;">: </span><span style="color:#9acc76;">cargo test --locked 
+</span><span style="color:#abb2bf;">    - </span><span style="color:#eb6772;">run</span><span style="color:#abb2bf;">: </span><span style="color:#9acc76;">cargo test --locked
 </span></code></pre>
 <h3 id="worked-example">Worked example</h3>
 <p><a href="https://github.com/langston-barrett/mdlynx/tree/main/.github/workflows">https://github.com/langston-barrett/mdlynx/tree/main/.github/workflows</a></p>
@@ -67,7 +86,7 @@
 </span><span style="color:#abb2bf;">    - </span><span style="color:#eb6772;">name</span><span style="color:#abb2bf;">: </span><span style="color:#9acc76;">Build static executable
 </span><span style="color:#abb2bf;">      </span><span style="color:#eb6772;">run</span><span style="color:#abb2bf;">: </span><span style="color:#cd74e8;">|
 </span><span style="color:#9acc76;">        cargo build  --release --target=x86_64-unknown-linux-musl
-</span><span style="color:#9acc76;">        cp target/x86_64-unknown-linux-musl/release/${NAME} . 
+</span><span style="color:#9acc76;">        cp target/x86_64-unknown-linux-musl/release/${NAME} .
 </span></code></pre>
 
 

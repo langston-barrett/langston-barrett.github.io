@@ -34,6 +34,9 @@
         <loc>https://langston-barrett.github.io/notes/atomics-in-rust/</loc>
     </url>
     <url>
+        <loc>https://langston-barrett.github.io/notes/bunched-logic/</loc>
+    </url>
+    <url>
         <loc>https://langston-barrett.github.io/notes/cargo/</loc>
     </url>
     <url>
@@ -44,6 +47,9 @@
     </url>
     <url>
         <loc>https://langston-barrett.github.io/notes/haskell-style-guide/</loc>
+    </url>
+    <url>
+        <loc>https://langston-barrett.github.io/notes/hoare-logic/</loc>
     </url>
     <url>
         <loc>https://langston-barrett.github.io/notes/k-llvm/</loc>
@@ -80,6 +86,12 @@
     </url>
     <url>
         <loc>https://langston-barrett.github.io/notes/rustfmt/</loc>
+    </url>
+    <url>
+        <loc>https://langston-barrett.github.io/notes/sanitizers/</loc>
+    </url>
+    <url>
+        <loc>https://langston-barrett.github.io/notes/separation-logic/</loc>
     </url>
     <url>
         <loc>https://langston-barrett.github.io/notes/thiserror/</loc>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <link rel="stylesheet" href="/mine.css">
+  <title>langston-barrett.github.io</title>
+</head>
+<body>
+  <div id="content">
+    <h1 class="title">
+      <div class="logo"><strong>langston-barrrett.github.io</strong></div>
+    </h1>
+    <nav>
+      <a href="/">Home</a>&nbsp;&nbsp;
+      <a href="/blog">Blog</a>&nbsp;&nbsp;
+      <a href="/notes">Notes</a>
+    </nav>
+    
+<!-- NOTE! This page is PUBLIC! -->
+<h1 id="separation-logic">Separation Logic</h1>
+<p>A logic for verification of programs with pointers. An extension of
+<a href="/notes/hoare-logic">Hoare logic</a>, uses <a href="/notes/bunched-logic">bunched logic</a>.</p>
+<h2 id="concepts">Concepts</h2>
+<h3 id="frame-rule">Frame Rule</h3>
+<p>The frame rule states that a program satisfying the triple {P} C {Q}
+also satisfies {P ∗ R} C {Q ∗ R} (i.e. a program that executes properly in
+one heap context also executes correctly with the same result in any
+other larger heap context).</p>
+<h2 id="tools">Tools</h2>
+<ul>
+<li><a href="/notes/infer">Infer</a></li>
+</ul>
+
+
+  </div>
+</body> 
+</html>

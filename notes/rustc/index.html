@@ -21,10 +21,24 @@
 <h1 id="rustc">rustc</h1>
 <p>The <a href="/notes/rust">Rust</a> compiler.</p>
 <h2 id="deny">Deny</h2>
-<pre style="background-color:#2b303b;color:#6c7079;"><code><span style="color:#abb2bf;">#![deny(missing_docs)] 
+<pre style="background-color:#2b303b;color:#6c7079;"><code><span style="color:#abb2bf;">#![deny(missing_docs)]
 </span><span style="color:#abb2bf;">#![forbid(unsafe_code)]
 </span></code></pre>
-<p><a href="https://doc.rust-lang.org/rustc/lints/levels.html">https://doc.rust-lang.org/rustc/lints/levels.html</a></p>
+<ul>
+<li><a href="https://rust-unofficial.github.io/patterns/anti_patterns/deny-warnings.html">The <code>#[deny(warnings)]</code> anti-pattern</a></li>
+<li><a href="https://doc.rust-lang.org/rustc/lints/listing/index.html">List of lints</a></li>
+<li><a href="https://doc.rust-lang.org/rustc/lints/levels.html">Lint levels</a></li>
+</ul>
+<h2 id="output-llvm">Output LLVM</h2>
+<p>To output <a href="/notes/llvm">LLVM</a>:</p>
+<pre data-lang="sh" style="background-color:#2b303b;color:#6c7079;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#eb6772;">rustc --emit</span><span style="color:#adb7c9;">=</span><span style="color:#abb2bf;">llvm-ir file.rs
+</span><span style="color:#eb6772;">rustc --emit</span><span style="color:#adb7c9;">=</span><span style="color:#abb2bf;">llvm-bc file.rs
+</span></code></pre>
+<p><a href="https://doc.rust-lang.org/rustc/command-line-arguments.html#--emit-specifies-the-types-of-output-files-to-generate">https://doc.rust-lang.org/rustc/command-line-arguments.html#--emit-specifies-the-types-of-output-files-to-generate</a></p>
+<h2 id="sanitizing">Sanitizing</h2>
+<p>More generally, see <a href="/notes/sanitizers">Sanitizers</a>.</p>
+<pre data-lang="sh" style="background-color:#2b303b;color:#6c7079;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#eb6772;">RUSTFLAGS</span><span style="color:#adb7c9;">=</span><span style="color:#9acc76;">&quot;-Z sanitizer=address&quot; </span><span style="color:#eb6772;">cargo</span><span style="color:#abb2bf;"> +nightly test</span><span style="color:#eb6772;"> --target</span><span style="color:#abb2bf;"> x86_64-unknown-linux-gnu
+</span></code></pre>
 
 
   </div>

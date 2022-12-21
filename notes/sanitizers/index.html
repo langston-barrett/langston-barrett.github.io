@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <link rel="stylesheet" href="/mine.css">
+  <title>langston-barrett.github.io</title>
+</head>
+<body>
+  <div id="content">
+    <h1 class="title">
+      <div class="logo"><strong>langston-barrrett.github.io</strong></div>
+    </h1>
+    <nav>
+      <a href="/">Home</a>&nbsp;&nbsp;
+      <a href="/blog">Blog</a>&nbsp;&nbsp;
+      <a href="/notes">Notes</a>
+    </nav>
+    
+<!-- NOTE! This page is PUBLIC! -->
+<h1 id="sanitizers">Sanitizers</h1>
+<p>Sanitizers are code that turn less-than-fatal <a href="/notes/undefined-behavior">undefined behavior</a>
+(use-after-free, signed integer wrap, etc.) into fatal errors.
+They are often used with <a href="/notes/fuzzing">fuzzers</a> and in <a href="/notes/testing">test
+suites</a>.</p>
+<ul>
+<li><a href="https://clang.llvm.org/docs/AddressSanitizer.html">AddressSanitizer</a>,
+<a href="https://llvm.org/docs/GwpAsan.html">GWP-ASan</a> (see also
+<a href="https://linux.die.net/man/3/efence">efence</a> for a
+historical version and
+<a href="https://llvm.org/docs/ScudoHardenedAllocator.html">scudo</a>
+for a more lightweight approach)</li>
+<li><a href="https://clang.llvm.org/docs/MemorySanitizer.html">MemorySanitizer</a></li>
+<li><a href="https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html">UndefinedBehaviorSanitizer</a></li>
+<li>ThreadSanitizer</li>
+<li><a href="https://clang.llvm.org/docs/UsersManual.html#controlling-code-generation">others…</a></li>
+</ul>
+<h2 id="how-to">How-To</h2>
+<p>Here's how to use them in a <code>Makefile</code>:</p>
+<pre data-lang="conf" style="background-color:#2b303b;color:#6c7079;" class="language-conf "><code class="language-conf" data-lang="conf"><span style="color:#abb2bf;">CLANG </span><span style="color:#adb7c9;">?=</span><span style="color:#abb2bf;"> clang
+</span><span style="color:#abb2bf;">CFLAGS </span><span style="color:#adb7c9;">?= -</span><span style="color:#abb2bf;">Werror </span><span style="color:#adb7c9;">-</span><span style="color:#abb2bf;">Wall </span><span style="color:#adb7c9;">-</span><span style="color:#abb2bf;">fsanitize</span><span style="color:#adb7c9;">=</span><span style="color:#abb2bf;">address </span><span style="color:#adb7c9;">-</span><span style="color:#abb2bf;">fno</span><span style="color:#adb7c9;">-</span><span style="color:#abb2bf;">omit</span><span style="color:#adb7c9;">-</span><span style="color:#abb2bf;">frame</span><span style="color:#adb7c9;">-</span><span style="color:#abb2bf;">pointer </span><span style="color:#adb7c9;">-</span><span style="color:#abb2bf;">O1
+</span><span style="color:#abb2bf;">CC </span><span style="color:#adb7c9;">?= </span><span style="color:#cd74e8;">$(CLANG)
+</span></code></pre>
+<p>AdressSanitizer wants <code>-fno-omit-frame-pointer</code> for error
+messages and <code>-O1</code> for performance.</p>
+<p>For CMake builds, try</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#6c7079;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#eb6772;">-DCMAKE_C_FLAGS</span><span style="color:#adb7c9;">=</span><span style="color:#9acc76;">&quot;-fsanitize=address -fno-omit-frame-pointer -O1&quot;
+</span><span style="color:#eb6772;">-DCMAKE_CXX_FLAGS</span><span style="color:#adb7c9;">=</span><span style="color:#9acc76;">&quot;-fsanitize=address -fno-omit-frame-pointer -O1&quot;
+</span><span style="color:#eb6772;">-DLDFLAGS</span><span style="color:#adb7c9;">=</span><span style="color:#9acc76;">&quot;-fsanitize=address&quot;
+</span></code></pre>
+<p>Though CMake will cache the <code>LDFLAGS</code> so you might have to
+rebuild more!</p>
+<p>You can disable leak checking:</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#6c7079;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#cd74e8;">export </span><span style="color:#eb6772;">ASAN_OPTIONS</span><span style="color:#adb7c9;">=</span><span style="color:#9acc76;">detect_leaks=0
+</span></code></pre>
+<h3 id="sanitizing-shared-objects">Sanitizing Shared Objects</h3>
+<p>You can run shared objects with sanitizers even if they are loaded by an
+unsanitized executable by using the <code>LD_PRELOAD</code> trick.</p>
+<h2 id="error-messages">Error Messages</h2>
+<h3 id="missing-symbols">Missing Symbols</h3>
+<p>Did you put the sanitizer shared libraries on
+<code>LD_PRELOAD</code>?</p>
+<h3 id="ubsan-undefined-reference-to-typeinfo">UBSan: Undefined Reference to Typeinfo</h3>
+<p>Try enabling RTTI or the <code>-fno-sanitize=vptr</code> flag
+(<a href="https://stackoverflow.com/questions/37358573/why-does-fsanitize-undefined-cause-undefined-reference-to-typeinfo">StackOverflow</a>).</p>
+
+
+  </div>
+</body> 
+</html>
