@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <link rel="stylesheet" href="/mine.css">
+  <title>langston-barrett.github.io</title>
+</head>
+<body>
+  <div id="content">
+    <h1 class="title">
+      <div class="logo"><strong>langston-barrrett.github.io</strong></div>
+    </h1>
+    <nav>
+      <a href="/">Home</a>&nbsp;&nbsp;
+      <a href="/blog">Blog</a>&nbsp;&nbsp;
+      <a href="/notes">Notes</a>
+    </nav>
+    
+<!-- NOTE! This page is PUBLIC! -->
+<h1 id="cargo-careful">cargo-careful</h1>
+<blockquote>
+<p>cargo careful is a tool to run your Rust code extra carefully -- opting into
+a bunch of nightly-only extra checks that help detect Undefined Behavior, and
+using a standard library with debug assertions.</p>
+</blockquote>
+<p>Also can enable <a href="/notes/sanitizers">sanitizers</a>.</p>
+<p><a href="/notes/miri">Miri</a> is more comprehensive, but works on less code.</p>
+<p>See also <a href="/notes/high-assurance-rust">High Assurance Rust</a>.</p>
+<h2 id="in-gitlab-ci">In Gitlab CI</h2>
+<pre data-lang="yaml" style="background-color:#2b303b;color:#6c7079;" class="language-yaml "><code class="language-yaml" data-lang="yaml"><span style="color:#abb2bf;">  - </span><span style="color:#9acc76;">rustup toolchain install nightly
+</span><span style="color:#abb2bf;">  - </span><span style="color:#9acc76;">rustup default nightly
+</span><span style="color:#abb2bf;">  - </span><span style="color:#9acc76;">cargo +nightly install cargo-careful
+</span><span style="color:#abb2bf;">  - </span><span style="color:#9acc76;">cargo +nightly careful build -Zcareful-sanitizer=address --target=x86_64-unknown-linux-gnu
+</span><span style="color:#abb2bf;">  - </span><span style="color:#9acc76;">cargo +nightly careful test -Zcareful-sanitizer=address --target=x86_64-unknown-linux-gnu
+</span></code></pre>
+<p>(TODO: <code>cargo-careful</code> now published pre-built binaries, adapt the above to
+use them!)</p>
+
+
+  </div>
+</body> 
+</html>

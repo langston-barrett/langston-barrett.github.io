@@ -37,7 +37,13 @@
         <loc>https://langston-barrett.github.io/notes/bunched-logic/</loc>
     </url>
     <url>
+        <loc>https://langston-barrett.github.io/notes/cargo-careful/</loc>
+    </url>
+    <url>
         <loc>https://langston-barrett.github.io/notes/cargo/</loc>
+    </url>
+    <url>
+        <loc>https://langston-barrett.github.io/notes/ci-for-rust/</loc>
     </url>
     <url>
         <loc>https://langston-barrett.github.io/notes/clippy/</loc>

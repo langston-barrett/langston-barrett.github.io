@@ -33,6 +33,8 @@
 <li><a href="http://cosmic.mearie.org/2014/01/periodic-table-of-rust-types/">Periodic Table of Rust Types</a></li>
 <li><a href="https://cheats.rs">Rust Cheat Sheet</a></li>
 <li><a href="https://github.com/brson/rust-anthology">Rust Anthology</a></li>
+<li><a href="/notes/high-assurance-rust">High Assurance Rust</a></li>
+<li><a href="https://github.com/rosetta-rs/string-rosetta-rs">String Rosetta Stone</a></li>
 </ul>
 <h2 id="tools">Tools</h2>
 <ul>
@@ -58,7 +60,19 @@ Find unused dependencies in Cargo.toml</li>
 <ul>
 <li><a href="/notes/anyhow">anyhow</a></li>
 <li><a href="/notes/thiserror">thiserror</a></li>
+<li>triomphe: Smaller <code>Arc</code> when you don't need <code>Weak</code></li>
 </ul>
+<h2 id="visibility">Visibility</h2>
+<p><a href="https://doc.rust-lang.org/reference/visibility-and-privacy.html">Reference</a>.</p>
+<p>Options:</p>
+<ul>
+<li><code>pub</code></li>
+<li><code>pub(crate)</code></li>
+<li><code>pub(in {crate,self,super}::&lt;path&gt;)</code></li>
+<li><code>pub(self)</code> (equivalent to not <code>pub</code>)</li>
+<li><code>pub(super)</code> (equivalent to <code>pub(in super)</code>)</li>
+</ul>
+<p>See also the <a href="/notes/rustc"><code>rustc</code></a> <code>unreachable_pub</code> lint.</p>
 
 
   </div>

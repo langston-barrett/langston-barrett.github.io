@@ -29,6 +29,7 @@
 <li><a href="https://doc.rust-lang.org/rustc/lints/listing/index.html">List of lints</a></li>
 <li><a href="https://doc.rust-lang.org/rustc/lints/levels.html">Lint levels</a></li>
 </ul>
+<p>See also <a href="https://langston-barrett.github.io/notes/rustc/high-assurance-rust.md#rustc">High Assurance Rust#rustc</a>.</p>
 <h2 id="output-llvm">Output LLVM</h2>
 <p>To output <a href="/notes/llvm">LLVM</a>:</p>
 <pre data-lang="sh" style="background-color:#2b303b;color:#6c7079;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#eb6772;">rustc --emit</span><span style="color:#adb7c9;">=</span><span style="color:#abb2bf;">llvm-ir file.rs
@@ -36,9 +37,25 @@
 </span></code></pre>
 <p><a href="https://doc.rust-lang.org/rustc/command-line-arguments.html#--emit-specifies-the-types-of-output-files-to-generate">https://doc.rust-lang.org/rustc/command-line-arguments.html#--emit-specifies-the-types-of-output-files-to-generate</a></p>
 <h2 id="sanitizing">Sanitizing</h2>
+<p>See also <a href="/notes/cargo-careful">cargo-careful</a>.</p>
 <p>More generally, see <a href="/notes/sanitizers">Sanitizers</a>.</p>
 <pre data-lang="sh" style="background-color:#2b303b;color:#6c7079;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#eb6772;">RUSTFLAGS</span><span style="color:#adb7c9;">=</span><span style="color:#9acc76;">&quot;-Z sanitizer=address&quot; </span><span style="color:#eb6772;">cargo</span><span style="color:#abb2bf;"> +nightly test</span><span style="color:#eb6772;"> --target</span><span style="color:#abb2bf;"> x86_64-unknown-linux-gnu
 </span></code></pre>
+<h2 id="hacking">Hacking</h2>
+<h3 id="fuzzing">Fuzzing</h3>
+<p>Getting files:</p>
+<pre style="background-color:#2b303b;color:#6c7079;"><code><span style="color:#abb2bf;">mkdir rs
+</span><span style="color:#abb2bf;">for repo in rust-lang/glacier; do
+</span><span style="color:#abb2bf;">  git clone --jobs 4 --depth 1 https://github.com/$repo
+</span><span style="color:#abb2bf;">  for f in ./$(basename ${repo})/**/*.rs; do 
+</span><span style="color:#abb2bf;">    cp &quot;${f}&quot; rs/&quot;$(basename &quot;${repo}&quot;)-$(sha256sum &quot;${f}&quot; | head -c 5)-$(basename &quot;${f}&quot;)&quot;
+</span><span style="color:#abb2bf;">  done
+</span><span style="color:#abb2bf;">done
+</span></code></pre>
+<ul>
+<li>https://github.com/rust-lang/glacier</li>
+<li>https://github.com/matthiaskrgr/icemaker</li>
+</ul>
 
 
   </div>
