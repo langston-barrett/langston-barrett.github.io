@@ -1,0 +1,8 @@
+[book]
+authors = ["Langston Barrett"]
+language = "en"
+src = "."
+title = "Langston Barrett"
+
+[output.html]
+no-section-label = true

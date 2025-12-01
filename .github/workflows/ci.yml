@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    # The default is 360 (i.e., 6 hours), which can be wasteful. See:
+    # https://github.com/Cambridge-ICCS/green-ci/blob/b9e942d81e4d6536d69f3cfbffe28fa14b8ae381/README.md#time-limits
+    timeout-minutes: 15
+    steps:
+    - uses: actions/checkout@v5
+      with:
+        persist-credentials: false
+    - run: npm install -g markdownlint-cli
+    - uses: langston-barrett/gha/.github/actions/install-mdlynx@2a02a76aebfc226461aa632fe33300ba5fcf2d9d
+    - uses: langston-barrett/gha/.github/actions/install-typos@2a02a76aebfc226461aa632fe33300ba5fcf2d9d
+    - run: env PATH=$PATH:$PWD make lint

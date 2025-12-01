@@ -1,0 +1,22 @@
+name: docs
+on:
+  push:
+    branches:
+    - main
+  workflow_dispatch:
+
+concurrency:
+  # Only run one of these at a time because they update the global pages. Don't
+  # cancel existing runs.
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  docs:
+    uses: langston-barrett/gha/.github/workflows/mdbook-pages.yml@edd880b5448475bd00b1136cb875c13d8dd506f4
+    with:
+      path: "."
+    permissions:
+      contents: read
+      id-token: write
+      pages: write
