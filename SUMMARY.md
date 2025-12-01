@@ -1,6 +1,8 @@
 # Summary
 
-[Index](index.md)
+[Index](md/index.md)
+[Projects](md/projects.md)
+[Writing](md/writing.md)
 
 # Blog
 
@@ -8,7 +10,10 @@
 - [Fun with mypy: reifying runtime relations on types](blog/mypy-reify.md)
 - [A quick tutorial on setoids in Rocq](blog/setoids.md)
 
+
 # Notes
+
+- [**About**](notes/about.md)
 
 <!-- TODO: script to generate these -->
 

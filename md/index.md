@@ -1,3 +1,5 @@
+# Index
+
 Researcher with experience in functional programming, formal methods,
 programming languages, and security. I work at [Galois].
 

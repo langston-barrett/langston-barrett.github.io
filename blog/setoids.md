@@ -3,7 +3,7 @@
 <p>A setoid is a type <code>T</code> and an
 <a href="https://coq.inria.fr/library/Coq.Classes.RelationClasses.html#Equivalence"><code>equivalence</code></a>
 <a href="https://coq.inria.fr/library/Coq.Relations.Relation_Definitions.html#relation"><code>relation</code></a>
-<code>(=</code>) : T -&gt; T -&gt; Prop=. Coq has some built-in automation
+<code>(=) : T -&gt; T -&gt; Prop</code>. Coq has some built-in automation
 facilities for working with setoids that can make your life a lot
 easier.</p>
 <h2 id="building-a-setoid">Building a setoid</h2>

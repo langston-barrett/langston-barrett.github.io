@@ -7,7 +7,7 @@
 SHELL = bash -euo pipefail
 THIS = $(abspath $(lastword $(MAKEFILE_LIST)))
 
-NOTES := $(wildcard notes/*.md)
+NOTES := $(wildcard md/*.md) $(wildcard notes/*.md)
 POSTS := $(wildcard blog/*.md)
 OUT := out
 MDLYNX := $(HOME)/.cargo/bin/mdlynx
