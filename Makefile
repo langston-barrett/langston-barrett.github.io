@@ -39,6 +39,14 @@ $(OUT)/%.md.markdownlint: %.md $(THIS)
 	@mkdir -p -- '$(OUT)/$(dir $<)'
 	@markdownlint --fix --config markdownlint.jsonc -- '$<' && touch -- '$@'
 
+lint: missing
+.PHONY: missing
+missing: $(addsuffix .missing, $(addprefix $(OUT)/, $(NOTES)))
+$(OUT)/%.md.missing: %.md $(THIS)
+	@printf "missing %s\n" '$<'
+	@mkdir -p -- '$(OUT)/$(dir $<)'
+	@grep "$(notdir $<)" SUMMARY.md > /dev/null 2>&1 && touch -- '$@'
+
 lint: mdlynx
 .PHONY: mdlynx
 mdlynx: $(addsuffix .mdlynx, $(addprefix $(OUT)/, $(NOTES) $(POSTS)))

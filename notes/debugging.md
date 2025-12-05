@@ -1,5 +1,10 @@
 # Debugging
 
+## Tips
+
+- Try `set -x` in Bash
+- Use `strace`
+
 ## Tools
 
 - [gdb](https://sourceware.org/gdb/)

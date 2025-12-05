@@ -18,10 +18,14 @@
 <!-- TODO: script to generate these -->
 
 - [Amd64 System V ABI](notes/amd64-sysv.md)
+- [Build systems](notes/build-systems.md)
 - [Datalog](notes/datalog.md)
 - [Debugging](notes/debugging.md)
+- [Error handling](notes/error-handling.md)
 - [Make](notes/make.md)
 - [Markdown](notes/markdown.md)
 - [Python](notes/python.md)
 - [Rust](notes/rust.md)
+- [Software engineering](notes/software-engineering.md)
 - [Testing](notes/testing.md)
+- [Tools](notes/tools.md)
