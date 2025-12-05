@@ -30,7 +30,7 @@ I use these every day.
 
 Little utilities I wrote.
 
-- [`copy` and `paste`]: copy and past from the shell, on Linux or macOS
+- [`copy` and `paste`]: copy and paste from the shell, on Linux or macOS
 - [`notify`]: send a notification on Linux or macOS
 - [`pick`]: pick something at the terminal (just some `fzf` flags)
 
