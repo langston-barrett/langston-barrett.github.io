@@ -1,5 +1,7 @@
 # Make
 
+More generally, see [Build systems](build-systems.md).
+
 ## Snippets
 
 ### Adding a suffix to a list of files
