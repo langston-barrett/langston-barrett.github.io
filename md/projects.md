@@ -33,6 +33,8 @@
   Dr. Ice diagnoses internal compiler errors (ICEs) in rustc
 - [Icemelter](https://github.com/langston-barrett/icemelter):
   Icemelter automates steps in debugging rustc internal compiler errors (ICEs)
+- [linkup](https://github.com/langston-barrett/linkup):
+  Automatically add links to Markdown files
 - [Marki](https://github.com/langston-barrett/marki):
   Generate Anki cards from Markdown notes
 - [mdlynx](https://github.com/langston-barrett/mdlynx):
