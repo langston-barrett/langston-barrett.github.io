@@ -14,6 +14,7 @@ Some examples:
 - [GREASE](https://galoisinc.github.io/grease/dev/tests.html)
 - [rust-analyzer](https://rust-analyzer.github.io/book/contributing/testing.html)
 - [rustc](https://rustc-dev-guide.rust-lang.org/tests/compiletest.html)
+- [ty](https://github.com/astral-sh/ruff/blob/6e0e49eda88118f69b5521dd8138dd09a384e5ee/crates/ty_python_semantic/resources/mdtest/binary/booleans.md)
 - [Wild](https://github.com/llvm/llvm-project/blob/main/clang/test/Sema/Float16.c)
 
 ## Property-based testing
