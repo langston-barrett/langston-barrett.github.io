@@ -37,6 +37,7 @@
   Generate Anki cards from Markdown notes
 - [mdlynx](https://github.com/langston-barrett/mdlynx):
   Small, fast tool to find broken file links in Markdown documents
+- [ttlint](https://github.com/langston-barrett/ttlint): tiny text linter
 
 ## Tiny libraries
 
