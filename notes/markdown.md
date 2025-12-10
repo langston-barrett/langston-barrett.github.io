@@ -25,8 +25,6 @@ echo "my-file.md" | entr -c -s "redcarpet --parse fenced_code_blocks my-file.md 
 
 ### Markdown/shell polyglots
 
-# Preface
-
     : ' \
     <!-- ' ;:<<'HERE' #
 
