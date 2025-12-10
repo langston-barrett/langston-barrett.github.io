@@ -3,11 +3,12 @@
 ## Tips
 
 - Try `set -x` in Bash
+- Use the `gdb` Python interface (see [gdb](gdb.md))
 - Use `strace`
 
 ## Tools
 
-- [gdb](https://sourceware.org/gdb/)
+- [gdb](gdb.md)
 - [rr](https://rr-project.org/)
 - [valgrind](https://valgrind.org/)
 - Linux:

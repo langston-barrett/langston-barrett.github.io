@@ -22,6 +22,7 @@
 - [Datalog](notes/datalog.md)
 - [Debugging](notes/debugging.md)
 - [Error handling](notes/error-handling.md)
+- [gdb](notes/gdb.md)
 - [Make](notes/make.md)
 - [Markdown](notes/markdown.md)
 - [Python](notes/python.md)

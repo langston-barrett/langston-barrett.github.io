@@ -47,3 +47,4 @@ Helpful links:
 - <https://eli.thegreenplace.net/2011/09/06/stack-frame-layout-on-x86-64>
 - <https://wiki.osdev.org/System_V_ABI#x86-64>
 - <https://refspecs.linuxfoundation.org/elf/x86_64-abi-0.99.pdf>
+- <https://blog.nelhage.com/2010/10/amd64-and-va_arg/>:

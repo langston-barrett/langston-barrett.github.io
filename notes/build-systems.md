@@ -90,8 +90,14 @@ the files present plus those downloaded and managed by the build system.
 For instance, a common unstated dependency is a bunch of git submodules. It also
 makes it easier to back up your sources.
 
+## Research
+
+- [Build systems a la carte](https://www.microsoft.com/en-us/research/publication/build-systems-la-carte/)
+- [Riker: Always-Correct and Fast Incremental Builds from Simple Specifications](https://www.usenix.org/conference/atc22/presentation/curtsinger):
+  Forward (tracing) build system
+
 ## Links
 
+- [build system tradeoffs - jyn](https://jyn.dev/build-system-tradeoffs)
 - [Neil Mitchell - Four Interesting Build Tools](http://neilmitchell.blogspot.com/2012/02/four-interesting-build-tools.html)
-- [rattle](https://github.com/ndmitchell/rattle)
-- [Build systems a la carte](https://www.microsoft.com/en-us/research/publication/build-systems-la-carte/)
+- [rattle](https://github.com/ndmitchell/rattle): forward build system
