@@ -8,20 +8,35 @@ redcarpet --parse fenced_code_blocks my-file.md > my-file.html
 echo "my-file.md" | entr -c -s "redcarpet --parse fenced_code_blocks my-file.md > my-file.html"
 ```
 
-## Spoiler text
+## Snippets
 
-```markdown
-<details>
-<summary>Spoiler warning</summary>
+### Spoiler text
 
-Spoiler text. Note that it's important to have a space after the summary tag.
+    <details>
+    <summary>Spoiler warning</summary>
 
-```sh
-echo "code block"
-```
+    Spoiler text. Note that it's important to have a space after the summary tag.
 
-</details>
-```
+    ```sh
+    echo "code block"
+    ```
+
+    </details>
+
+### Markdown/shell polyglots
+
+# Preface
+
+    : ' \
+    <!-- ' ;:<<'HERE' #
+
+    HERE
+    echo "executing as shell"
+    exit 0
+
+    -->
+
+    Due to the above sad face (`: ' \`), this file is a Markdown/Bash polyglot.
 
 ## Tools
 
