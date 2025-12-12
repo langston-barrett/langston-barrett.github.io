@@ -45,7 +45,7 @@ See also this section of the
 
 #### `dhat`
 
-[`dhat`](https://docs.rs/dhat/latest/dhat/)
+[`dhat`](https://docs.rs/dhat/latest/dhat/) is a heap profiler.
 
 Quickstart:
 
@@ -63,16 +63,26 @@ dhat = ["dep:dhat"]
 In `main.rs`:
 
 ```rs
-#[cfg(feature = "dhat-heap")]
+#[cfg(feature = "dhat")]
 #[global_allocator]
 static ALLOC: dhat::Alloc = dhat::Alloc;
+
+fn main() {
+    #[cfg(feature = "dhat")]
+    let _profiler = dhat::Profiler::new_heap();
+    // ...
+}
 ```
 
 Then:
 
 ```sh
-cargo build --profile=profiling --features dhat -- your args here
+cargo run --profile=profiling --features dhat -- your args here
 ```
+
+Then upload `dhat-heap.json` to [the online viewer].
+
+[the online viewer]: https://nnethercote.github.io/dh_view/dh_view.html
 
 ## Safety
 
