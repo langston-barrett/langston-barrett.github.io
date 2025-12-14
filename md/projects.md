@@ -2,7 +2,7 @@
 
 ## Highlighted Projects
 
-- [Lesshand](https://github.com/langston-barrett/lesshand): A shorthand for the 21st century
+- [Lūn](https://github.com/langston-barrett/lun): Run linters and formatters quickly
 - [treereduce](https://github.com/langston-barrett/treereduce): A fast, parallel, syntax-aware test case reducer based on tree-sitter grammars
 - [tree-splicer](https://github.com/langston-barrett/tree-splicer): Simple grammar-based test case generator (black-box fuzzer)
 
@@ -59,6 +59,7 @@
   Racket-style higher-order contracts for Emacs Lisp
 - [coq-big-o](https://github.com/langston-barrett/coq-big-o):
   A formalization of Big O, Big Theta, and more based on normed vector spaces
+- [Lūn](https://github.com/langston-barrett/lun): Run linters and formatters quickly
 - [nixpkgs-blight](https://github.com/langston-barrett/nixpkgs-blight):
   Instrument the builds of tens of thousands of open-source packages
 - [Spacelix](https://github.com/langston-barrett/spacelix):
