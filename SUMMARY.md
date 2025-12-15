@@ -10,7 +10,6 @@
 - [Fun with mypy: reifying runtime relations on types](blog/mypy-reify.md)
 - [A quick tutorial on setoids in Rocq](blog/setoids.md)
 
-
 # Notes
 
 - [**About**](notes/about.md)
