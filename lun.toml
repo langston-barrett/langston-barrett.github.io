@@ -1,0 +1,84 @@
+# https://langston-barrett.github.io/lun/
+
+# TODO: rumdl
+
+mtime = true
+ignore = ["*.png"]
+
+# -------------------------------------
+# gha
+
+[[linter]]
+name = "zizmor"
+cmd = "zizmor --"
+files = [".github/**/*.yml"]
+fix = "zizmor --fix=safe --"
+ignore = [".github/dependabot.yml"] # zizmor#1341
+
+# -------------------------------------
+# json
+
+[[linter]]
+name = "jq"
+cmd = "jq null --"
+files = ["*.json"]
+
+# -------------------------------------
+# make
+
+[[linter]]
+name = "make"
+cmd = "make -n --"
+files = ["**/Makefile", "*.mk"]
+
+# -------------------------------------
+# md
+
+[[linter]]
+name = "markdownlint"
+cmd = "markdownlint --config markdownlint.jsonc --"
+files = ["*.md"]
+fix = "markdownlint --config markdownlint.jsonc --fix --"
+
+[[linter]]
+name = "mdlynx"
+cmd = "mdlynx --"
+files = ["*.md"]
+
+[[linter]]
+name = "missing"
+cmd = "./scripts/lint/missing.sh --"
+files = ["*.md"]
+
+[[linter]]
+name = "typos"
+cmd = "typos --"
+files = ["*.md"]
+ignore = ["blog/*"]                                # TODO
+fix = "typos --color={{color}} --write-changes --"
+
+# -------------------------------------
+# sh
+
+[[linter]]
+name = "shellcheck"
+cmd = "shellcheck --color={{color}} --shell=bash --"
+files = ["*.sh"]
+
+# -------------------------------------
+# toml
+
+[[formatter]]
+name = "taplo"
+cmd = "taplo format --"
+files = ["*.toml"]
+check = "taplo format --check --"
+
+# -------------------------------------
+# txt
+
+[[linter]]
+name = "ttlint"
+cmd = "ttlint --"
+files = ["*"]
+fix = "ttlint --fix --"

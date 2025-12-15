@@ -30,4 +30,5 @@ jobs:
     - run: npm install -g markdownlint-cli
     - uses: langston-barrett/gha/.github/actions/install-mdlynx@2a02a76aebfc226461aa632fe33300ba5fcf2d9d
     - uses: langston-barrett/gha/.github/actions/install-typos@2a02a76aebfc226461aa632fe33300ba5fcf2d9d
-    - run: env PATH=$PATH:$PWD make lint
+    - uses: langston-barrett/lun/.github/actions/install-lun@4ff0bb8913126e9f4660c6fb2a10e868e709c9b7
+    - run: env PATH=$PATH:$PWD lun --color=always run --check
