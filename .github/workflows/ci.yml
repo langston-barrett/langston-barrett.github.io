@@ -28,7 +28,10 @@ jobs:
       with:
         persist-credentials: false
     - run: npm install -g markdownlint-cli
-    - uses: langston-barrett/gha/.github/actions/install-mdlynx@2a02a76aebfc226461aa632fe33300ba5fcf2d9d
-    - uses: langston-barrett/gha/.github/actions/install-typos@2a02a76aebfc226461aa632fe33300ba5fcf2d9d
+    - uses: langston-barrett/gha/.github/actions/install-taplo@e9a0541869681c30de7e16c4f7b70f03c23dd472
+    - uses: langston-barrett/gha/.github/actions/install-typos@e9a0541869681c30de7e16c4f7b70f03c23dd472
+    - uses: langston-barrett/gha/.github/actions/install-zizmor@e9a0541869681c30de7e16c4f7b70f03c23dd472
     - uses: langston-barrett/lun/.github/actions/install-lun@4ff0bb8913126e9f4660c6fb2a10e868e709c9b7
+    - uses: langston-barrett/mdlynx/.github/actions/install-mdlynx@a7a1539ea9a2af88e7eccb30278c7716af760745
+    - uses: langston-barrett/ttlint/.github/actions/install-ttlint@13378504b86ee7c2f5f97f81d65992cc4dde01bb
     - run: env PATH=$PATH:$PWD lun --color=always run --check
