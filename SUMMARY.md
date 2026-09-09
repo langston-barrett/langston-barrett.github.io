@@ -29,3 +29,4 @@
 - [Software engineering](notes/software-engineering.md)
 - [Testing](notes/testing.md)
 - [Tools](notes/tools.md)
+- [Writing](notes/writing.md)
