@@ -101,3 +101,7 @@ makes it easier to back up your sources.
 - [build system tradeoffs - jyn](https://jyn.dev/build-system-tradeoffs)
 - [Neil Mitchell - Four Interesting Build Tools](http://neilmitchell.blogspot.com/2012/02/four-interesting-build-tools.html)
 - [rattle](https://github.com/ndmitchell/rattle): forward build system
+- [The smallest build system](https://neugierig.org/software/blog/2026/01/smallest-build-system.html)
+- [Make your own Make](https://matklad.github.io/2018/01/03/make-your-own-make.html)
+- [The Success and Failure of Ninja](https://neugierig.org/software/blog/2020/05/ninja.html#:~:text=Related%20work)
+- [Build System Rules and Algorithms](https://gittup.org/tup/build_system_rules_and_algorithms.pdf)
